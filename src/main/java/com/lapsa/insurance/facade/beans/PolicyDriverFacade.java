@@ -31,6 +31,10 @@ public class PolicyDriverFacade {
     @Inject
     private InsuranceClassTypeServiceDAO insuranceClassTypeService;
 
+    public InsuranceClassType getDefaultInsuranceClass() {
+	return insuranceClassTypeService.getDefault();
+    }
+
     public PolicyDriver fetchByIdNumber(String idNumber) {
 
 	SubjectPersonEntity subjectLocal = null;
@@ -129,7 +133,18 @@ public class PolicyDriverFacade {
     public void fetch(PolicyDriver driver) {
 	clearFetched(driver);
 	PolicyDriver fetched = fetchByIdNumber(driver.getIdNumber());
-	_copyFetched(driver, fetched);
+
+	driver.setFetched(fetched.isFetched());
+
+	driver.setInsuranceClassType(fetched.getInsuranceClassType());
+	driver.setAgeClass(fetched.getAgeClass());
+
+	driver.setPersonalData(fetched.getPersonalData());
+	driver.setResidenceData(fetched.getResidenceData());
+	driver.setOriginData(fetched.getOriginData());
+	driver.setIdentityCardData(fetched.getIdentityCardData());
+	driver.setTaxPayerNumber(fetched.getTaxPayerNumber());
+	driver.setContactData(fetched.getContactData());
     }
 
     public void clearFetched(PolicyDriver driver) {
@@ -144,26 +159,6 @@ public class PolicyDriverFacade {
 	driver.setIdentityCardData(new IdentityCardData());
 	driver.setTaxPayerNumber(null);
 	driver.setContactData(new ContactData());
-    }
-
-    private void _copyFetched(PolicyDriver driver, PolicyDriver fetched) {
-	driver.setFetched(fetched.isFetched());
-
-	driver.setInsuranceClassType(fetched.getInsuranceClassType());
-	driver.setAgeClass(fetched.getAgeClass());
-
-	driver.setPersonalData(fetched.getPersonalData());
-	driver.setResidenceData(fetched.getResidenceData());
-	driver.setOriginData(fetched.getOriginData());
-	driver.setIdentityCardData(fetched.getIdentityCardData());
-	driver.setTaxPayerNumber(fetched.getTaxPayerNumber());
-	driver.setContactData(fetched.getContactData());
-    }
-
-    // PRIVATE
-
-    public InsuranceClassType getDefaultInsuranceClass() {
-	return insuranceClassTypeService.getDefault();
     }
 
     // PRIVATE STATIC
