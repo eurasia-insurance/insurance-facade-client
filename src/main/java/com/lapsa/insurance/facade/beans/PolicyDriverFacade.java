@@ -126,6 +126,46 @@ public class PolicyDriverFacade {
 	return driver;
     }
 
+    public void fetch(PolicyDriver driver) {
+	clearFetched(driver);
+	PolicyDriver fetched = fetchByIdNumber(driver.getIdNumber());
+	_copyFetched(driver, fetched);
+    }
+
+    public void clearFetched(PolicyDriver driver) {
+	driver.setFetched(false);
+
+	driver.setInsuranceClassType(getDefaultInsuranceClass());
+	driver.setAgeClass(null);
+
+	driver.setPersonalData(new PersonalData());
+	driver.setResidenceData(new ResidenceData());
+	driver.setOriginData(new OriginData());
+	driver.setIdentityCardData(new IdentityCardData());
+	driver.setTaxPayerNumber(null);
+	driver.setContactData(new ContactData());
+    }
+
+    private void _copyFetched(PolicyDriver driver, PolicyDriver fetched) {
+	driver.setFetched(fetched.isFetched());
+
+	driver.setInsuranceClassType(fetched.getInsuranceClassType());
+	driver.setAgeClass(fetched.getAgeClass());
+
+	driver.setPersonalData(fetched.getPersonalData());
+	driver.setResidenceData(fetched.getResidenceData());
+	driver.setOriginData(fetched.getOriginData());
+	driver.setIdentityCardData(fetched.getIdentityCardData());
+	driver.setTaxPayerNumber(fetched.getTaxPayerNumber());
+	driver.setContactData(fetched.getContactData());
+    }
+
+    // PRIVATE
+
+    public InsuranceClassType getDefaultInsuranceClass() {
+	return insuranceClassTypeService.getDefault();
+    }
+
     // PRIVATE STATIC
 
     private static Sex convertKZLibSex(com.lapsa.kz.idnumber.IDNumberUtils.Sex kzLibSex) {
@@ -155,44 +195,6 @@ public class PolicyDriverFacade {
 
     private static InsuredAgeClass _obtainInsuredAgeClass(int years) {
 	return years < 25 ? InsuredAgeClass.UNDER25 : InsuredAgeClass.OVER25;
-    }
-
-    public InsuranceClassType getDefaultInsuranceClass() {
-	return insuranceClassTypeService.getDefault();
-    }
-
-    public void fetch(PolicyDriver driver) {
-	clearFetched(driver);
-	PolicyDriver fetched = fetchByIdNumber(driver.getIdNumber());
-	_copyFetched(driver, fetched);
-    }
-
-    private void _copyFetched(PolicyDriver driver, PolicyDriver fetched) {
-	driver.setFetched(fetched.isFetched());
-
-	driver.setInsuranceClassType(fetched.getInsuranceClassType());
-	driver.setAgeClass(fetched.getAgeClass());
-
-	driver.setPersonalData(fetched.getPersonalData());
-	driver.setResidenceData(fetched.getResidenceData());
-	driver.setOriginData(fetched.getOriginData());
-	driver.setIdentityCardData(fetched.getIdentityCardData());
-	driver.setTaxPayerNumber(fetched.getTaxPayerNumber());
-	driver.setContactData(fetched.getContactData());
-    }
-
-    public void clearFetched(PolicyDriver driver) {
-	driver.setFetched(false);
-
-	driver.setInsuranceClassType(getDefaultInsuranceClass());
-	driver.setAgeClass(null);
-
-	driver.setPersonalData(new PersonalData());
-	driver.setResidenceData(new ResidenceData());
-	driver.setOriginData(new OriginData());
-	driver.setIdentityCardData(new IdentityCardData());
-	driver.setTaxPayerNumber(null);
-	driver.setContactData(new ContactData());
     }
 
 }
