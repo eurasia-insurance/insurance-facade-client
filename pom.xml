@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.lapsa.maven.pom</groupId>
+		<artifactId>javaee7-app-parent</artifactId>
+		<version>2.0</version>
+	</parent>
+
+	<groupId>com.lapsa.insurance-lib</groupId>
+	<artifactId>insurance-facade</artifactId>
+	<version>3.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>Insurance Lib : Facade</name>
+
+	<properties>
+		<!-- APIs -->
+		<insurance-lib.version>2.3-SNAPSHOT</insurance-lib.version>
+		<lapsa-commons-lib.version>2.2-SNAPSHOT</lapsa-commons-lib.version>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- internal insurance -->
+			<dependency>
+				<groupId>com.lapsa.insurance-lib</groupId>
+				<artifactId>insurance-dao</artifactId>
+				<version>${insurance-lib.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.lapsa.insurance-lib</groupId>
+				<artifactId>insurance-esbd</artifactId>
+				<version>${insurance-lib.version}</version>
+			</dependency>
+			<!-- internal lapsa-commons -->
+			<dependency>
+				<groupId>com.lapsa.lapsa-commons-lib</groupId>
+				<artifactId>lapsa-commons</artifactId>
+				<version>${lapsa-commons-lib.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<!-- internal -->
+		<dependency>
+			<groupId>com.lapsa.insurance-lib</groupId>
+			<artifactId>insurance-dao</artifactId>
+			<scope>compile</scope>
+			<optional>false</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.lapsa.insurance-lib</groupId>
+			<artifactId>insurance-esbd</artifactId>
+			<scope>compile</scope>
+			<optional>false</optional>
+		</dependency>
+		<!-- internal lapsa-commons -->
+		<dependency>
+			<groupId>com.lapsa.lapsa-commons-lib</groupId>
+			<artifactId>lapsa-commons</artifactId>
+			<scope>compile</scope>
+			<optional>false</optional>
+		</dependency>
+		<!-- JavaEE -->
+		<dependency>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<scm>
+		<connection>scm:git:https://gitlab.lapsa.tech/lapsa/insurance/facade.git</connection>
+		<developerConnection>scm:git:https://gitlab.lapsa.tech/lapsa/insurance/facade.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+
+	<issueManagement>
+		<system>gitlab</system>
+		<url>https://gitlab.lapsa.tech/lapsa/insurance/facade/issues</url>
+	</issueManagement>
+
+</project>
