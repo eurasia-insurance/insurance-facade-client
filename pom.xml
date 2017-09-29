@@ -19,6 +19,7 @@
 		<!-- APIs -->
 		<insurance-lib.version>2.3-SNAPSHOT</insurance-lib.version>
 		<lapsa-commons-lib.version>2.2-SNAPSHOT</lapsa-commons-lib.version>
+		<!-- FACADES -->
 		<qazkom-facade.version>3.0-SNAPSHOT</qazkom-facade.version>
 		<!-- EJBs & WARs -->
 		<insurance-dao-impl-jpa.version>2.3-SNAPSHOT</insurance-dao-impl-jpa.version>
@@ -44,12 +45,6 @@
 				<groupId>com.lapsa.insurance-lib</groupId>
 				<artifactId>insurance-mesenger</artifactId>
 				<version>${insurance-lib.version}</version>
-			</dependency>
-			<!-- internal qazkom-facade -->
-			<dependency>
-				<groupId>com.lapsa.qazkom-lib</groupId>
-				<artifactId>qazkom-facade</artifactId>
-				<version>${qazkom-facade.version}</version>
 			</dependency>
 			<!-- internal lapsa-commons -->
 			<dependency>
@@ -77,6 +72,12 @@
 				<version>${insurance-esbd-impl-ws.version}</version>
 				<type>ejb</type>
 			</dependency>
+			<!-- FACADES -->
+			<dependency>
+				<groupId>com.lapsa.qazkom</groupId>
+				<artifactId>qazkom-facade</artifactId>
+				<version>${qazkom-facade.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -100,13 +101,6 @@
 			<scope>compile</scope>
 			<optional>true</optional>
 		</dependency>
-		<!-- internal qazkom-facade -->
-		<dependency>
-			<groupId>com.lapsa.qazkom-lib</groupId>
-			<artifactId>qazkom-facade</artifactId>
-			<scope>compile</scope>
-			<optional>true</optional>
-		</dependency>
 		<!-- internal lapsa-commons -->
 		<dependency>
 			<groupId>com.lapsa.lapsa-commons-lib</groupId>
@@ -121,27 +115,33 @@
 			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
-			<!-- runtime -->
-			<!-- internal insurance -->
-			<dependency>
-				<groupId>com.lapsa.insurance-lib</groupId>
-				<artifactId>insurance-dao-impl-jpa</artifactId>
-				<type>ejb</type>
-				<scope>runtime</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.lapsa.insurance-lib</groupId>
-				<artifactId>insurance-mesenger-impl-default</artifactId>
-				<type>ejb</type>
-				<scope>runtime</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.lapsa.insurance-lib</groupId>
-				<artifactId>insurance-esbd-impl-ws</artifactId>
-				<type>ejb</type>
-				<scope>runtime</scope>
-			</dependency>
-	
+		<!-- runtime -->
+		<!-- internal insurance -->
+		<dependency>
+			<groupId>com.lapsa.insurance-lib</groupId>
+			<artifactId>insurance-dao-impl-jpa</artifactId>
+			<type>ejb</type>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.lapsa.insurance-lib</groupId>
+			<artifactId>insurance-mesenger-impl-default</artifactId>
+			<type>ejb</type>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.lapsa.insurance-lib</groupId>
+			<artifactId>insurance-esbd-impl-ws</artifactId>
+			<type>ejb</type>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- FACADES -->
+		<dependency>
+			<groupId>com.lapsa.qazkom</groupId>
+			<artifactId>qazkom-facade</artifactId>
+			<scope>compile</scope>
+			<optional>true</optional>
+		</dependency>
 	</dependencies>
 
 	<scm>
