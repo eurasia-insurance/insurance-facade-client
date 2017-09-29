@@ -1,4 +1,4 @@
-package com.lapsa.insurance.facade.beans;
+package com.lapsa.eurasia36.facade;
 
 import javax.enterprise.context.ApplicationScoped;
 

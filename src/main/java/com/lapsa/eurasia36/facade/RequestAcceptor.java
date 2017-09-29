@@ -1,4 +1,4 @@
-package com.lapsa.insurance.facade.beans;
+package com.lapsa.eurasia36.facade;
 
 import com.lapsa.insurance.domain.Request;
 
