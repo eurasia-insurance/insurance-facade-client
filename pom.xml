@@ -8,12 +8,12 @@
 		<version>2.0</version>
 	</parent>
 
-	<groupId>com.lapsa.insurance-lib</groupId>
-	<artifactId>insurance-facade</artifactId>
+	<groupId>com.lapsa.eurasia36</groupId>
+	<artifactId>eurasia36-facade</artifactId>
 	<version>3.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>Insurance Lib : Facade</name>
+	<name>Eurasia36 : Facade</name>
 
 	<properties>
 		<!-- APIs -->
@@ -145,14 +145,14 @@
 	</dependencies>
 
 	<scm>
-		<connection>scm:git:https://gitlab.lapsa.tech/lapsa/insurance/facade.git</connection>
-		<developerConnection>scm:git:https://gitlab.lapsa.tech/lapsa/insurance/facade.git</developerConnection>
+		<connection>scm:git:https://gitlab.lapsa.tech/lapsa/eurasia36/facade.git</connection>
+		<developerConnection>scm:git:https://gitlab.lapsa.tech/lapsa/eurasia36/facade.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 
 	<issueManagement>
 		<system>gitlab</system>
-		<url>https://gitlab.lapsa.tech/lapsa/insurance/facade/issues</url>
+		<url>https://gitlab.lapsa.tech/lapsa/eurasia36/facade/issues</url>
 	</issueManagement>
 
 </project>
