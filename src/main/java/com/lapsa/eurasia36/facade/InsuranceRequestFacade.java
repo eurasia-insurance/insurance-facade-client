@@ -75,6 +75,7 @@ abstract class InsuranceRequestFacade<T extends InsuranceRequest> implements Req
 		    .doubleValue();
 
 	    String reference = builder.withMoreItem(itemName, cost, 1) //
+		    .build() //
 		    .accept() //
 		    .getReference();
 
