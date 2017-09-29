@@ -21,12 +21,9 @@ import com.lapsa.international.localization.LocalizationLanguage;
 import com.lapsa.kkb.facade.QazkomFacade;
 import com.lapsa.kkb.facade.QazkomFacade.PaymentBuilder;
 
-abstract class InsuranceRequestFacade<T extends InsuranceRequest> {
+abstract class InsuranceRequestFacade<T extends InsuranceRequest> implements RequestAcceptor<T> {
 
-    public void accept(T request) {
-	acceptAndReply(request);
-    }
-
+    @Override
     public T acceptAndReply(T request) {
 	Requests.preSave(request);
 	T saved = persistRequest(request);
@@ -41,7 +38,7 @@ abstract class InsuranceRequestFacade<T extends InsuranceRequest> {
     @Inject
     private QazkomFacade qazkomFacade;
 
-    private void setupPaymentOrder(T request) {
+    private T setupPaymentOrder(T request) {
 	if (request.getPayment() != null //
 		&& MyStrings.empty(request.getPayment().getPaymentReference()) //
 		&& PaymentMethod.PAYCARD_ONLINE.equals(request.getPayment().getMethod())) {
@@ -84,12 +81,13 @@ abstract class InsuranceRequestFacade<T extends InsuranceRequest> {
 	    request.getPayment() //
 		    .setPaymentReference(reference);
 	}
+	return request;
     }
 
     @Inject
     private Notifier notifier;
 
-    private void setupNotifications(InsuranceRequest request) {
+    private T setupNotifications(T request) {
 	switch (request.getType()) {
 	case ONLINE:
 	case EXPRESS:
@@ -102,25 +100,26 @@ abstract class InsuranceRequestFacade<T extends InsuranceRequest> {
 	    notifier.assignRequestNotification(NotificationChannel.PUSH, NotificationRecipientType.COMPANY,
 		    NotificationRequestStage.NEW_REQUEST, request);
 	}
+	return request;
     }
 
     @Inject
-    private InsuranceRequestDAO insuranceRequestDAO;
+    private InsuranceRequestDAO dao;
 
-    private <R extends InsuranceRequest> R persistRequest(final R request) {
-	R saved = insuranceRequestDAO.save(request);
-	return saved;
+    private T persistRequest(final T request) {
+	return dao.save(request);
     }
 
     @Inject
     private Logger logger;
 
-    private void logInsuranceRequestAccepted(T request) {
+    private T logInsuranceRequestAccepted(T request) {
 	logger.info(String.format("New %4$s accepded from '%1$s' '<%2$s>' tel '%3$s' ", //
 		request.getRequester().getName(), // 1
 		request.getRequester().getEmail(), // 2
 		request.getRequester().getPhone(), // 3
 		request.getClass().getSimpleName() // 4
 	));
+	return request;
     }
 }
