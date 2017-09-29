@@ -19,55 +19,62 @@ final class Requests {
     private Requests() {
     }
 
-    static void preSave(InsuranceRequest request) {
+    static <T extends InsuranceRequest> T preSave(T request) {
 	preDates(request);
 	preStatus(request);
 	preProgressStatus(request);
 
 	prePayment(request);
 	preObtaining(request);
+	return request;
     }
 
-    static void preSave(CallbackRequest request) {
+    static <T extends CallbackRequest> T preSave(T request) {
 	preDates(request);
 	preStatus(request);
 	preProgressStatus(request);
+	return request;
     }
 
     // PRIVATE
 
-    private static void preProgressStatus(Request request) {
+    private static <T extends Request> T preDates(final T request) {
+	if (request.getCreated() == null)
+	    request.setCreated(LocalDateTime.now());
+	request.setUpdated(LocalDateTime.now());
+	return request;
+    }
+
+    private static <T extends Request> T preProgressStatus(final T request) {
 	if (request.getProgressStatus() == null)
 	    request.setProgressStatus(ProgressStatus.NEW);
+	return request;
     }
 
-    protected static void preStatus(Request request) {
+    protected static <T extends Request> T preStatus(final T request) {
 	if (request.getStatus() == null)
 	    request.setStatus(RequestStatus.OPEN);
+	return request;
     }
 
-    private static void preObtaining(InsuranceRequest request) {
+    private static <T extends InsuranceRequest> T preObtaining(final T request) {
 	if (request.getObtaining() == null)
 	    request.setObtaining(new ObtainingData());
 	if (request.getObtaining().getMethod() == null)
 	    request.getObtaining().setMethod(ObtainingMethod.UNDEFINED);
 	if (request.getObtaining().getStatus() == null)
 	    request.getObtaining().setStatus(ObtainingStatus.UNDEFINED);
+	return request;
     }
 
-    private static void prePayment(InsuranceRequest request) {
+    private static <T extends InsuranceRequest> T prePayment(final T request) {
 	if (request.getPayment() == null)
 	    request.setPayment(new PaymentData());
 	if (request.getPayment().getMethod() == null)
 	    request.getPayment().setMethod(PaymentMethod.UNDEFINED);
 	if (request.getPayment().getStatus() == null)
 	    request.getPayment().setStatus(PaymentStatus.UNDEFINED);
-    }
-
-    private static void preDates(final Request request) {
-	if (request.getCreated() == null)
-	    request.setCreated(LocalDateTime.now());
-	request.setUpdated(LocalDateTime.now());
+	return request;
     }
 
 }
