@@ -18,7 +18,7 @@
 	<properties>
 		<!-- APIs -->
 		<insurance-lib.version>2.3-SNAPSHOT</insurance-lib.version>
-		<lapsa-commons-lib.version>2.2-SNAPSHOT</lapsa-commons-lib.version>
+		<lapsa-commons.version>2.2-SNAPSHOT</lapsa-commons.version>
 		<!-- FACADES -->
 		<qazkom-facade.version>3.0-SNAPSHOT</qazkom-facade.version>
 		<!-- EJBs & WARs -->
@@ -48,9 +48,9 @@
 			</dependency>
 			<!-- internal lapsa-commons -->
 			<dependency>
-				<groupId>com.lapsa.lapsa-commons-lib</groupId>
+				<groupId>com.lapsa.lapsa.commons</groupId>
 				<artifactId>lapsa-commons</artifactId>
-				<version>${lapsa-commons-lib.version}</version>
+				<version>${lapsa-commons.version}</version>
 			</dependency>
 			<!-- runtime -->
 			<!-- internal insurance -->
@@ -103,7 +103,7 @@
 		</dependency>
 		<!-- internal lapsa-commons -->
 		<dependency>
-			<groupId>com.lapsa.lapsa-commons-lib</groupId>
+			<groupId>com.lapsa.lapsa.commons</groupId>
 			<artifactId>lapsa-commons</artifactId>
 			<scope>compile</scope>
 			<optional>true</optional>
