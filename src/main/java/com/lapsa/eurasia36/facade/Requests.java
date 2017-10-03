@@ -1,6 +1,6 @@
 package com.lapsa.eurasia36.facade;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import com.lapsa.insurance.domain.CallbackRequest;
 import com.lapsa.insurance.domain.InsuranceRequest;
@@ -40,8 +40,8 @@ final class Requests {
 
     private static <T extends Request> T preDates(final T request) {
 	if (request.getCreated() == null)
-	    request.setCreated(LocalDateTime.now());
-	request.setUpdated(LocalDateTime.now());
+	    request.setCreated(Instant.now());
+	request.setUpdated(Instant.now());
 	return request;
     }
 
