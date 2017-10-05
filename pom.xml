@@ -21,7 +21,7 @@
 		<lapsa-commons.version>2.2-SNAPSHOT</lapsa-commons.version>
 		<eurasia36-templates.version>4.0-SNAPSHOT</eurasia36-templates.version>
 		<!-- FACADES -->
-		<qazkom-facade.version>3.0-SNAPSHOT</qazkom-facade.version>
+		<epayment-facade.version>1.0-SNAPSHOT</epayment-facade.version>
 		<!-- EJBs & WARs -->
 		<insurance-dao-impl-jpa.version>2.3-SNAPSHOT</insurance-dao-impl-jpa.version>
 		<insurance-jpa-unit.version>1.13-SNAPSHOT</insurance-jpa-unit.version>
@@ -81,9 +81,10 @@
 			</dependency>
 			<!-- FACADES -->
 			<dependency>
-				<groupId>com.lapsa.qazkom</groupId>
-				<artifactId>qazkom-facade</artifactId>
-				<version>${qazkom-facade.version}</version>
+				<groupId>com.lapsa.epayment</groupId>
+				<artifactId>epayment-facade</artifactId>
+				<version>${epayment-facade.version}</version>
+				<type>ejb</type>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -151,8 +152,9 @@
 		</dependency>
 		<!-- FACADES -->
 		<dependency>
-			<groupId>com.lapsa.qazkom</groupId>
-			<artifactId>qazkom-facade</artifactId>
+			<groupId>com.lapsa.epayment</groupId>
+			<artifactId>epayment-facade</artifactId>
+			<type>ejb</type>
 			<scope>compile</scope>
 			<optional>true</optional>
 		</dependency>
