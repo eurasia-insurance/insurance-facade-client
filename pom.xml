@@ -55,7 +55,7 @@
 			</dependency>
 			<!-- internal lapsa-commons -->
 			<dependency>
-				<groupId>com.lapsa.lapsa.commons</groupId>
+				<groupId>tech.lapsa.lapsa</groupId>
 				<artifactId>lapsa-commons</artifactId>
 				<version>${lapsa-commons.version}</version>
 			</dependency>
@@ -118,7 +118,7 @@
 		</dependency>
 		<!-- internal lapsa-commons -->
 		<dependency>
-			<groupId>com.lapsa.lapsa.commons</groupId>
+			<groupId>tech.lapsa.lapsa</groupId>
 			<artifactId>lapsa-commons</artifactId>
 			<scope>compile</scope>
 			<optional>true</optional>
