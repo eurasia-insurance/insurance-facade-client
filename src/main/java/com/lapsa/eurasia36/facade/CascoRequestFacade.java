@@ -5,5 +5,5 @@ import javax.enterprise.context.ApplicationScoped;
 import com.lapsa.insurance.domain.casco.CascoRequest;
 
 @ApplicationScoped
-public class CascoRequestFacade extends InsuranceRequestFacade<CascoRequest> {
+public class CascoRequestFacade extends AbstractInsuranceRequestFacade<CascoRequest> {
 }

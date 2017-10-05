@@ -5,5 +5,5 @@ import javax.enterprise.context.ApplicationScoped;
 import com.lapsa.insurance.domain.policy.PolicyRequest;
 
 @ApplicationScoped
-public class PolicyRequestFacade extends InsuranceRequestFacade<PolicyRequest> {
+public class PolicyRequestFacade extends AbstractInsuranceRequestFacade<PolicyRequest> {
 }

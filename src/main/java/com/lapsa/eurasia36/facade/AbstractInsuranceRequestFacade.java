@@ -1,5 +1,6 @@
 package com.lapsa.eurasia36.facade;
 
+import java.time.Instant;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -7,21 +8,23 @@ import javax.inject.Inject;
 import com.lapsa.commons.function.MyNumbers;
 import com.lapsa.commons.function.MyOptionals;
 import com.lapsa.commons.function.MyStrings;
+import com.lapsa.epayment.facade.EpaymentFacade;
+import com.lapsa.epayment.facade.EpaymentFacade.PaymentBuilder;
+import com.lapsa.insurance.dao.EntityNotFound;
 import com.lapsa.insurance.dao.InsuranceRequestDAO;
 import com.lapsa.insurance.domain.CalculationData;
 import com.lapsa.insurance.domain.InsuranceProduct;
 import com.lapsa.insurance.domain.InsuranceRequest;
 import com.lapsa.insurance.domain.RequesterData;
 import com.lapsa.insurance.elements.PaymentMethod;
+import com.lapsa.insurance.elements.PaymentStatus;
 import com.lapsa.insurance.mesenger.NotificationChannel;
 import com.lapsa.insurance.mesenger.NotificationRecipientType;
 import com.lapsa.insurance.mesenger.NotificationRequestStage;
 import com.lapsa.insurance.mesenger.Notifier;
 import com.lapsa.international.localization.LocalizationLanguage;
-import com.lapsa.kkb.facade.QazkomFacade;
-import com.lapsa.kkb.facade.QazkomFacade.PaymentBuilder;
 
-abstract class InsuranceRequestFacade<T extends InsuranceRequest> implements RequestAcceptor<T> {
+abstract class AbstractInsuranceRequestFacade<T extends InsuranceRequest> implements RequestAcceptor<T> {
 
     @Override
     public T acceptAndReply(T request) {
@@ -33,14 +36,26 @@ abstract class InsuranceRequestFacade<T extends InsuranceRequest> implements Req
 	return saved;
     }
 
+    public void markPaymentSucces(Integer id, String paymentReference, Instant paymentInstant) {
+	try {
+	    InsuranceRequest request = dao.findById(id);
+	    request.getPayment().setStatus(PaymentStatus.DONE);
+	    request.getPayment().setPostReference(paymentReference);
+	    request.getPayment().setPostInstant(paymentInstant);
+	    request = dao.save(request);
+	} catch (EntityNotFound e) {
+	    throw new IllegalArgumentException("Request not found", e);
+	}
+    }
+
     // PRIVATE
 
     @Inject
-    private QazkomFacade qazkomFacade;
+    private EpaymentFacade qazkomFacade;
 
     private T setupPaymentOrder(T request) {
 	if (request.getPayment() != null //
-		&& MyStrings.empty(request.getPayment().getPaymentReference()) //
+		&& MyStrings.empty(request.getPayment().getExternalId()) //
 		&& PaymentMethod.PAYCARD_ONLINE.equals(request.getPayment().getMethod())) {
 
 	    LocalizationLanguage consumerLanguage = MyOptionals.of(request.getRequester()) //
@@ -80,7 +95,7 @@ abstract class InsuranceRequestFacade<T extends InsuranceRequest> implements Req
 		    .getReference();
 
 	    request.getPayment() //
-		    .setPaymentReference(reference);
+		    .setExternalId(reference);
 	}
 	return request;
     }
