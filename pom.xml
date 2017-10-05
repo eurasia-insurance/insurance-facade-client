@@ -19,6 +19,7 @@
 		<!-- APIs -->
 		<insurance-lib.version>2.3-SNAPSHOT</insurance-lib.version>
 		<lapsa-commons.version>2.2-SNAPSHOT</lapsa-commons.version>
+		<eurasia36-templates.version>4.0-SNAPSHOT</eurasia36-templates.version>
 		<!-- FACADES -->
 		<qazkom-facade.version>3.0-SNAPSHOT</qazkom-facade.version>
 		<!-- EJBs & WARs -->
@@ -30,6 +31,12 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<!-- internal epayment -->
+			<dependency>
+				<groupId>com.lapsa.eurasia36</groupId>
+				<artifactId>eurasia36-templates</artifactId>
+				<version>${eurasia36-templates.version}</version>
+			</dependency>
 			<!-- internal insurance -->
 			<dependency>
 				<groupId>com.lapsa.insurance-lib</groupId>
@@ -82,7 +89,14 @@
 	</dependencyManagement>
 
 	<dependencies>
-		<!-- internal -->
+		<!-- internal epayment -->
+		<dependency>
+			<groupId>com.lapsa.eurasia36</groupId>
+			<artifactId>eurasia36-templates</artifactId>
+			<scope>compile</scope>
+			<optional>false</optional>
+		</dependency>
+		<!-- internal insurance -->
 		<dependency>
 			<groupId>com.lapsa.insurance-lib</groupId>
 			<artifactId>insurance-dao</artifactId>
