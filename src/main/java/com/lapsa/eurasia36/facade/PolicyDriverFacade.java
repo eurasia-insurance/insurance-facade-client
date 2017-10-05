@@ -2,7 +2,8 @@ package com.lapsa.eurasia36.facade;
 
 import java.time.LocalDate;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import com.lapsa.commons.function.MyOptionals;
@@ -22,7 +23,8 @@ import com.lapsa.insurance.esbd.services.general.SubjectPersonServiceDAO;
 import com.lapsa.kz.idnumber.IDNumberUtils;
 import com.lapsa.utils.TemporalUtils;
 
-@ApplicationScoped
+@Stateless
+@LocalBean
 public class PolicyDriverFacade {
 
     @Inject

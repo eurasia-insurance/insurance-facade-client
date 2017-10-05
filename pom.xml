@@ -11,9 +11,9 @@
 	<groupId>com.lapsa.eurasia36</groupId>
 	<artifactId>eurasia36-facade</artifactId>
 	<version>1.0-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>ejb</packaging>
 
-	<name>Eurasia36 : Facade</name>
+	<name>Eurasia36 Lib : Facade</name>
 
 	<properties>
 		<!-- APIs -->
@@ -128,7 +128,11 @@
 			<groupId>javax.enterprise</groupId>
 			<artifactId>cdi-api</artifactId>
 			<scope>provided</scope>
-			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>javax.ejb</groupId>
+			<artifactId>javax.ejb-api</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<!-- runtime -->
 		<!-- internal insurance -->

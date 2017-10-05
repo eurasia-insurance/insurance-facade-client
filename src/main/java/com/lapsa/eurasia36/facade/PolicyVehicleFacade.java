@@ -4,7 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Stream;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import com.lapsa.commons.function.MyCollectors;
@@ -14,7 +15,8 @@ import com.lapsa.insurance.elements.VehicleAgeClass;
 import com.lapsa.insurance.esbd.domain.entities.policy.VehicleEntity;
 import com.lapsa.insurance.esbd.services.policy.VehicleServiceDAO;
 
-@ApplicationScoped
+@Stateless
+@LocalBean
 public class PolicyVehicleFacade {
 
     @Inject
@@ -58,7 +60,16 @@ public class PolicyVehicleFacade {
     @Deprecated
     public void fetch(PolicyVehicle vehicle) {
 	clearFetched(vehicle);
-	PolicyVehicle fetched = fetchFirstByVINCode(vehicle.getVinCode()); // TODO fetchFirst fetching the first entity. What if has more?
+	PolicyVehicle fetched = fetchFirstByVINCode(vehicle.getVinCode()); // TODO
+									   // fetchFirst
+									   // fetching
+									   // the
+									   // first
+									   // entity.
+									   // What
+									   // if
+									   // has
+									   // more?
 	vehicle.setFetched(fetched.isFetched());
 	vehicle.setVinCode(fetched.getVinCode());
 	vehicle.setVehicleAgeClass(fetched.getVehicleAgeClass());
