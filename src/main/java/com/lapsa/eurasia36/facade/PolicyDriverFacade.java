@@ -20,7 +20,7 @@ import com.lapsa.insurance.esbd.domain.entities.general.SubjectPersonEntity;
 import com.lapsa.insurance.esbd.services.NotFound;
 import com.lapsa.insurance.esbd.services.elements.InsuranceClassTypeServiceDAO;
 import com.lapsa.insurance.esbd.services.general.SubjectPersonServiceDAO;
-import com.lapsa.kz.idnumber.IDNumberUtils;
+import com.lapsa.kz.idnumber.IdNumbers;
 import com.lapsa.utils.TemporalUtils;
 
 @Stateless
@@ -109,8 +109,7 @@ public class PolicyDriverFacade {
 
 	    LocalDate dobLocal = null;
 	    {
-		if (idNumber != null)
-		    dobLocal = IDNumberUtils.parseDOBFromIdNumberLocalDate(idNumber);
+		dobLocal = IdNumbers.dateOfBirthFrom(idNumber).orElse(null);
 		if (esbdEntity != null && esbdEntity.getPersonal() != null
 			&& esbdEntity.getPersonal().getDayOfBirth() != null)
 		    dobLocal = esbdEntity.getPersonal().getDayOfBirth();
@@ -124,8 +123,7 @@ public class PolicyDriverFacade {
 
 	    Sex sexLocal = null;
 	    {
-		if (idNumber != null)
-		    sexLocal = convertKZLibSex(IDNumberUtils.parseSexFromIdNumber(idNumber));
+		sexLocal = convertKZLibSex(IdNumbers.genderFrom(idNumber).orElse(null));
 		if (esbdEntity != null && esbdEntity.getPersonal() != null
 			&& esbdEntity.getPersonal().getSex() != null)
 		    sexLocal = esbdEntity.getPersonal().getSex();
@@ -183,7 +181,7 @@ public class PolicyDriverFacade {
 
     // PRIVATE STATIC
 
-    private static Sex convertKZLibSex(com.lapsa.kz.idnumber.IDNumberUtils.Sex kzLibSex) {
+    private static Sex convertKZLibSex(com.lapsa.kz.idnumber.IdNumbers.Gender kzLibSex) {
 	if (kzLibSex == null)
 	    return null;
 	switch (kzLibSex) {
