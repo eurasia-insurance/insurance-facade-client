@@ -10,7 +10,7 @@
 
 	<groupId>com.lapsa.eurasia36</groupId>
 	<artifactId>eurasia36-facade</artifactId>
-	<version>3.0-SNAPSHOT</version>
+	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Eurasia36 : Facade</name>
