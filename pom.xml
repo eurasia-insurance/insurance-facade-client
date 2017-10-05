@@ -137,18 +137,21 @@
 			<artifactId>insurance-dao-impl-jpa</artifactId>
 			<type>ejb</type>
 			<scope>runtime</scope>
+			<optional>false</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.lapsa.insurance-lib</groupId>
 			<artifactId>insurance-mesenger-impl-default</artifactId>
 			<type>ejb</type>
 			<scope>runtime</scope>
+			<optional>false</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.lapsa.insurance-lib</groupId>
 			<artifactId>insurance-esbd-impl-ws</artifactId>
 			<type>ejb</type>
 			<scope>runtime</scope>
+			<optional>false</optional>
 		</dependency>
 		<!-- FACADES -->
 		<dependency>
