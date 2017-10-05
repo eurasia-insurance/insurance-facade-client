@@ -1,13 +1,13 @@
 package com.lapsa.eurasia36.facade;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import com.lapsa.commons.function.MyCollectors;
+import com.lapsa.commons.function.MyObjects;
 import com.lapsa.commons.function.MyOptionals;
 import com.lapsa.insurance.dao.CompanyPointOfSaleDAO;
 import com.lapsa.insurance.domain.CompanyPointOfSale;
@@ -29,10 +29,10 @@ public class CompanyPointOfSaleFacade {
     }
 
     public List<CompanyPointOfSale> pointOfSalesForPickup(final KZCity city) {
-	Objects.requireNonNull(city, "city");
+	MyObjects.requireNonNull(city, "city");
 	return allAvailable() //
 		.filter(CompanyPointOfSale::isPickupAvailable)
-		.filter(x -> Objects.nonNull(x.getAddress()))
+		.filter(x -> MyObjects.nonNull(x.getAddress()))
 		.filter(x -> city.equals(x.getAddress().getCity()))
 		.collect(MyCollectors.unmodifiableList());
     }
@@ -44,10 +44,10 @@ public class CompanyPointOfSaleFacade {
     }
 
     public List<CompanyPointOfSale> pointOfSalesForDelivery(final KZCity city) {
-	Objects.requireNonNull(city, "city");
+	MyObjects.requireNonNull(city, "city");
 	return allAvailable() //
 		.filter(CompanyPointOfSale::isDeliveryServicesAvailable) //
-		.filter(x -> Objects.nonNull(x.getAddress())) //
+		.filter(x -> MyObjects.nonNull(x.getAddress())) //
 		.filter(x -> city.equals(x.getAddress().getCity())) //
 		.collect(MyCollectors.unmodifiableList());
     }
