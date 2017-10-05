@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import com.lapsa.commons.function.MyOptionals;
 import com.lapsa.insurance.domain.ContactData;
 import com.lapsa.insurance.domain.IdentityCardData;
 import com.lapsa.insurance.domain.OriginData;
@@ -15,7 +16,6 @@ import com.lapsa.insurance.elements.InsuranceClassType;
 import com.lapsa.insurance.elements.InsuredAgeClass;
 import com.lapsa.insurance.elements.Sex;
 import com.lapsa.insurance.esbd.domain.entities.general.SubjectPersonEntity;
-import com.lapsa.insurance.esbd.services.InvalidInputParameter;
 import com.lapsa.insurance.esbd.services.NotFound;
 import com.lapsa.insurance.esbd.services.elements.InsuranceClassTypeServiceDAO;
 import com.lapsa.insurance.esbd.services.general.SubjectPersonServiceDAO;
@@ -37,99 +37,19 @@ public class PolicyDriverFacade {
 
     public PolicyDriver fetchByIdNumber(String idNumber) {
 
-	SubjectPersonEntity subjectLocal = null;
-	{
-	    if (idNumber != null)
-		try {
-		    subjectLocal = subjectPersonService.getByIIN(idNumber);
-		} catch (NotFound | InvalidInputParameter e) {
-		}
-	}
-
-	InsuranceClassType insuranceClassTypeLocal = null;
-	{
-	    insuranceClassTypeLocal = insuranceClassTypeService.getDefault();
-	    if (subjectLocal != null) {
-		try {
-		    insuranceClassTypeLocal = insuranceClassTypeService.getForSubject(subjectLocal);
-		} catch (NotFound | InvalidInputParameter e) {
-		}
-	    }
-	}
-
-	LocalDate dobLocal = null;
-	{
-	    if (idNumber != null)
-		dobLocal = IDNumberUtils.parseDOBFromIdNumberLocalDate(idNumber);
-	    if (subjectLocal != null && subjectLocal.getPersonal() != null
-		    && subjectLocal.getPersonal().getDayOfBirth() != null)
-		dobLocal = TemporalUtils.toLocalDate(subjectLocal.getPersonal().getDayOfBirth());
-	}
-
-	InsuredAgeClass insuredAgeClassLocal = null;
-	{
-	    if (dobLocal != null)
-		insuredAgeClassLocal = obtainInsuredAgeClass(dobLocal);
-	}
-
-	Sex sexLocal = null;
-	{
-	    if (idNumber != null)
-		sexLocal = convertKZLibSex(IDNumberUtils.parseSexFromIdNumber(idNumber));
-	    if (subjectLocal != null && subjectLocal.getPersonal() != null
-		    && subjectLocal.getPersonal().getSex() != null)
-		sexLocal = subjectLocal.getPersonal().getSex();
-	}
-
-	PolicyDriver driver = new PolicyDriver();
-	driver.setIdNumber(idNumber);
-	driver.setInsuranceClassType(insuranceClassTypeLocal);
-	driver.setAgeClass(insuredAgeClassLocal);
-
-	driver.getPersonalData().setDayOfBirth(dobLocal);
-	driver.getPersonalData().setSex(sexLocal);
-
-	if (subjectLocal != null) {
-	    driver.setFetched(true);
-
-	    if (subjectLocal.getPersonal() != null) {
-		driver.getPersonalData().setName(subjectLocal.getPersonal().getName());
-		driver.getPersonalData().setSurename(subjectLocal.getPersonal().getSurename());
-		driver.getPersonalData().setPatronymic(subjectLocal.getPersonal().getPatronymic());
-	    }
-
-	    if (subjectLocal.getOrigin() != null) {
-		driver.getResidenceData().setResident(subjectLocal.getOrigin().isResident());
-		driver.getOriginData().setCountry(subjectLocal.getOrigin().getCountry());
-	    }
-
-	    if (subjectLocal.getContact() != null)
-		driver.getResidenceData().setAddress(subjectLocal.getContact().getHomeAdress());
-
-	    if (subjectLocal.getOrigin().getCity() != null)
-		driver.getResidenceData().setCity(subjectLocal.getOrigin().getCity());
-
-	    if (subjectLocal.getIdentityCard() != null) {
-		driver.getIdentityCardData().setNumber(subjectLocal.getIdentityCard().getNumber());
-		driver.getIdentityCardData()
-			.setDateOfIssue(TemporalUtils.toLocalDate(subjectLocal.getIdentityCard().getDateOfIssue()));
-		driver.getIdentityCardData().setType(subjectLocal.getIdentityCard().getIdentityCardType());
-		driver.getIdentityCardData()
-			.setIssuingAuthority(subjectLocal.getIdentityCard().getIssuingAuthority());
-	    }
-
-	    if (subjectLocal.getContact() != null) {
-		driver.getContactData().setEmail(subjectLocal.getContact().getEmail());
-		driver.getContactData().setPhone(subjectLocal.getContact().getPhone());
-		driver.getContactData().setSiteUrl(subjectLocal.getContact().getSiteUrl());
-	    }
-
-	    driver.setTaxPayerNumber(subjectLocal.getTaxPayerNumber());
-	}
-
-	return driver;
+	return MyOptionals.of(idNumber) //
+		.map(x -> {
+		    try {
+			return subjectPersonService.getByIIN(x);
+		    } catch (NotFound e) {
+			return null;
+		    }
+		})
+		.map(this::fetchFrom)
+		.orElse(null);
     }
 
+    @Deprecated
     public void fetch(PolicyDriver driver) {
 	clearFetched(driver);
 	PolicyDriver fetched = fetchByIdNumber(driver.getIdNumber());
@@ -147,6 +67,7 @@ public class PolicyDriverFacade {
 	driver.setContactData(fetched.getContactData());
     }
 
+    @Deprecated
     public void clearFetched(PolicyDriver driver) {
 	driver.setFetched(false);
 
@@ -159,6 +80,103 @@ public class PolicyDriverFacade {
 	driver.setIdentityCardData(new IdentityCardData());
 	driver.setTaxPayerNumber(null);
 	driver.setContactData(new ContactData());
+    }
+
+    // PRIVATE
+
+    private PolicyDriver fetchFrom(SubjectPersonEntity esbdEntity) {
+
+	PolicyDriver driver = new PolicyDriver();
+
+	if (esbdEntity != null) {
+
+	    String idNumber = esbdEntity.getIdNumber();
+
+	    if (idNumber != null) {
+		driver.setIdNumber(idNumber);
+	    }
+
+	    InsuranceClassType insuranceClassTypeLocal = null;
+	    {
+		insuranceClassTypeLocal = insuranceClassTypeService.getDefault();
+		try {
+		    insuranceClassTypeLocal = insuranceClassTypeService.getForSubject(esbdEntity);
+		} catch (NotFound e) {
+		}
+	    }
+
+	    LocalDate dobLocal = null;
+	    {
+		if (idNumber != null)
+		    dobLocal = IDNumberUtils.parseDOBFromIdNumberLocalDate(idNumber);
+		if (esbdEntity != null && esbdEntity.getPersonal() != null
+			&& esbdEntity.getPersonal().getDayOfBirth() != null)
+		    dobLocal = esbdEntity.getPersonal().getDayOfBirth();
+	    }
+
+	    InsuredAgeClass insuredAgeClassLocal = null;
+	    {
+		if (dobLocal != null)
+		    insuredAgeClassLocal = obtainInsuredAgeClass(dobLocal);
+	    }
+
+	    Sex sexLocal = null;
+	    {
+		if (idNumber != null)
+		    sexLocal = convertKZLibSex(IDNumberUtils.parseSexFromIdNumber(idNumber));
+		if (esbdEntity != null && esbdEntity.getPersonal() != null
+			&& esbdEntity.getPersonal().getSex() != null)
+		    sexLocal = esbdEntity.getPersonal().getSex();
+	    }
+
+	    driver.setIdNumber(idNumber);
+
+	    driver.setInsuranceClassType(insuranceClassTypeLocal);
+	    driver.setAgeClass(insuredAgeClassLocal);
+
+	    driver.getPersonalData().setDayOfBirth(dobLocal);
+	    driver.getPersonalData().setSex(sexLocal);
+
+	    if (esbdEntity != null) {
+		driver.setFetched(true);
+
+		if (esbdEntity.getPersonal() != null) {
+		    driver.getPersonalData().setName(esbdEntity.getPersonal().getName());
+		    driver.getPersonalData().setSurename(esbdEntity.getPersonal().getSurename());
+		    driver.getPersonalData().setPatronymic(esbdEntity.getPersonal().getPatronymic());
+		}
+
+		if (esbdEntity.getOrigin() != null) {
+		    driver.getResidenceData().setResident(esbdEntity.getOrigin().isResident());
+		    driver.getOriginData().setCountry(esbdEntity.getOrigin().getCountry());
+		}
+
+		if (esbdEntity.getContact() != null)
+		    driver.getResidenceData().setAddress(esbdEntity.getContact().getHomeAdress());
+
+		if (esbdEntity.getOrigin().getCity() != null)
+		    driver.getResidenceData().setCity(esbdEntity.getOrigin().getCity());
+
+		if (esbdEntity.getIdentityCard() != null) {
+		    driver.getIdentityCardData().setNumber(esbdEntity.getIdentityCard().getNumber());
+		    driver.getIdentityCardData()
+			    .setDateOfIssue(TemporalUtils.toLocalDate(esbdEntity.getIdentityCard().getDateOfIssue()));
+		    driver.getIdentityCardData().setType(esbdEntity.getIdentityCard().getIdentityCardType());
+		    driver.getIdentityCardData()
+			    .setIssuingAuthority(esbdEntity.getIdentityCard().getIssuingAuthority());
+		}
+
+		if (esbdEntity.getContact() != null) {
+		    driver.getContactData().setEmail(esbdEntity.getContact().getEmail());
+		    driver.getContactData().setPhone(esbdEntity.getContact().getPhone());
+		    driver.getContactData().setSiteUrl(esbdEntity.getContact().getSiteUrl());
+		}
+
+		driver.setTaxPayerNumber(esbdEntity.getTaxPayerNumber());
+	    }
+	}
+
+	return driver;
     }
 
     // PRIVATE STATIC
