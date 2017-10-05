@@ -1,17 +1,17 @@
 package com.lapsa.eurasia36.facade;
 
 import java.time.LocalDate;
-import java.util.Calendar;
+import java.util.List;
+import java.util.stream.Stream;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import com.lapsa.commons.time.Temporals;
+import com.lapsa.commons.function.MyCollectors;
+import com.lapsa.commons.function.MyOptionals;
 import com.lapsa.insurance.domain.policy.PolicyVehicle;
 import com.lapsa.insurance.elements.VehicleAgeClass;
 import com.lapsa.insurance.esbd.domain.entities.policy.VehicleEntity;
-import com.lapsa.insurance.esbd.services.InvalidInputParameter;
-import com.lapsa.insurance.esbd.services.NotFound;
 import com.lapsa.insurance.esbd.services.policy.VehicleServiceDAO;
 
 @ApplicationScoped
@@ -20,49 +20,46 @@ public class PolicyVehicleFacade {
     @Inject
     private VehicleServiceDAO vehicleService;
 
-    public PolicyVehicle fetchByVINCode(String vinCode) {
-
-	VehicleEntity vehicleLocal = null;
-	{
-	    if (vinCode != null) {
-		try {
-		    vehicleLocal = vehicleService.getByVINCode(vinCode);
-		} catch (NotFound | InvalidInputParameter e) {
-		}
-	    }
-	}
-
-	PolicyVehicle vehicle = new PolicyVehicle();
-	vehicle.setVinCode(vinCode);
-
-	if (vehicleLocal != null) {
-	    vehicle.setFetched(true);
-
-	    if (vehicleLocal.getRealeaseDate() != null) {
-		vehicle.setVehicleAgeClass(obtainVehicleAgeClass(vehicleLocal.getRealeaseDate()));
-		vehicle.setYearOfManufacture(vehicleLocal.getRealeaseDate().get(Calendar.YEAR));
-	    }
-
-	    vehicle.setVehicleClass(vehicleLocal.getVehicleClass());
-
-	    vehicle.setColor(vehicleLocal.getColor());
-
-	    if (vehicleLocal.getVehicleModel() != null) {
-		vehicle.setModel(vehicleLocal.getVehicleModel().getName());
-		if (vehicleLocal.getVehicleModel().getManufacturer() != null)
-		    vehicle.setManufacturer(vehicleLocal.getVehicleModel().getManufacturer().getName());
-	    }
-	}
-
-	return vehicle;
+    public List<PolicyVehicle> fetchByRegNumber(String regNumber) {
+	return MyOptionals.streamOf(vehicleService.getByRegNumber(regNumber)) //
+		.orElseGet(Stream::empty) //
+		.map(this::fetchFrom) //
+		.peek(x -> x.getCertificateData().setRegistrationNumber(regNumber)) //
+		.collect(MyCollectors.unmodifiableList());
     }
 
+    public List<PolicyVehicle> fetchByVINCode(String vinCode) {
+	return MyOptionals.streamOf(vehicleService.getByRegNumber(vinCode)) //
+		.orElseGet(Stream::empty) //
+		.map(this::fetchFrom) //
+		.collect(MyCollectors.unmodifiableList());
+    }
+
+    public PolicyVehicle fetchFirstByRegNumber(String regNumber) {
+	return MyOptionals.streamOf(vehicleService.getByRegNumber(regNumber)) //
+		.orElseGet(Stream::empty) //
+		.findFirst()
+		.map(this::fetchFrom) //
+		.map(x -> {
+		    x.getCertificateData().setRegistrationNumber(regNumber);
+		    return x;
+		})
+		.orElse(null);
+    }
+
+    public PolicyVehicle fetchFirstByVINCode(String vinCode) {
+	return MyOptionals.streamOf(vehicleService.getByVINCode(vinCode)) //
+		.orElseGet(Stream::empty) //
+		.findFirst()
+		.map(this::fetchFrom) //
+		.orElse(null);
+    }
+
+    @Deprecated
     public void fetch(PolicyVehicle vehicle) {
 	clearFetched(vehicle);
-	PolicyVehicle fetched = fetchByVINCode(vehicle.getVinCode());
-
+	PolicyVehicle fetched = fetchFirstByVINCode(vehicle.getVinCode()); // TODO fetchFirst fetching the first entity. What if has more?
 	vehicle.setFetched(fetched.isFetched());
-
 	vehicle.setVinCode(fetched.getVinCode());
 	vehicle.setVehicleAgeClass(fetched.getVehicleAgeClass());
 	vehicle.setYearOfManufacture(fetched.getYearOfManufacture());
@@ -71,8 +68,11 @@ public class PolicyVehicleFacade {
 	vehicle.setColor(fetched.getColor());
 	vehicle.setModel(fetched.getModel());
 	vehicle.setManufacturer(fetched.getManufacturer());
+
+	vehicle.getCertificateData().setRegistrationNumber(fetched.getCertificateData().getRegistrationNumber());
     }
 
+    @Deprecated
     public void clearFetched(PolicyVehicle vehicle) {
 	vehicle.setFetched(false);
 
@@ -83,18 +83,48 @@ public class PolicyVehicleFacade {
 	vehicle.setManufacturer(null);
 	vehicle.setModel(null);
 	vehicle.setYearOfManufacture(null);
+
+	vehicle.getCertificateData().setRegistrationNumber(null);
     }
 
-    // PRIVATE STATIC helpers
+    // PRIVATE
+
+    private PolicyVehicle fetchFrom(VehicleEntity esbdEntity) {
+	PolicyVehicle vehicle = new PolicyVehicle();
+
+	if (esbdEntity != null) {
+	    vehicle.setFetched(true);
+
+	    vehicle.setVinCode(esbdEntity.getVinCode());
+	    if (esbdEntity.getRealeaseDate() != null) {
+		vehicle.setVehicleAgeClass(obtainVehicleAgeClass(esbdEntity.getRealeaseDate()));
+		vehicle.setYearOfManufacture(esbdEntity.getRealeaseDate().getYear());
+	    }
+
+	    vehicle.setVehicleClass(esbdEntity.getVehicleClass());
+
+	    vehicle.setColor(esbdEntity.getColor());
+
+	    if (esbdEntity.getVehicleModel() != null) {
+		vehicle.setModel(esbdEntity.getVehicleModel().getName());
+		if (esbdEntity.getVehicleModel().getManufacturer() != null)
+		    vehicle.setManufacturer(esbdEntity.getVehicleModel().getManufacturer().getName());
+	    }
+	}
+
+	return vehicle;
+    }
+
+    // PRIVATE STATIC
 
     private static VehicleAgeClass _obtainVehicleAgeClass(int age) {
 	return age > 7 ? VehicleAgeClass.OVER7 : VehicleAgeClass.UNDER7;
     }
 
-    private static VehicleAgeClass obtainVehicleAgeClass(Calendar realeaseDate) {
+    private static VehicleAgeClass obtainVehicleAgeClass(LocalDate realeaseDate) {
 	if (realeaseDate == null)
 	    return null;
-	int age = calculateAgeByDOB(Temporals.toLocalDate(realeaseDate));
+	int age = calculateAgeByDOB(realeaseDate);
 	return _obtainVehicleAgeClass(age);
     }
 
