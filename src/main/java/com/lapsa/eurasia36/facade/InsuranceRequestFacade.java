@@ -3,6 +3,8 @@ package com.lapsa.eurasia36.facade;
 import java.time.Instant;
 import java.util.logging.Logger;
 
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import com.lapsa.commons.function.MyNumbers;
@@ -24,10 +26,12 @@ import com.lapsa.insurance.mesenger.NotificationRequestStage;
 import com.lapsa.insurance.mesenger.Notifier;
 import com.lapsa.international.localization.LocalizationLanguage;
 
-abstract class AbstractInsuranceRequestFacade<T extends InsuranceRequest> implements RequestAcceptor<T> {
+@Stateless
+@LocalBean
+public class InsuranceRequestFacade implements Acceptor<InsuranceRequest> {
 
     @Override
-    public T acceptAndReply(T request) {
+    public <T extends InsuranceRequest> T acceptAndReply(T request) {
 	Requests.preSave(request);
 	T saved = persistRequest(request);
 	setupPaymentOrder(saved);
@@ -53,7 +57,7 @@ abstract class AbstractInsuranceRequestFacade<T extends InsuranceRequest> implem
     @Inject
     private EpaymentFacade qazkomFacade;
 
-    private T setupPaymentOrder(T request) {
+    private <T extends InsuranceRequest> T setupPaymentOrder(T request) {
 	if (request.getPayment() != null //
 		&& MyStrings.empty(request.getPayment().getExternalId()) //
 		&& PaymentMethod.PAYCARD_ONLINE.equals(request.getPayment().getMethod())) {
@@ -103,7 +107,7 @@ abstract class AbstractInsuranceRequestFacade<T extends InsuranceRequest> implem
     @Inject
     private Notifier notifier;
 
-    private T setupNotifications(T request) {
+    private <T extends InsuranceRequest> T setupNotifications(T request) {
 	switch (request.getType()) {
 	case ONLINE:
 	case EXPRESS:
@@ -122,14 +126,14 @@ abstract class AbstractInsuranceRequestFacade<T extends InsuranceRequest> implem
     @Inject
     private InsuranceRequestDAO dao;
 
-    private T persistRequest(final T request) {
+    private <T extends InsuranceRequest> T persistRequest(final T request) {
 	return dao.save(request);
     }
 
     @Inject
     private Logger logger;
 
-    private T logInsuranceRequestAccepted(T request) {
+    private <T extends InsuranceRequest> T logInsuranceRequestAccepted(T request) {
 	logger.info(String.format("New %4$s accepded from '%1$s' '<%2$s>' tel '%3$s' ", //
 		request.getRequester().getName(), // 1
 		request.getRequester().getEmail(), // 2
@@ -138,4 +142,5 @@ abstract class AbstractInsuranceRequestFacade<T extends InsuranceRequest> implem
 	));
 	return request;
     }
+
 }

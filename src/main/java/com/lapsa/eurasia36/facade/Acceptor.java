@@ -1,12 +1,10 @@
 package com.lapsa.eurasia36.facade;
 
-import com.lapsa.insurance.domain.Request;
+interface Acceptor<T> {
 
-interface RequestAcceptor<T extends Request> {
-
-    default void accept(T request) {
+    default <X extends T> void accept(X request) {
 	acceptAndReply(request);
     }
 
-    T acceptAndReply(T request);
+    <X extends T> X acceptAndReply(X request);
 }

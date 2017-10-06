@@ -15,12 +15,12 @@ import com.lapsa.insurance.mesenger.Notifier;
 
 @Stateless
 @LocalBean
-public class CallbackRequestFacade implements RequestAcceptor<CallbackRequest> {
+public class CallbackRequestFacade implements Acceptor<CallbackRequest> {
 
     @Override
-    public CallbackRequest acceptAndReply(CallbackRequest request) {
+    public <T extends CallbackRequest> T acceptAndReply(T request) {
 	Requests.preSave(request);
-	CallbackRequest saved = persistRequest(request);
+	T saved = persistRequest(request);
 	setupNotifications(saved);
 	logInsuranceRequestAccepted(saved);
 	return saved;
@@ -38,7 +38,7 @@ public class CallbackRequestFacade implements RequestAcceptor<CallbackRequest> {
     @Inject
     private CallbackRequestDAO dao;
 
-    private CallbackRequest persistRequest(final CallbackRequest request) {
+    private <T extends CallbackRequest> T persistRequest(final T request) {
 	return dao.save(request);
     }
 
