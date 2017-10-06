@@ -18,9 +18,9 @@
 	<properties>
 		<!-- BOMS -->
 		<lapsa-bom.version>1.0-SNAPSHOT</lapsa-bom.version>
+		<insurance-bom.version>1.0-SNAPSHOT</insurance-bom.version>
 		<!-- APIs -->
 		<insurance-lib.version>2.3-SNAPSHOT</insurance-lib.version>
-		<insurance-templates.version>4.0-SNAPSHOT</insurance-templates.version>
 		<!-- FACADES -->
 		<epayment-facade.version>1.0-SNAPSHOT</epayment-facade.version>
 		<!-- EJBs & WARs -->
@@ -40,11 +40,12 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			<!-- internal epayment -->
 			<dependency>
 				<groupId>tech.lapsa.insurance</groupId>
-				<artifactId>insurance-templates</artifactId>
-				<version>${insurance-templates.version}</version>
+				<artifactId>insurance-bom</artifactId>
+				<version>${insurance-bom.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 			<!-- internal insurance -->
 			<dependency>
