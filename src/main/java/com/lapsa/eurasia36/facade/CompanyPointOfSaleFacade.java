@@ -16,11 +16,9 @@ import com.lapsa.insurance.domain.PostAddress;
 import com.lapsa.kz.country.KZCity;
 
 @Stateless
-@LocalBean // TODO проверить, нужен ли этот фасад?
+@LocalBean
 public class CompanyPointOfSaleFacade {
 
-    // do not use @Inject instead of @EJB because it goes to fault with CDI
-    // deployment failure: WELD-001408: Unsatisfied dependencies
     @Inject
     private CompanyPointOfSaleDAO companyPointOfSaleDAO;
 
