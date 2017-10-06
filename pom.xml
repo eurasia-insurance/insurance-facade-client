@@ -163,7 +163,7 @@
 			<artifactId>epayment-facade</artifactId>
 			<type>ejb</type>
 			<scope>compile</scope>
-			<optional>true</optional>
+			<optional>false</optional>
 		</dependency>
 	</dependencies>
 
