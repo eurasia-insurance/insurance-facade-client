@@ -19,10 +19,9 @@
 		<!-- BOMS -->
 		<lapsa-bom.version>1.0-SNAPSHOT</lapsa-bom.version>
 		<insurance-bom.version>1.0-SNAPSHOT</insurance-bom.version>
+		<epayment-bom.version>1.0-SNAPSHOT</epayment-bom.version>
 		<!-- APIs -->
 		<insurance-lib.version>2.3-SNAPSHOT</insurance-lib.version>
-		<!-- FACADES -->
-		<epayment-facade.version>1.0-SNAPSHOT</epayment-facade.version>
 		<!-- EJBs & WARs -->
 		<insurance-dao-impl-jpa.version>2.3-SNAPSHOT</insurance-dao-impl-jpa.version>
 		<insurance-jpa-unit.version>1.13-SNAPSHOT</insurance-jpa-unit.version>
@@ -44,6 +43,13 @@
 				<groupId>tech.lapsa.insurance</groupId>
 				<artifactId>insurance-bom</artifactId>
 				<version>${insurance-bom.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>tech.lapsa.epayment</groupId>
+				<artifactId>epayment-bom</artifactId>
+				<version>${epayment-bom.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -81,13 +87,6 @@
 				<groupId>com.lapsa.insurance-lib</groupId>
 				<artifactId>insurance-esbd-impl-ws</artifactId>
 				<version>${insurance-esbd-impl-ws.version}</version>
-				<type>ejb</type>
-			</dependency>
-			<!-- FACADES -->
-			<dependency>
-				<groupId>tech.lapsa.epayment</groupId>
-				<artifactId>epayment-facade</artifactId>
-				<version>${epayment-facade.version}</version>
 				<type>ejb</type>
 			</dependency>
 		</dependencies>
