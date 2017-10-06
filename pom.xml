@@ -16,9 +16,10 @@
 	<name>Insurance Lib : Facade</name>
 
 	<properties>
+		<!-- BOMS -->
+		<lapsa-bom.version>1.0-SNAPSHOT</lapsa-bom.version>
 		<!-- APIs -->
 		<insurance-lib.version>2.3-SNAPSHOT</insurance-lib.version>
-		<lapsa-commons.version>2.2-SNAPSHOT</lapsa-commons.version>
 		<insurance-templates.version>4.0-SNAPSHOT</insurance-templates.version>
 		<!-- FACADES -->
 		<epayment-facade.version>1.0-SNAPSHOT</epayment-facade.version>
@@ -31,6 +32,14 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<!-- BOMS -->
+			<dependency>
+				<groupId>tech.lapsa.lapsa</groupId>
+				<artifactId>lapsa-bom</artifactId>
+				<version>${lapsa-bom.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 			<!-- internal epayment -->
 			<dependency>
 				<groupId>tech.lapsa.insurance</groupId>
@@ -52,12 +61,6 @@
 				<groupId>com.lapsa.insurance-lib</groupId>
 				<artifactId>insurance-mesenger</artifactId>
 				<version>${insurance-lib.version}</version>
-			</dependency>
-			<!-- internal lapsa-commons -->
-			<dependency>
-				<groupId>tech.lapsa.lapsa</groupId>
-				<artifactId>lapsa-commons</artifactId>
-				<version>${lapsa-commons.version}</version>
 			</dependency>
 			<!-- runtime -->
 			<!-- internal insurance -->
