@@ -8,18 +8,18 @@
 		<version>3.0-SNAPSHOT</version>
 	</parent>
 
-	<groupId>tech.lapsa.eurasia36</groupId>
-	<artifactId>eurasia36-facade</artifactId>
+	<groupId>tech.lapsa.insurance</groupId>
+	<artifactId>insurance-facade</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>ejb</packaging>
 
-	<name>Eurasia36 Lib : Facade</name>
+	<name>Insurance Lib : Facade</name>
 
 	<properties>
 		<!-- APIs -->
 		<insurance-lib.version>2.3-SNAPSHOT</insurance-lib.version>
 		<lapsa-commons.version>2.2-SNAPSHOT</lapsa-commons.version>
-		<eurasia36-templates.version>4.0-SNAPSHOT</eurasia36-templates.version>
+		<insurance-templates.version>4.0-SNAPSHOT</insurance-templates.version>
 		<!-- FACADES -->
 		<epayment-facade.version>1.0-SNAPSHOT</epayment-facade.version>
 		<!-- EJBs & WARs -->
@@ -33,9 +33,9 @@
 		<dependencies>
 			<!-- internal epayment -->
 			<dependency>
-				<groupId>tech.lapsa.eurasia36</groupId>
-				<artifactId>eurasia36-templates</artifactId>
-				<version>${eurasia36-templates.version}</version>
+				<groupId>tech.lapsa.insurance</groupId>
+				<artifactId>insurance-templates</artifactId>
+				<version>${insurance-templates.version}</version>
 			</dependency>
 			<!-- internal insurance -->
 			<dependency>
@@ -92,8 +92,8 @@
 	<dependencies>
 		<!-- internal epayment -->
 		<dependency>
-			<groupId>tech.lapsa.eurasia36</groupId>
-			<artifactId>eurasia36-templates</artifactId>
+			<groupId>tech.lapsa.insurance</groupId>
+			<artifactId>insurance-templates</artifactId>
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
@@ -168,14 +168,14 @@
 	</dependencies>
 
 	<scm>
-		<connection>scm:git:https://gitlab.lapsa.tech/lapsa/eurasia36/facade.git</connection>
-		<developerConnection>scm:git:https://gitlab.lapsa.tech/lapsa/eurasia36/facade.git</developerConnection>
+		<connection>scm:git:https://gitlab.lapsa.tech/lapsa/insurance/facade.git</connection>
+		<developerConnection>scm:git:https://gitlab.lapsa.tech/lapsa/insurance/facade.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 
 	<issueManagement>
 		<system>gitlab</system>
-		<url>https://gitlab.lapsa.tech/lapsa/eurasia36/facade/issues</url>
+		<url>https://gitlab.lapsa.tech/lapsa/insurance/facade/issues</url>
 	</issueManagement>
 
 </project>
