@@ -20,7 +20,6 @@
 		<javax-javaee-bom.version>7.0-SNAPSHOT</javax-javaee-bom.version>
 		<java-commons-root.version>1.0-SNAPSHOT</java-commons-root.version>
 		<!-- tech -->
-		<insurance-templates.version>4.0-SNAPSHOT</insurance-templates.version>
 		<epayment-facade.version>1.0-SNAPSHOT</epayment-facade.version>
 		<!-- oldies -->
 		<insurance-lib.version>2.3-SNAPSHOT</insurance-lib.version>
@@ -48,11 +47,6 @@
 				<scope>import</scope>
 			</dependency>
 			<!-- tech -->
-			<dependency>
-				<groupId>tech.lapsa.insurance</groupId>
-				<artifactId>insurance-templates</artifactId>
-				<version>${insurance-templates.version}</version>
-			</dependency>
 			<dependency>
 				<groupId>tech.lapsa.epayment</groupId>
 				<artifactId>epayment-facade</artifactId>
@@ -101,12 +95,6 @@
 		<dependency>
 			<groupId>tech.lapsa.java</groupId>
 			<artifactId>java-commons</artifactId>
-			<scope>compile</scope>
-			<optional>false</optional>
-		</dependency>
-		<dependency>
-			<groupId>tech.lapsa.insurance</groupId>
-			<artifactId>insurance-templates</artifactId>
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
