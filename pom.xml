@@ -3,8 +3,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.lapsa.maven.pom</groupId>
-		<artifactId>javaee7-app-parent</artifactId>
+		<groupId>tech.lapsa.maven</groupId>
+		<artifactId>maven-general</artifactId>
 		<version>3.0-SNAPSHOT</version>
 	</parent>
 
@@ -17,12 +17,13 @@
 
 	<properties>
 		<!-- BOMS -->
-		<lapsa-bom.version>1.0-SNAPSHOT</lapsa-bom.version>
-		<insurance-bom.version>1.0-SNAPSHOT</insurance-bom.version>
-		<epayment-bom.version>1.0-SNAPSHOT</epayment-bom.version>
-		<!-- APIs -->
+		<javax-javaee-bom.version>7.0-SNAPSHOT</javax-javaee-bom.version>
+		<java-commons-root.version>1.0-SNAPSHOT</java-commons-root.version>
+		<!-- tech -->
+		<insurance-templates.version>4.0-SNAPSHOT</insurance-templates.version>
+		<epayment-facade.version>1.0-SNAPSHOT</epayment-facade.version>
+		<!-- oldies -->
 		<insurance-lib.version>2.3-SNAPSHOT</insurance-lib.version>
-		<!-- EJBs & WARs -->
 		<insurance-dao-impl-jpa.version>2.3-SNAPSHOT</insurance-dao-impl-jpa.version>
 		<insurance-jpa-unit.version>1.13-SNAPSHOT</insurance-jpa-unit.version>
 		<insurance-esbd-impl-ws.version>3.1-SNAPSHOT</insurance-esbd-impl-ws.version>
@@ -33,27 +34,32 @@
 		<dependencies>
 			<!-- BOMS -->
 			<dependency>
-				<groupId>tech.lapsa.lapsa</groupId>
-				<artifactId>lapsa-bom</artifactId>
-				<version>${lapsa-bom.version}</version>
+				<groupId>tech.lapsa.javax</groupId>
+				<artifactId>javax-javaee-bom</artifactId>
+				<version>${javax-javaee-bom.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>tech.lapsa.java</groupId>
+				<artifactId>java-commons-root</artifactId>
+				<version>${java-commons-root.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			<!-- tech -->
 			<dependency>
 				<groupId>tech.lapsa.insurance</groupId>
-				<artifactId>insurance-bom</artifactId>
-				<version>${insurance-bom.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
+				<artifactId>insurance-templates</artifactId>
+				<version>${insurance-templates.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>tech.lapsa.epayment</groupId>
-				<artifactId>epayment-bom</artifactId>
-				<version>${epayment-bom.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
+				<artifactId>epayment-facade</artifactId>
+				<version>${epayment-facade.version}</version>
+				<type>ejb</type>
 			</dependency>
-			<!-- internal insurance -->
+			<!-- oldies -->
 			<dependency>
 				<groupId>com.lapsa.insurance-lib</groupId>
 				<artifactId>insurance-dao</artifactId>
@@ -69,8 +75,6 @@
 				<artifactId>insurance-mesenger</artifactId>
 				<version>${insurance-lib.version}</version>
 			</dependency>
-			<!-- runtime -->
-			<!-- internal insurance -->
 			<dependency>
 				<groupId>com.lapsa.insurance-lib</groupId>
 				<artifactId>insurance-dao-impl-jpa</artifactId>
@@ -93,14 +97,27 @@
 	</dependencyManagement>
 
 	<dependencies>
-		<!-- internal epayment -->
+		<!-- tech -->
+		<dependency>
+			<groupId>tech.lapsa.java</groupId>
+			<artifactId>java-commons</artifactId>
+			<scope>compile</scope>
+			<optional>false</optional>
+		</dependency>
 		<dependency>
 			<groupId>tech.lapsa.insurance</groupId>
 			<artifactId>insurance-templates</artifactId>
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
-		<!-- internal insurance -->
+		<dependency>
+			<groupId>tech.lapsa.epayment</groupId>
+			<artifactId>epayment-facade</artifactId>
+			<type>ejb</type>
+			<scope>compile</scope>
+			<optional>false</optional>
+		</dependency>
+		<!-- oldies -->
 		<dependency>
 			<groupId>com.lapsa.insurance-lib</groupId>
 			<artifactId>insurance-dao</artifactId>
@@ -119,26 +136,6 @@
 			<scope>compile</scope>
 			<optional>true</optional>
 		</dependency>
-		<!-- internal lapsa-commons -->
-		<dependency>
-			<groupId>tech.lapsa.lapsa</groupId>
-			<artifactId>lapsa-commons</artifactId>
-			<scope>compile</scope>
-			<optional>true</optional>
-		</dependency>
-		<!-- JavaEE -->
-		<dependency>
-			<groupId>javax.enterprise</groupId>
-			<artifactId>cdi-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.ejb</groupId>
-			<artifactId>javax.ejb-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<!-- runtime -->
-		<!-- internal insurance -->
 		<dependency>
 			<groupId>com.lapsa.insurance-lib</groupId>
 			<artifactId>insurance-dao-impl-jpa</artifactId>
@@ -160,13 +157,16 @@
 			<scope>runtime</scope>
 			<optional>false</optional>
 		</dependency>
-		<!-- FACADES -->
+		<!-- JavaEE -->
 		<dependency>
-			<groupId>tech.lapsa.epayment</groupId>
-			<artifactId>epayment-facade</artifactId>
-			<type>ejb</type>
-			<scope>compile</scope>
-			<optional>false</optional>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.ejb</groupId>
+			<artifactId>javax.ejb-api</artifactId>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
