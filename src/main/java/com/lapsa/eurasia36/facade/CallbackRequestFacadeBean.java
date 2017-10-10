@@ -13,7 +13,7 @@ import com.lapsa.insurance.mesenger.NotificationRequestStage;
 import com.lapsa.insurance.mesenger.Notifier;
 
 @Stateless
-public class CallbackRequestFacade implements Acceptor<CallbackRequest> {
+public class CallbackRequestFacadeBean implements Acceptor<CallbackRequest> {
 
     @Override
     public <T extends CallbackRequest> T acceptAndReply(T request) {

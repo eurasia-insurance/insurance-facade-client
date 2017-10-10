@@ -15,7 +15,7 @@ import com.lapsa.insurance.domain.PostAddress;
 import com.lapsa.kz.country.KZCity;
 
 @Stateless
-public class CompanyPointOfSaleFacade {
+public class CompanyPointOfSaleFacadeBean {
 
     @Inject
     private CompanyPointOfSaleDAO companyPointOfSaleDAO;

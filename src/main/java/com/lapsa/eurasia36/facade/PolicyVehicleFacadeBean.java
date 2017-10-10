@@ -15,7 +15,7 @@ import com.lapsa.insurance.esbd.domain.entities.policy.VehicleEntity;
 import com.lapsa.insurance.esbd.services.policy.VehicleServiceDAO;
 
 @Stateless
-public class PolicyVehicleFacade {
+public class PolicyVehicleFacadeBean {
 
     @Inject
     private VehicleServiceDAO vehicleService;

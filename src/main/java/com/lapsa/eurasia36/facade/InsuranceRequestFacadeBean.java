@@ -26,7 +26,7 @@ import com.lapsa.insurance.mesenger.Notifier;
 import com.lapsa.international.localization.LocalizationLanguage;
 
 @Stateless
-public class InsuranceRequestFacade implements Acceptor<InsuranceRequest> {
+public class InsuranceRequestFacadeBean implements Acceptor<InsuranceRequest> {
 
     @Override
     public <T extends InsuranceRequest> T acceptAndReply(T request) {

@@ -14,7 +14,7 @@ import com.lapsa.insurance.domain.crm.User;
 import com.lapsa.insurance.domain.crm.UserLogin;
 
 @Stateless
-public class UserFacade {
+public class UserFacadeBean {
 
     // do not use @Inject instead of @EJB because it goes to fault with CDI
     // deployment failure: WELD-001408: Unsatisfied dependencies

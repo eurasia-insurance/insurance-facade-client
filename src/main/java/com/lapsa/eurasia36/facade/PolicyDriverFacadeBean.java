@@ -23,7 +23,7 @@ import com.lapsa.kz.idnumber.IdNumbers;
 import com.lapsa.utils.TemporalUtils;
 
 @Stateless
-public class PolicyDriverFacade {
+public class PolicyDriverFacadeBean {
 
     @Inject
     private SubjectPersonServiceDAO subjectPersonService;

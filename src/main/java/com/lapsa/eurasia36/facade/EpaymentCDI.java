@@ -11,7 +11,7 @@ import com.lapsa.epayment.facade.QEpaymentSuccess;
 public class EpaymentCDI {
 
     @Inject
-    private InsuranceRequestFacade requestFacade;
+    private InsuranceRequestFacadeBean requestFacade;
 
     public void epaymentSuccess(@Observes @QEpaymentSuccess Ebill ebill) {
 	requestFacade.markPaymentSucces(Integer.valueOf(ebill.getExternalId()), //
