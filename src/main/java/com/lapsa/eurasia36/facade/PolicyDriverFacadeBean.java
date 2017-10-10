@@ -23,7 +23,7 @@ import com.lapsa.kz.idnumber.IdNumbers;
 import com.lapsa.utils.TemporalUtils;
 
 @Stateless
-public class PolicyDriverFacadeBean {
+public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 
     @Inject
     private SubjectPersonServiceDAO subjectPersonService;
@@ -31,10 +31,12 @@ public class PolicyDriverFacadeBean {
     @Inject
     private InsuranceClassTypeServiceDAO insuranceClassTypeService;
 
+    @Override
     public InsuranceClassType getDefaultInsuranceClass() {
 	return insuranceClassTypeService.getDefault();
     }
 
+    @Override
     public PolicyDriver fetchByIdNumber(String idNumber) {
 
 	return MyOptionals.of(idNumber) //

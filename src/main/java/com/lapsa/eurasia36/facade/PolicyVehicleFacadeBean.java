@@ -15,11 +15,12 @@ import com.lapsa.insurance.esbd.domain.entities.policy.VehicleEntity;
 import com.lapsa.insurance.esbd.services.policy.VehicleServiceDAO;
 
 @Stateless
-public class PolicyVehicleFacadeBean {
+public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
 
     @Inject
     private VehicleServiceDAO vehicleService;
 
+    @Override
     public List<PolicyVehicle> fetchByRegNumber(String regNumber) {
 	return MyOptionals.streamOf(vehicleService.getByRegNumber(regNumber)) //
 		.orElseGet(Stream::empty) //
@@ -28,6 +29,7 @@ public class PolicyVehicleFacadeBean {
 		.collect(MyCollectors.unmodifiableList());
     }
 
+    @Override
     public List<PolicyVehicle> fetchByVINCode(String vinCode) {
 	return MyOptionals.streamOf(vehicleService.getByRegNumber(vinCode)) //
 		.orElseGet(Stream::empty) //
@@ -35,6 +37,7 @@ public class PolicyVehicleFacadeBean {
 		.collect(MyCollectors.unmodifiableList());
     }
 
+    @Override
     public PolicyVehicle fetchFirstByRegNumber(String regNumber) {
 	return MyOptionals.streamOf(vehicleService.getByRegNumber(regNumber)) //
 		.orElseGet(Stream::empty) //
@@ -47,6 +50,7 @@ public class PolicyVehicleFacadeBean {
 		.orElse(null);
     }
 
+    @Override
     public PolicyVehicle fetchFirstByVINCode(String vinCode) {
 	return MyOptionals.streamOf(vehicleService.getByVINCode(vinCode)) //
 		.orElseGet(Stream::empty) //

@@ -15,17 +15,19 @@ import com.lapsa.insurance.domain.PostAddress;
 import com.lapsa.kz.country.KZCity;
 
 @Stateless
-public class CompanyPointOfSaleFacadeBean {
+public class CompanyPointOfSaleFacadeBean implements CompanyPointOfSaleFacade {
 
     @Inject
     private CompanyPointOfSaleDAO companyPointOfSaleDAO;
 
+    @Override
     public List<CompanyPointOfSale> pointOfSalesForPickup() {
 	return allAvailable() //
 		.filter(CompanyPointOfSale::isPickupAvailable) //
 		.collect(MyCollectors.unmodifiableList());
     }
 
+    @Override
     public List<CompanyPointOfSale> pointOfSalesForPickup(final KZCity city) {
 	MyObjects.requireNonNull(city, "city");
 	return allAvailable() //
@@ -35,12 +37,14 @@ public class CompanyPointOfSaleFacadeBean {
 		.collect(MyCollectors.unmodifiableList());
     }
 
+    @Override
     public List<CompanyPointOfSale> pointOfSalesForDelivery() {
 	return allAvailable() //
 		.filter(CompanyPointOfSale::isDeliveryServicesAvailable) //
 		.collect(MyCollectors.unmodifiableList());
     }
 
+    @Override
     public List<CompanyPointOfSale> pointOfSalesForDelivery(final KZCity city) {
 	MyObjects.requireNonNull(city, "city");
 	return allAvailable() //
@@ -50,6 +54,7 @@ public class CompanyPointOfSaleFacadeBean {
 		.collect(MyCollectors.unmodifiableList());
     }
 
+    @Override
     public List<KZCity> getCitiesForPickup() {
 	return allAvailable() //
 		.filter(CompanyPointOfSale::isPickupAvailable) //
@@ -59,6 +64,7 @@ public class CompanyPointOfSaleFacadeBean {
 		.collect(MyCollectors.unmodifiableList());
     }
 
+    @Override
     public List<CompanyPointOfSale> findAllOwnOffices() {
 	return allAvailable() //
 		.filter(CompanyPointOfSale::isCompanyOwnOffice)

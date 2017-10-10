@@ -26,7 +26,7 @@ import com.lapsa.insurance.mesenger.Notifier;
 import com.lapsa.international.localization.LocalizationLanguage;
 
 @Stateless
-public class InsuranceRequestFacadeBean implements Acceptor<InsuranceRequest> {
+public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 
     @Override
     public <T extends InsuranceRequest> T acceptAndReply(T request) {
@@ -38,6 +38,7 @@ public class InsuranceRequestFacadeBean implements Acceptor<InsuranceRequest> {
 	return saved;
     }
 
+    @Override
     public void markPaymentSucces(Integer id, String paymentReference, Instant paymentInstant) {
 	try {
 	    InsuranceRequest request = dao.findById(id);
