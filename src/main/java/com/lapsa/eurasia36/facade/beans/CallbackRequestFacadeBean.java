@@ -1,10 +1,11 @@
-package com.lapsa.eurasia36.facade;
+package com.lapsa.eurasia36.facade.beans;
 
 import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import com.lapsa.eurasia36.facade.CallbackRequestFacade;
 import com.lapsa.insurance.dao.CallbackRequestDAO;
 import com.lapsa.insurance.domain.CallbackRequest;
 import com.lapsa.insurance.mesenger.NotificationChannel;

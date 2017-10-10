@@ -1,4 +1,4 @@
-package com.lapsa.eurasia36.facade;
+package com.lapsa.eurasia36.facade.beans;
 
 import java.time.LocalDate;
 
@@ -6,6 +6,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import com.lapsa.commons.function.MyOptionals;
+import com.lapsa.eurasia36.facade.PolicyDriverFacade;
 import com.lapsa.insurance.domain.ContactData;
 import com.lapsa.insurance.domain.IdentityCardData;
 import com.lapsa.insurance.domain.OriginData;

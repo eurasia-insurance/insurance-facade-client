@@ -1,4 +1,4 @@
-package com.lapsa.eurasia36.facade;
+package com.lapsa.eurasia36.facade.beans;
 
 import java.time.Instant;
 import java.util.logging.Logger;
@@ -11,6 +11,7 @@ import com.lapsa.commons.function.MyOptionals;
 import com.lapsa.commons.function.MyStrings;
 import com.lapsa.epayment.facade.EpaymentFacade;
 import com.lapsa.epayment.facade.EpaymentFacade.EbillAcceptorBuilder;
+import com.lapsa.eurasia36.facade.InsuranceRequestFacade;
 import com.lapsa.insurance.dao.EntityNotFound;
 import com.lapsa.insurance.dao.InsuranceRequestDAO;
 import com.lapsa.insurance.domain.CalculationData;

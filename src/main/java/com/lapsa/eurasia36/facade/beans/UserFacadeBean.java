@@ -1,4 +1,4 @@
-package com.lapsa.eurasia36.facade;
+package com.lapsa.eurasia36.facade.beans;
 
 import java.security.Principal;
 import java.util.List;
@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import com.lapsa.eurasia36.facade.UserFacade;
 import com.lapsa.insurance.dao.EntityNotFound;
 import com.lapsa.insurance.dao.UserDAO;
 import com.lapsa.insurance.domain.crm.User;

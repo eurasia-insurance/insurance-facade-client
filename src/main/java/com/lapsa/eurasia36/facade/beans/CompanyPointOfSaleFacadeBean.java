@@ -1,4 +1,4 @@
-package com.lapsa.eurasia36.facade;
+package com.lapsa.eurasia36.facade.beans;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import com.lapsa.commons.function.MyCollectors;
 import com.lapsa.commons.function.MyObjects;
 import com.lapsa.commons.function.MyOptionals;
+import com.lapsa.eurasia36.facade.CompanyPointOfSaleFacade;
 import com.lapsa.insurance.dao.CompanyPointOfSaleDAO;
 import com.lapsa.insurance.domain.CompanyPointOfSale;
 import com.lapsa.insurance.domain.PostAddress;
