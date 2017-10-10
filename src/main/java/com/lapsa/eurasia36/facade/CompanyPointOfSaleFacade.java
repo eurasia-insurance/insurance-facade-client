@@ -3,7 +3,6 @@ package com.lapsa.eurasia36.facade;
 import java.util.List;
 import java.util.stream.Stream;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -16,7 +15,6 @@ import com.lapsa.insurance.domain.PostAddress;
 import com.lapsa.kz.country.KZCity;
 
 @Stateless
-@LocalBean
 public class CompanyPointOfSaleFacade {
 
     @Inject

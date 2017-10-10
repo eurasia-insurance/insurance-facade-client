@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -15,7 +14,6 @@ import com.lapsa.insurance.domain.crm.User;
 import com.lapsa.insurance.domain.crm.UserLogin;
 
 @Stateless
-@LocalBean
 public class UserFacade {
 
     // do not use @Inject instead of @EJB because it goes to fault with CDI

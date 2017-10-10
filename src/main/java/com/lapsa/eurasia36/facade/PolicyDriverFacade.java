@@ -2,7 +2,6 @@ package com.lapsa.eurasia36.facade;
 
 import java.time.LocalDate;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -24,7 +23,6 @@ import com.lapsa.kz.idnumber.IdNumbers;
 import com.lapsa.utils.TemporalUtils;
 
 @Stateless
-@LocalBean
 public class PolicyDriverFacade {
 
     @Inject

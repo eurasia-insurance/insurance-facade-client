@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Stream;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -16,7 +15,6 @@ import com.lapsa.insurance.esbd.domain.entities.policy.VehicleEntity;
 import com.lapsa.insurance.esbd.services.policy.VehicleServiceDAO;
 
 @Stateless
-@LocalBean
 public class PolicyVehicleFacade {
 
     @Inject

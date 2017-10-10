@@ -3,7 +3,6 @@ package com.lapsa.eurasia36.facade;
 import java.time.Instant;
 import java.util.logging.Logger;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -27,7 +26,6 @@ import com.lapsa.insurance.mesenger.Notifier;
 import com.lapsa.international.localization.LocalizationLanguage;
 
 @Stateless
-@LocalBean
 public class InsuranceRequestFacade implements Acceptor<InsuranceRequest> {
 
     @Override
