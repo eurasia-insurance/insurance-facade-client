@@ -11,7 +11,7 @@ import com.lapsa.commons.function.MyNumbers;
 import com.lapsa.commons.function.MyOptionals;
 import com.lapsa.commons.function.MyStrings;
 import com.lapsa.epayment.facade.EpaymentFacade;
-import com.lapsa.epayment.facade.EpaymentFacade.PaymentBuilder;
+import com.lapsa.epayment.facade.EpaymentFacade.EbillAcceptorBuilder;
 import com.lapsa.insurance.dao.EntityNotFound;
 import com.lapsa.insurance.dao.InsuranceRequestDAO;
 import com.lapsa.insurance.domain.CalculationData;
@@ -55,7 +55,7 @@ public class InsuranceRequestFacade implements Acceptor<InsuranceRequest> {
     // PRIVATE
 
     @Inject
-    private EpaymentFacade qazkomFacade;
+    private EpaymentFacade epaymentFacade;
 
     private <T extends InsuranceRequest> T setupPaymentOrder(T request) {
 	if (request.getPayment() != null //
@@ -74,7 +74,7 @@ public class InsuranceRequestFacade implements Acceptor<InsuranceRequest> {
 		    .map(RequesterData::getName) //
 		    .orElseThrow(() -> new IllegalArgumentException("Can't determine a consumer name"));
 
-	    PaymentBuilder builder = qazkomFacade.newPaymentBuilder() //
+	    EbillAcceptorBuilder builder = epaymentFacade.newEbillAcceptorBuilder() //
 		    .winthGeneratedId() //
 		    .withDefaultCurrency() //
 		    .withConsumerLanguage(consumerLanguage) //
