@@ -1,4 +1,4 @@
-package com.lapsa.eurasia36.facade.beans;
+package tech.lapsa.insurance.facade.beans;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -9,11 +9,12 @@ import javax.inject.Inject;
 
 import com.lapsa.commons.function.MyCollectors;
 import com.lapsa.commons.function.MyOptionals;
-import com.lapsa.eurasia36.facade.PolicyVehicleFacade;
 import com.lapsa.insurance.domain.policy.PolicyVehicle;
 import com.lapsa.insurance.elements.VehicleAgeClass;
 import com.lapsa.insurance.esbd.domain.entities.policy.VehicleEntity;
 import com.lapsa.insurance.esbd.services.policy.VehicleServiceDAO;
+
+import tech.lapsa.insurance.facade.PolicyVehicleFacade;
 
 @Stateless
 public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {

@@ -1,4 +1,4 @@
-package com.lapsa.eurasia36.facade.beans;
+package tech.lapsa.insurance.facade.beans;
 
 import java.time.Instant;
 

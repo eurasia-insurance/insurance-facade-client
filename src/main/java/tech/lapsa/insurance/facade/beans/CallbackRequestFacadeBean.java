@@ -1,17 +1,18 @@
-package com.lapsa.eurasia36.facade.beans;
+package tech.lapsa.insurance.facade.beans;
 
 import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import com.lapsa.eurasia36.facade.CallbackRequestFacade;
 import com.lapsa.insurance.dao.CallbackRequestDAO;
 import com.lapsa.insurance.domain.CallbackRequest;
 import com.lapsa.insurance.mesenger.NotificationChannel;
 import com.lapsa.insurance.mesenger.NotificationRecipientType;
 import com.lapsa.insurance.mesenger.NotificationRequestStage;
 import com.lapsa.insurance.mesenger.Notifier;
+
+import tech.lapsa.insurance.facade.CallbackRequestFacade;
 
 @Stateless
 public class CallbackRequestFacadeBean implements CallbackRequestFacade {

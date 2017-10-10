@@ -1,4 +1,4 @@
-package com.lapsa.eurasia36.facade.beans;
+package tech.lapsa.insurance.facade.beans;
 
 import java.time.Instant;
 import java.util.logging.Logger;
@@ -11,7 +11,6 @@ import com.lapsa.commons.function.MyOptionals;
 import com.lapsa.commons.function.MyStrings;
 import com.lapsa.epayment.facade.EpaymentFacade;
 import com.lapsa.epayment.facade.EpaymentFacade.EbillAcceptorBuilder;
-import com.lapsa.eurasia36.facade.InsuranceRequestFacade;
 import com.lapsa.insurance.dao.EntityNotFound;
 import com.lapsa.insurance.dao.InsuranceRequestDAO;
 import com.lapsa.insurance.domain.CalculationData;
@@ -25,6 +24,8 @@ import com.lapsa.insurance.mesenger.NotificationRecipientType;
 import com.lapsa.insurance.mesenger.NotificationRequestStage;
 import com.lapsa.insurance.mesenger.Notifier;
 import com.lapsa.international.localization.LocalizationLanguage;
+
+import tech.lapsa.insurance.facade.InsuranceRequestFacade;
 
 @Stateless
 public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {

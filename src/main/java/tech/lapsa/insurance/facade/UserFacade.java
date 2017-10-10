@@ -1,4 +1,4 @@
-package com.lapsa.eurasia36.facade;
+package tech.lapsa.insurance.facade;
 
 import java.security.Principal;
 import java.util.List;

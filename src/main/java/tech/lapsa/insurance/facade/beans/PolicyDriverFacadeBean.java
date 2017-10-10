@@ -1,4 +1,4 @@
-package com.lapsa.eurasia36.facade.beans;
+package tech.lapsa.insurance.facade.beans;
 
 import java.time.LocalDate;
 
@@ -6,7 +6,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import com.lapsa.commons.function.MyOptionals;
-import com.lapsa.eurasia36.facade.PolicyDriverFacade;
 import com.lapsa.insurance.domain.ContactData;
 import com.lapsa.insurance.domain.IdentityCardData;
 import com.lapsa.insurance.domain.OriginData;
@@ -22,6 +21,8 @@ import com.lapsa.insurance.esbd.services.elements.InsuranceClassTypeServiceDAO;
 import com.lapsa.insurance.esbd.services.general.SubjectPersonServiceDAO;
 import com.lapsa.kz.idnumber.IdNumbers;
 import com.lapsa.utils.TemporalUtils;
+
+import tech.lapsa.insurance.facade.PolicyDriverFacade;
 
 @Stateless
 public class PolicyDriverFacadeBean implements PolicyDriverFacade {
