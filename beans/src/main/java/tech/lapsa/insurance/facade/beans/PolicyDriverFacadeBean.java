@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import com.lapsa.commons.function.MyOptionals;
 import com.lapsa.insurance.domain.ContactData;
 import com.lapsa.insurance.domain.IdentityCardData;
 import com.lapsa.insurance.domain.OriginData;
@@ -23,6 +22,7 @@ import com.lapsa.kz.idnumber.IdNumbers;
 import com.lapsa.utils.TemporalUtils;
 
 import tech.lapsa.insurance.facade.PolicyDriverFacade;
+import tech.lapsa.java.commons.function.MyOptionals;
 
 @Stateless
 public class PolicyDriverFacadeBean implements PolicyDriverFacade {
