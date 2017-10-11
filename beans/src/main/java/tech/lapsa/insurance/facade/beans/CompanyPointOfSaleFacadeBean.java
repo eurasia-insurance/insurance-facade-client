@@ -1,9 +1,8 @@
-package com.lapsa.eurasia36.facade;
+package tech.lapsa.insurance.facade.beans;
 
 import java.util.List;
 import java.util.stream.Stream;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -15,19 +14,22 @@ import com.lapsa.insurance.domain.CompanyPointOfSale;
 import com.lapsa.insurance.domain.PostAddress;
 import com.lapsa.kz.country.KZCity;
 
+import tech.lapsa.insurance.facade.CompanyPointOfSaleFacade;
+
 @Stateless
-@LocalBean
-public class CompanyPointOfSaleFacade {
+public class CompanyPointOfSaleFacadeBean implements CompanyPointOfSaleFacade {
 
     @Inject
     private CompanyPointOfSaleDAO companyPointOfSaleDAO;
 
+    @Override
     public List<CompanyPointOfSale> pointOfSalesForPickup() {
 	return allAvailable() //
 		.filter(CompanyPointOfSale::isPickupAvailable) //
 		.collect(MyCollectors.unmodifiableList());
     }
 
+    @Override
     public List<CompanyPointOfSale> pointOfSalesForPickup(final KZCity city) {
 	MyObjects.requireNonNull(city, "city");
 	return allAvailable() //
@@ -37,12 +39,14 @@ public class CompanyPointOfSaleFacade {
 		.collect(MyCollectors.unmodifiableList());
     }
 
+    @Override
     public List<CompanyPointOfSale> pointOfSalesForDelivery() {
 	return allAvailable() //
 		.filter(CompanyPointOfSale::isDeliveryServicesAvailable) //
 		.collect(MyCollectors.unmodifiableList());
     }
 
+    @Override
     public List<CompanyPointOfSale> pointOfSalesForDelivery(final KZCity city) {
 	MyObjects.requireNonNull(city, "city");
 	return allAvailable() //
@@ -52,6 +56,7 @@ public class CompanyPointOfSaleFacade {
 		.collect(MyCollectors.unmodifiableList());
     }
 
+    @Override
     public List<KZCity> getCitiesForPickup() {
 	return allAvailable() //
 		.filter(CompanyPointOfSale::isPickupAvailable) //
@@ -61,6 +66,7 @@ public class CompanyPointOfSaleFacade {
 		.collect(MyCollectors.unmodifiableList());
     }
 
+    @Override
     public List<CompanyPointOfSale> findAllOwnOffices() {
 	return allAvailable() //
 		.filter(CompanyPointOfSale::isCompanyOwnOffice)

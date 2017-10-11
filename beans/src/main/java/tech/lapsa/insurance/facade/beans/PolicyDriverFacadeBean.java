@@ -1,8 +1,7 @@
-package com.lapsa.eurasia36.facade;
+package tech.lapsa.insurance.facade.beans;
 
 import java.time.LocalDate;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -23,9 +22,10 @@ import com.lapsa.insurance.esbd.services.general.SubjectPersonServiceDAO;
 import com.lapsa.kz.idnumber.IdNumbers;
 import com.lapsa.utils.TemporalUtils;
 
+import tech.lapsa.insurance.facade.PolicyDriverFacade;
+
 @Stateless
-@LocalBean
-public class PolicyDriverFacade {
+public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 
     @Inject
     private SubjectPersonServiceDAO subjectPersonService;
@@ -33,10 +33,12 @@ public class PolicyDriverFacade {
     @Inject
     private InsuranceClassTypeServiceDAO insuranceClassTypeService;
 
+    @Override
     public InsuranceClassType getDefaultInsuranceClass() {
 	return insuranceClassTypeService.getDefault();
     }
 
+    @Override
     public PolicyDriver fetchByIdNumber(String idNumber) {
 
 	return MyOptionals.of(idNumber) //

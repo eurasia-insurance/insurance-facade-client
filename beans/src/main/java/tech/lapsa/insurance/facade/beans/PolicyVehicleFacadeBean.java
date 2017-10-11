@@ -1,10 +1,9 @@
-package com.lapsa.eurasia36.facade;
+package tech.lapsa.insurance.facade.beans;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Stream;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -15,13 +14,15 @@ import com.lapsa.insurance.elements.VehicleAgeClass;
 import com.lapsa.insurance.esbd.domain.entities.policy.VehicleEntity;
 import com.lapsa.insurance.esbd.services.policy.VehicleServiceDAO;
 
+import tech.lapsa.insurance.facade.PolicyVehicleFacade;
+
 @Stateless
-@LocalBean
-public class PolicyVehicleFacade {
+public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
 
     @Inject
     private VehicleServiceDAO vehicleService;
 
+    @Override
     public List<PolicyVehicle> fetchByRegNumber(String regNumber) {
 	return MyOptionals.streamOf(vehicleService.getByRegNumber(regNumber)) //
 		.orElseGet(Stream::empty) //
@@ -30,6 +31,7 @@ public class PolicyVehicleFacade {
 		.collect(MyCollectors.unmodifiableList());
     }
 
+    @Override
     public List<PolicyVehicle> fetchByVINCode(String vinCode) {
 	return MyOptionals.streamOf(vehicleService.getByRegNumber(vinCode)) //
 		.orElseGet(Stream::empty) //
@@ -37,6 +39,7 @@ public class PolicyVehicleFacade {
 		.collect(MyCollectors.unmodifiableList());
     }
 
+    @Override
     public PolicyVehicle fetchFirstByRegNumber(String regNumber) {
 	return MyOptionals.streamOf(vehicleService.getByRegNumber(regNumber)) //
 		.orElseGet(Stream::empty) //
@@ -49,6 +52,7 @@ public class PolicyVehicleFacade {
 		.orElse(null);
     }
 
+    @Override
     public PolicyVehicle fetchFirstByVINCode(String vinCode) {
 	return MyOptionals.streamOf(vehicleService.getByVINCode(vinCode)) //
 		.orElseGet(Stream::empty) //

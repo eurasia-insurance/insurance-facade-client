@@ -1,8 +1,7 @@
-package com.lapsa.eurasia36.facade;
+package tech.lapsa.insurance.facade.beans;
 
 import java.util.logging.Logger;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -13,9 +12,10 @@ import com.lapsa.insurance.mesenger.NotificationRecipientType;
 import com.lapsa.insurance.mesenger.NotificationRequestStage;
 import com.lapsa.insurance.mesenger.Notifier;
 
+import tech.lapsa.insurance.facade.CallbackRequestFacade;
+
 @Stateless
-@LocalBean
-public class CallbackRequestFacade implements Acceptor<CallbackRequest> {
+public class CallbackRequestFacadeBean implements CallbackRequestFacade {
 
     @Override
     public <T extends CallbackRequest> T acceptAndReply(T request) {

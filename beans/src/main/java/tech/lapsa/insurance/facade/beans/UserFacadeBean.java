@@ -1,11 +1,10 @@
-package com.lapsa.eurasia36.facade;
+package tech.lapsa.insurance.facade.beans;
 
 import java.security.Principal;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -14,9 +13,10 @@ import com.lapsa.insurance.dao.UserDAO;
 import com.lapsa.insurance.domain.crm.User;
 import com.lapsa.insurance.domain.crm.UserLogin;
 
+import tech.lapsa.insurance.facade.UserFacade;
+
 @Stateless
-@LocalBean
-public class UserFacade {
+public class UserFacadeBean implements UserFacade {
 
     // do not use @Inject instead of @EJB because it goes to fault with CDI
     // deployment failure: WELD-001408: Unsatisfied dependencies
@@ -26,6 +26,7 @@ public class UserFacade {
     @Inject
     private Logger logger;
 
+    @Override
     public User findOrCreate(String principalName) {
 	if (principalName == null)
 	    return null;
@@ -48,12 +49,14 @@ public class UserFacade {
 	}
     }
 
+    @Override
     public User findOrCreate(Principal principal) {
 	if (principal == null)
 	    return null;
 	return findOrCreate(principal.getName());
     }
 
+    @Override
     public List<User> getWhoCreatedRequests() {
 	return userDAO.findAllWhoCreatedRequest();
     }
