@@ -94,13 +94,13 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 		    .orElseThrow(() -> new IllegalArgumentException("Can't determine an item cost")) //
 		    .doubleValue();
 
-	    String reference = builder.withMoreItem(itemName, cost, 1) //
+	    String ebillId = builder.withMoreItem(itemName, cost, 1) //
 		    .build() //
 		    .accept() //
-		    .getReference();
+		    .getId();
 
 	    request.getPayment() //
-		    .setExternalId(reference);
+		    .setExternalId(ebillId);
 	}
 	return request;
     }
