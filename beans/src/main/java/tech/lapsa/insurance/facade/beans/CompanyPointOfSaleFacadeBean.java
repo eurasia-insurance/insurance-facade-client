@@ -6,15 +6,15 @@ import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import com.lapsa.commons.function.MyCollectors;
-import com.lapsa.commons.function.MyObjects;
-import com.lapsa.commons.function.MyOptionals;
 import com.lapsa.insurance.dao.CompanyPointOfSaleDAO;
 import com.lapsa.insurance.domain.CompanyPointOfSale;
 import com.lapsa.insurance.domain.PostAddress;
 import com.lapsa.kz.country.KZCity;
 
 import tech.lapsa.insurance.facade.CompanyPointOfSaleFacade;
+import tech.lapsa.java.commons.function.MyCollectors;
+import tech.lapsa.java.commons.function.MyObjects;
+import tech.lapsa.java.commons.function.MyOptionals;
 
 @Stateless
 public class CompanyPointOfSaleFacadeBean implements CompanyPointOfSaleFacade {

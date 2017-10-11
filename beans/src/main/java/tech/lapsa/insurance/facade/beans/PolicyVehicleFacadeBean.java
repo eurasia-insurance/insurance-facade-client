@@ -7,14 +7,14 @@ import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import com.lapsa.commons.function.MyCollectors;
-import com.lapsa.commons.function.MyOptionals;
 import com.lapsa.insurance.domain.policy.PolicyVehicle;
 import com.lapsa.insurance.elements.VehicleAgeClass;
 import com.lapsa.insurance.esbd.domain.entities.policy.VehicleEntity;
 import com.lapsa.insurance.esbd.services.policy.VehicleServiceDAO;
 
 import tech.lapsa.insurance.facade.PolicyVehicleFacade;
+import tech.lapsa.java.commons.function.MyCollectors;
+import tech.lapsa.java.commons.function.MyOptionals;
 
 @Stateless
 public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
