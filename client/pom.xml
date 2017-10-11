@@ -21,6 +21,12 @@
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
+		<!-- JavaEE -->
+		<dependency>
+			<groupId>javax.ejb</groupId>
+			<artifactId>javax.ejb-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 </project>
