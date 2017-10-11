@@ -1,6 +1,6 @@
 package tech.lapsa.insurance.facade;
 
-interface Acceptor<T> {
+public interface Acceptor<T> {
 
     default <X extends T> void accept(X request) {
 	acceptAndReply(request);
