@@ -2,9 +2,12 @@ package tech.lapsa.insurance.facade;
 
 import java.util.List;
 
+import javax.ejb.Local;
+
 import com.lapsa.insurance.domain.CompanyPointOfSale;
 import com.lapsa.kz.country.KZCity;
 
+@Local
 public interface CompanyPointOfSaleFacade {
 
     List<CompanyPointOfSale> pointOfSalesForPickup();
