@@ -41,7 +41,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
     }
 
     @Override
-    public void markPaymentSucces(Integer id, String paymentReference, Instant paymentInstant) {
+    public void markPaymentComplete(Integer id, String paymentReference, Instant paymentInstant) {
 	try {
 	    InsuranceRequest request = dao.findById(id);
 	    request.getPayment().setStatus(PaymentStatus.DONE);

@@ -11,5 +11,5 @@ public interface InsuranceRequestFacade extends Acceptor<InsuranceRequest> {
 
     <T extends InsuranceRequest> T acceptAndReply(T request);
 
-    void markPaymentSucces(Integer id, String paymentReference, Instant paymentInstant);
+    void markPaymentComplete(Integer id, String paymentReference, Instant paymentInstant);
 }
