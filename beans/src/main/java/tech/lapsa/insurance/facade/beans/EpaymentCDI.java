@@ -4,9 +4,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.lapsa.epayment.facade.Ebill;
-import com.lapsa.epayment.facade.QEpaymentSuccess;
-
+import tech.lapsa.epayment.facade.Ebill;
+import tech.lapsa.epayment.facade.QEpaymentSuccess;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade;
 
 @ApplicationScoped

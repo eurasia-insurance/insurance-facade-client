@@ -6,8 +6,6 @@ import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import com.lapsa.epayment.facade.EpaymentFacade;
-import com.lapsa.epayment.facade.EpaymentFacade.EbillAcceptorBuilder;
 import com.lapsa.insurance.dao.EntityNotFound;
 import com.lapsa.insurance.dao.InsuranceRequestDAO;
 import com.lapsa.insurance.domain.CalculationData;
@@ -22,6 +20,8 @@ import com.lapsa.insurance.mesenger.NotificationRequestStage;
 import com.lapsa.insurance.mesenger.Notifier;
 import com.lapsa.international.localization.LocalizationLanguage;
 
+import tech.lapsa.epayment.facade.EpaymentFacade;
+import tech.lapsa.epayment.facade.EpaymentFacade.EbillAcceptorBuilder;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade;
 import tech.lapsa.java.commons.function.MyNumbers;
 import tech.lapsa.java.commons.function.MyOptionals;
