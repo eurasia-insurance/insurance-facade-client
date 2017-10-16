@@ -5,13 +5,13 @@ import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import com.lapsa.insurance.dao.CallbackRequestDAO;
 import com.lapsa.insurance.domain.CallbackRequest;
 import com.lapsa.insurance.mesenger.NotificationChannel;
 import com.lapsa.insurance.mesenger.NotificationRecipientType;
 import com.lapsa.insurance.mesenger.NotificationRequestStage;
 import com.lapsa.insurance.mesenger.Notifier;
 
+import tech.lapsa.insurance.dao.CallbackRequestDAO;
 import tech.lapsa.insurance.facade.CallbackRequestFacade;
 
 @Stateless
