@@ -29,7 +29,6 @@
 		<!-- oldies -->
 		<insurance-lib.version>2.3-SNAPSHOT</insurance-lib.version>
 		<insurance-dao-impl-jpa.version>2.3-SNAPSHOT</insurance-dao-impl-jpa.version>
-		<insurance-jpa-unit.version>1.13-SNAPSHOT</insurance-jpa-unit.version>
 		<insurance-esbd-impl-ws.version>3.1-SNAPSHOT</insurance-esbd-impl-ws.version>
 		<insurance-mesenger-impl-default.version>3.1-SNAPSHOT</insurance-mesenger-impl-default.version>
 	</properties>
