@@ -84,7 +84,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 		    .withExternalId(request.getId());
 
 	    String itemName = MyOptionals.of(request.getProductType()) //
-		    .map(x -> x.displayName(consumerLanguage.getLocale())) //
+		    .map(x -> x.regular(consumerLanguage.getLocale())) //
 		    .orElseThrow(() -> new IllegalArgumentException("Can't determine an item name"));
 
 	    double cost = MyOptionals.of(request.getProduct()) //
