@@ -34,6 +34,19 @@
 			<scope>runtime</scope>
 			<optional>false</optional>
 		</dependency>
+		<dependency>
+			<groupId>tech.lapsa.insurance</groupId>
+			<artifactId>insurance-dao-client</artifactId>
+			<scope>compile</scope>
+			<optional>false</optional>
+		</dependency>
+		<dependency>
+			<groupId>tech.lapsa.insurance</groupId>
+			<artifactId>insurance-dao</artifactId>
+			<type>ejb</type>
+			<scope>runtime</scope>
+			<optional>false</optional>
+		</dependency>
 		<!-- own -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -58,13 +71,6 @@
 			<groupId>com.lapsa.insurance-lib</groupId>
 			<artifactId>insurance-mesenger</artifactId>
 			<scope>compile</scope>
-			<optional>false</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.lapsa.insurance-lib</groupId>
-			<artifactId>insurance-dao-impl-jpa</artifactId>
-			<type>ejb</type>
-			<scope>runtime</scope>
 			<optional>false</optional>
 		</dependency>
 		<dependency>
