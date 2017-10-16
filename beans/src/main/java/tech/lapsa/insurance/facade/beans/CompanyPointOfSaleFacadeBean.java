@@ -6,11 +6,11 @@ import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import com.lapsa.insurance.dao.CompanyPointOfSaleDAO;
 import com.lapsa.insurance.domain.CompanyPointOfSale;
 import com.lapsa.insurance.domain.PostAddress;
 import com.lapsa.kz.country.KZCity;
 
+import tech.lapsa.insurance.dao.CompanyPointOfSaleDAO;
 import tech.lapsa.insurance.facade.CompanyPointOfSaleFacade;
 import tech.lapsa.java.commons.function.MyCollectors;
 import tech.lapsa.java.commons.function.MyObjects;
