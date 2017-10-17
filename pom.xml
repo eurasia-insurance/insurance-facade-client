@@ -27,9 +27,9 @@
 		<!-- tech -->
 		<epayment-facade.version>1.0-SNAPSHOT</epayment-facade.version>
 		<insurance-dao.version>1.0-SNAPSHOT</insurance-dao.version>
+		<insurance-esbd.version>1.0-SNAPSHOT</insurance-esbd.version>
 		<!-- oldies -->
 		<insurance-lib.version>2.3-SNAPSHOT</insurance-lib.version>
-		<insurance-esbd-impl-ws.version>3.1-SNAPSHOT</insurance-esbd-impl-ws.version>
 		<insurance-mesenger-impl-default.version>3.1-SNAPSHOT</insurance-mesenger-impl-default.version>
 	</properties>
 
@@ -61,6 +61,13 @@
 				<groupId>tech.lapsa.insurance</groupId>
 				<artifactId>insurance-dao-root</artifactId>
 				<version>${insurance-dao.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>tech.lapsa.insurance</groupId>
+				<artifactId>insurance-esbd-root</artifactId>
+				<version>${insurance-esbd.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
