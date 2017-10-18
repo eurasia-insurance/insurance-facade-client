@@ -14,13 +14,13 @@ import com.lapsa.insurance.domain.policy.PolicyDriver;
 import com.lapsa.insurance.elements.InsuranceClassType;
 import com.lapsa.insurance.elements.InsuredAgeClass;
 import com.lapsa.insurance.elements.Sex;
-import com.lapsa.insurance.esbd.domain.entities.general.SubjectPersonEntity;
-import com.lapsa.insurance.esbd.services.NotFound;
-import com.lapsa.insurance.esbd.services.elements.InsuranceClassTypeServiceDAO;
-import com.lapsa.insurance.esbd.services.general.SubjectPersonServiceDAO;
 import com.lapsa.kz.idnumber.IdNumbers;
 import com.lapsa.utils.TemporalUtils;
 
+import tech.lapsa.insurance.esbd.NotFound;
+import tech.lapsa.insurance.esbd.elements.InsuranceClassTypeService;
+import tech.lapsa.insurance.esbd.entities.SubjectPersonEntity;
+import tech.lapsa.insurance.esbd.entities.SubjectPersonEntityService;
 import tech.lapsa.insurance.facade.PolicyDriverFacade;
 import tech.lapsa.java.commons.function.MyOptionals;
 
@@ -28,10 +28,10 @@ import tech.lapsa.java.commons.function.MyOptionals;
 public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 
     @Inject
-    private SubjectPersonServiceDAO subjectPersonService;
+    private SubjectPersonEntityService subjectPersonService;
 
     @Inject
-    private InsuranceClassTypeServiceDAO insuranceClassTypeService;
+    private InsuranceClassTypeService insuranceClassTypeService;
 
     @Override
     public InsuranceClassType getDefaultInsuranceClass() {
@@ -40,16 +40,9 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 
     @Override
     public PolicyDriver fetchByIdNumber(String idNumber) {
-
 	return MyOptionals.of(idNumber) //
-		.map(x -> {
-		    try {
-			return subjectPersonService.getByIIN(x);
-		    } catch (NotFound e) {
-			return null;
-		    }
-		})
-		.map(this::fetchFrom)
+		.flatMap(subjectPersonService::optionalByIIN) //
+		.map(this::fetchFrom) //
 		.orElse(null);
     }
 

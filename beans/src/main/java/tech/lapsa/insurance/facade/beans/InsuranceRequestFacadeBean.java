@@ -20,7 +20,6 @@ import com.lapsa.international.localization.LocalizationLanguage;
 
 import tech.lapsa.epayment.facade.EpaymentFacade;
 import tech.lapsa.epayment.facade.EpaymentFacade.EbillAcceptorBuilder;
-import tech.lapsa.insurance.dao.EntityNotFound;
 import tech.lapsa.insurance.dao.InsuranceRequestDAO;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade;
 import tech.lapsa.java.commons.function.MyNumbers;
@@ -42,15 +41,12 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 
     @Override
     public void markPaymentComplete(Integer id, String paymentReference, Instant paymentInstant) {
-	try {
-	    InsuranceRequest request = dao.findById(id);
-	    request.getPayment().setStatus(PaymentStatus.DONE);
-	    request.getPayment().setPostReference(paymentReference);
-	    request.getPayment().setPostInstant(paymentInstant);
-	    request = dao.save(request);
-	} catch (EntityNotFound e) {
-	    throw new IllegalArgumentException("Request not found", e);
-	}
+	InsuranceRequest request = dao.optionalById(id)
+		.orElseThrow(() -> new IllegalArgumentException("Request not found with id " + id));
+	request.getPayment().setStatus(PaymentStatus.DONE);
+	request.getPayment().setPostReference(paymentReference);
+	request.getPayment().setPostInstant(paymentInstant);
+	request = dao.save(request);
     }
 
     // PRIVATE

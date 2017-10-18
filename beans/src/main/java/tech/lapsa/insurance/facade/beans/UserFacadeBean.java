@@ -11,7 +11,7 @@ import javax.inject.Inject;
 import com.lapsa.insurance.domain.crm.User;
 import com.lapsa.insurance.domain.crm.UserLogin;
 
-import tech.lapsa.insurance.dao.EntityNotFound;
+import tech.lapsa.insurance.dao.NotFound;
 import tech.lapsa.insurance.dao.UserDAO;
 import tech.lapsa.insurance.facade.UserFacade;
 
@@ -31,8 +31,8 @@ public class UserFacadeBean implements UserFacade {
 	if (principalName == null)
 	    return null;
 	try {
-	    return userDAO.findByLogin(principalName);
-	} catch (EntityNotFound e) {
+	    return userDAO.getByLogin(principalName);
+	} catch (NotFound e) {
 	    logger.info(String.format("New User creating '%1$s'", principalName));
 
 	    User value = new User();

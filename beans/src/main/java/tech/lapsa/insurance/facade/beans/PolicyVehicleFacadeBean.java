@@ -9,21 +9,23 @@ import javax.inject.Inject;
 
 import com.lapsa.insurance.domain.policy.PolicyVehicle;
 import com.lapsa.insurance.elements.VehicleAgeClass;
-import com.lapsa.insurance.esbd.domain.entities.policy.VehicleEntity;
-import com.lapsa.insurance.esbd.services.policy.VehicleServiceDAO;
 
+import tech.lapsa.insurance.esbd.entities.VehicleEntity;
+import tech.lapsa.insurance.esbd.entities.VehicleEntityService;
 import tech.lapsa.insurance.facade.PolicyVehicleFacade;
 import tech.lapsa.java.commons.function.MyCollectors;
 import tech.lapsa.java.commons.function.MyOptionals;
+import tech.lapsa.java.commons.function.MyStrings;
 
 @Stateless
 public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
 
     @Inject
-    private VehicleServiceDAO vehicleService;
+    private VehicleEntityService vehicleService;
 
     @Override
     public List<PolicyVehicle> fetchByRegNumber(String regNumber) {
+	MyStrings.requireNonEmpty(regNumber, "regNumber");
 	return MyOptionals.streamOf(vehicleService.getByRegNumber(regNumber)) //
 		.orElseGet(Stream::empty) //
 		.map(this::fetchFrom) //
@@ -33,6 +35,7 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
 
     @Override
     public List<PolicyVehicle> fetchByVINCode(String vinCode) {
+	MyStrings.requireNonEmpty(vinCode, "vinCode");
 	return MyOptionals.streamOf(vehicleService.getByRegNumber(vinCode)) //
 		.orElseGet(Stream::empty) //
 		.map(this::fetchFrom) //
