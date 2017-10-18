@@ -11,15 +11,13 @@ import javax.inject.Inject;
 import com.lapsa.insurance.domain.crm.User;
 import com.lapsa.insurance.domain.crm.UserLogin;
 
-import tech.lapsa.insurance.dao.NotFound;
 import tech.lapsa.insurance.dao.UserDAO;
 import tech.lapsa.insurance.facade.UserFacade;
+import tech.lapsa.patterns.dao.NotFound;
 
 @Stateless
 public class UserFacadeBean implements UserFacade {
 
-    // do not use @Inject instead of @EJB because it goes to fault with CDI
-    // deployment failure: WELD-001408: Unsatisfied dependencies
     @Inject
     private UserDAO userDAO;
 
