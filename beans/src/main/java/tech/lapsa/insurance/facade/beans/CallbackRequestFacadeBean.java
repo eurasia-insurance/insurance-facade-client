@@ -49,8 +49,7 @@ public class CallbackRequestFacadeBean implements CallbackRequestFacade {
 	return dao.save(request);
     }
 
-    @Inject
-    private Logger logger;
+    private final Logger logger = Logger.getLogger(CallbackRequestFacade.class.getPackage().getName()); 
 
     private CallbackRequest logInsuranceRequestAccepted(CallbackRequest request) {
 	logger.info(String.format("New %4$s accepded from '%1$s' '<%2$s>' tel '%3$s' ", //

@@ -140,8 +140,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 	return dao.save(request);
     }
 
-    @Inject
-    private Logger logger;
+    private final Logger logger = Logger.getLogger(InsuranceRequestFacade.class.getPackage().getName());
 
     private <T extends InsuranceRequest> T logInsuranceRequestAccepted(T request) {
 	logger.info(String.format("New %4$s accepded from '%1$s' '<%2$s>' tel '%3$s' ", //

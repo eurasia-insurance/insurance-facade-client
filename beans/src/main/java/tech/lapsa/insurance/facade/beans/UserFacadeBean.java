@@ -21,8 +21,7 @@ public class UserFacadeBean implements UserFacade {
     @Inject
     private UserDAO userDAO;
 
-    @Inject
-    private Logger logger;
+    private final Logger logger = Logger.getLogger(UserFacade.class.getPackage().getName());
 
     @Override
     public User findOrCreate(String principalName) {
