@@ -114,19 +114,19 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 	case EXPRESS:
 	    builder.withChannel(NotificationChannel.EMAIL) //
 		    .withRecipient(NotificationRecipientType.COMPANY) //
-		    .forRequest(request) //
+		    .forEntity(request) //
 		    .build() //
 		    .send();
 	    if (request.getRequester().getEmail() != null)
 		builder.withChannel(NotificationChannel.EMAIL) //
 			.withRecipient(NotificationRecipientType.REQUESTER) //
-			.forRequest(request) //
+			.forEntity(request) //
 			.build() //
 			.send();
 	case UNCOMPLETE:
 	    builder.withChannel(NotificationChannel.PUSH) //
 		    .withRecipient(NotificationRecipientType.COMPANY) //
-		    .forRequest(request) //
+		    .forEntity(request) //
 		    .build() //
 		    .send();
 	}

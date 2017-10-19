@@ -35,7 +35,7 @@ public class CallbackRequestFacadeBean implements CallbackRequestFacade {
 		.withEvent(NotificationRequestStage.NEW_REQUEST) //
 		.withChannel(NotificationChannel.PUSH) //
 		.withRecipient(NotificationRecipientType.COMPANY) //
-		.forRequest(request) //
+		.forEntity(request) //
 		.build() //
 		.send();
 
