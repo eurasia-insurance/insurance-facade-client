@@ -6,13 +6,13 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import com.lapsa.insurance.domain.CallbackRequest;
-import com.lapsa.insurance.mesenger.NotificationChannel;
-import com.lapsa.insurance.mesenger.NotificationRecipientType;
-import com.lapsa.insurance.mesenger.NotificationRequestStage;
-import com.lapsa.insurance.mesenger.Notifier;
 
 import tech.lapsa.insurance.dao.CallbackRequestDAO;
 import tech.lapsa.insurance.facade.CallbackRequestFacade;
+import tech.lapsa.insurance.notifier.NotificationChannel;
+import tech.lapsa.insurance.notifier.NotificationRecipientType;
+import tech.lapsa.insurance.notifier.NotificationRequestStage;
+import tech.lapsa.insurance.notifier.Notifier;
 
 @Stateless
 public class CallbackRequestFacadeBean implements CallbackRequestFacade {
@@ -30,8 +30,15 @@ public class CallbackRequestFacadeBean implements CallbackRequestFacade {
     private Notifier notifier;
 
     private CallbackRequest setupNotifications(CallbackRequest request) {
-	notifier.assignRequestNotification(NotificationChannel.PUSH, NotificationRecipientType.COMPANY,
-		NotificationRequestStage.NEW_REQUEST, request);
+
+	notifier.newNotificationBuilder() //
+		.withEvent(NotificationRequestStage.NEW_REQUEST) //
+		.withChannel(NotificationChannel.PUSH) //
+		.withRecipient(NotificationRecipientType.COMPANY) //
+		.forRequest(request) //
+		.build() //
+		.send();
+
 	return request;
     }
 

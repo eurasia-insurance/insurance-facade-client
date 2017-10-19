@@ -12,16 +12,17 @@ import com.lapsa.insurance.domain.InsuranceRequest;
 import com.lapsa.insurance.domain.RequesterData;
 import com.lapsa.insurance.elements.PaymentMethod;
 import com.lapsa.insurance.elements.PaymentStatus;
-import com.lapsa.insurance.mesenger.NotificationChannel;
-import com.lapsa.insurance.mesenger.NotificationRecipientType;
-import com.lapsa.insurance.mesenger.NotificationRequestStage;
-import com.lapsa.insurance.mesenger.Notifier;
 import com.lapsa.international.localization.LocalizationLanguage;
 
 import tech.lapsa.epayment.facade.EpaymentFacade;
 import tech.lapsa.epayment.facade.EpaymentFacade.EbillAcceptorBuilder;
 import tech.lapsa.insurance.dao.InsuranceRequestDAO;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade;
+import tech.lapsa.insurance.notifier.NotificationChannel;
+import tech.lapsa.insurance.notifier.NotificationRecipientType;
+import tech.lapsa.insurance.notifier.NotificationRequestStage;
+import tech.lapsa.insurance.notifier.Notifier;
+import tech.lapsa.insurance.notifier.Notifier.NotificationBuilder;
 import tech.lapsa.java.commons.function.MyNumbers;
 import tech.lapsa.java.commons.function.MyOptionals;
 import tech.lapsa.java.commons.function.MyStrings;
@@ -105,17 +106,29 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
     private Notifier notifier;
 
     private <T extends InsuranceRequest> T setupNotifications(T request) {
+	NotificationBuilder builder = notifier.newNotificationBuilder() //
+		.withEvent(NotificationRequestStage.NEW_REQUEST);
+
 	switch (request.getType()) {
 	case ONLINE:
 	case EXPRESS:
-	    notifier.assignRequestNotification(NotificationChannel.EMAIL, NotificationRecipientType.COMPANY,
-		    NotificationRequestStage.NEW_REQUEST, request);
+	    builder.withChannel(NotificationChannel.EMAIL) //
+		    .withRecipient(NotificationRecipientType.COMPANY) //
+		    .forRequest(request) //
+		    .build() //
+		    .send();
 	    if (request.getRequester().getEmail() != null)
-		notifier.assignRequestNotification(NotificationChannel.EMAIL, NotificationRecipientType.REQUESTER,
-			NotificationRequestStage.NEW_REQUEST, request);
+		builder.withChannel(NotificationChannel.EMAIL) //
+			.withRecipient(NotificationRecipientType.REQUESTER) //
+			.forRequest(request) //
+			.build() //
+			.send();
 	case UNCOMPLETE:
-	    notifier.assignRequestNotification(NotificationChannel.PUSH, NotificationRecipientType.COMPANY,
-		    NotificationRequestStage.NEW_REQUEST, request);
+	    builder.withChannel(NotificationChannel.PUSH) //
+		    .withRecipient(NotificationRecipientType.COMPANY) //
+		    .forRequest(request) //
+		    .build() //
+		    .send();
 	}
 	return request;
     }

@@ -60,25 +60,24 @@
 			<scope>runtime</scope>
 			<optional>false</optional>
 		</dependency>
+		<dependency>
+			<groupId>tech.lapsa.insurance</groupId>
+			<artifactId>insurance-notifier-client</artifactId>
+			<scope>compile</scope>
+			<optional>false</optional>
+		</dependency>
+		<dependency>
+			<groupId>tech.lapsa.insurance</groupId>
+			<artifactId>insurance-notifier</artifactId>
+			<type>ejb</type>
+			<scope>runtime</scope>
+			<optional>false</optional>
+		</dependency>
 		<!-- own -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>insurance-facade-client</artifactId>
 			<scope>compile</scope>
-			<optional>false</optional>
-		</dependency>
-		<!-- oldies -->
-		<dependency>
-			<groupId>com.lapsa.insurance-lib</groupId>
-			<artifactId>insurance-mesenger</artifactId>
-			<scope>compile</scope>
-			<optional>false</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.lapsa.insurance-lib</groupId>
-			<artifactId>insurance-mesenger-impl-default</artifactId>
-			<type>ejb</type>
-			<scope>runtime</scope>
 			<optional>false</optional>
 		</dependency>
 		<!-- JavaEE -->
@@ -93,16 +92,5 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
-
-	<scm>
-		<connection>scm:git:https://gitlab.lapsa.tech/lapsa/insurance/facade.git</connection>
-		<developerConnection>scm:git:https://gitlab.lapsa.tech/lapsa/insurance/facade.git</developerConnection>
-		<tag>HEAD</tag>
-	</scm>
-
-	<issueManagement>
-		<system>gitlab</system>
-		<url>https://gitlab.lapsa.tech/lapsa/insurance/facade/issues</url>
-	</issueManagement>
 
 </project>

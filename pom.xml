@@ -28,9 +28,9 @@
 		<epayment-facade.version>1.0-SNAPSHOT</epayment-facade.version>
 		<insurance-dao.version>1.0-SNAPSHOT</insurance-dao.version>
 		<insurance-esbd.version>1.0-SNAPSHOT</insurance-esbd.version>
+		<insurance-notifier.version>1.0-SNAPSHOT</insurance-notifier.version>
 		<!-- oldies -->
 		<insurance-lib.version>2.3-SNAPSHOT</insurance-lib.version>
-		<insurance-mesenger-impl-default.version>3.1-SNAPSHOT</insurance-mesenger-impl-default.version>
 	</properties>
 
 	<dependencyManagement>
@@ -71,6 +71,13 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			<dependency>
+				<groupId>tech.lapsa.insurance</groupId>
+				<artifactId>insurance-notifier-root</artifactId>
+				<version>${insurance-notifier.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 			<!-- own -->
 			<dependency>
 				<groupId>${project.groupId}</groupId>
@@ -90,18 +97,6 @@
 				<version>${insurance-lib.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.lapsa.insurance-lib</groupId>
-				<artifactId>insurance-mesenger-impl-default</artifactId>
-				<version>${insurance-mesenger-impl-default.version}</version>
-				<type>ejb</type>
-			</dependency>
-			<dependency>
-				<groupId>com.lapsa.insurance-lib</groupId>
-				<artifactId>insurance-esbd-impl-ws</artifactId>
-				<version>${insurance-esbd-impl-ws.version}</version>
-				<type>ejb</type>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
