@@ -54,7 +54,7 @@ public class UserFacadeBean implements UserFacade {
     }
 
     @Override
-    public List<User> getWhoCreatedRequests() {
+    public List<User> getWhoEverCreatedRequests() {
 	return userDAO.findAllWhoCreatedRequest();
     }
 

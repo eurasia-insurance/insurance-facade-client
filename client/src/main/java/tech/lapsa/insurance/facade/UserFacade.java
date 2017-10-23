@@ -14,6 +14,6 @@ public interface UserFacade {
 
     User findOrCreate(Principal principal);
 
-    List<User> getWhoCreatedRequests();
+    List<User> getWhoEverCreatedRequests();
 
 }
