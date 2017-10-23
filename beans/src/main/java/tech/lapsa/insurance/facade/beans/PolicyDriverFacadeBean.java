@@ -15,7 +15,6 @@ import com.lapsa.insurance.elements.InsuranceClassType;
 import com.lapsa.insurance.elements.InsuredAgeClass;
 import com.lapsa.insurance.elements.Sex;
 import com.lapsa.kz.idnumber.IdNumbers;
-import com.lapsa.utils.TemporalUtils;
 
 import tech.lapsa.insurance.esbd.NotFound;
 import tech.lapsa.insurance.esbd.elements.InsuranceClassTypeService;
@@ -23,6 +22,7 @@ import tech.lapsa.insurance.esbd.entities.SubjectPersonEntity;
 import tech.lapsa.insurance.esbd.entities.SubjectPersonEntityService;
 import tech.lapsa.insurance.facade.PolicyDriverFacade;
 import tech.lapsa.java.commons.function.MyOptionals;
+import tech.lapsa.java.commons.time.MyTemporals;
 
 @Stateless
 public class PolicyDriverFacadeBean implements PolicyDriverFacade {
@@ -155,7 +155,7 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 		if (esbdEntity.getIdentityCard() != null) {
 		    driver.getIdentityCardData().setNumber(esbdEntity.getIdentityCard().getNumber());
 		    driver.getIdentityCardData()
-			    .setDateOfIssue(TemporalUtils.toLocalDate(esbdEntity.getIdentityCard().getDateOfIssue()));
+			    .setDateOfIssue(MyTemporals.calendar().toLocalDate(esbdEntity.getIdentityCard().getDateOfIssue()));
 		    driver.getIdentityCardData().setType(esbdEntity.getIdentityCard().getIdentityCardType());
 		    driver.getIdentityCardData()
 			    .setIssuingAuthority(esbdEntity.getIdentityCard().getIssuingAuthority());
