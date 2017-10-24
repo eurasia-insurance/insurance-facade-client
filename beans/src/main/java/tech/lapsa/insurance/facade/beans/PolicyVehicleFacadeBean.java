@@ -9,6 +9,7 @@ import javax.inject.Inject;
 
 import com.lapsa.insurance.domain.policy.PolicyVehicle;
 import com.lapsa.insurance.elements.VehicleAgeClass;
+import com.lapsa.insurance.elements.VehicleClass;
 
 import tech.lapsa.insurance.esbd.entities.VehicleEntity;
 import tech.lapsa.insurance.esbd.entities.VehicleEntityService;
@@ -16,6 +17,7 @@ import tech.lapsa.insurance.facade.PolicyVehicleFacade;
 import tech.lapsa.java.commons.function.MyCollectors;
 import tech.lapsa.java.commons.function.MyOptionals;
 import tech.lapsa.java.commons.function.MyStrings;
+import tech.lapsa.kz.vehicle.VehicleRegNumber;
 
 @Stateless
 public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
@@ -29,7 +31,6 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
 	return MyOptionals.streamOf(vehicleService.getByRegNumber(regNumber)) //
 		.orElseGet(Stream::empty) //
 		.map(this::fetchFrom) //
-		.peek(x -> x.getCertificateData().setRegistrationNumber(regNumber)) //
 		.collect(MyCollectors.unmodifiableList());
     }
 
@@ -48,10 +49,6 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
 		.orElseGet(Stream::empty) //
 		.findFirst()
 		.map(this::fetchFrom) //
-		.map(x -> {
-		    x.getCertificateData().setRegistrationNumber(regNumber);
-		    return x;
-		})
 		.orElse(null);
     }
 
@@ -122,6 +119,31 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
 	    vehicle.setVehicleClass(esbdEntity.getVehicleClass());
 
 	    vehicle.setColor(esbdEntity.getColor());
+
+	    {
+		MyOptionals.of(esbdEntity.getRegNum()) //
+			.map(VehicleRegNumber::of)
+			.ifPresent(x -> {
+			    vehicle.getCertificateData().setRegistrationNumber(x);
+			    x.optionalArea() //
+				    .ifPresent(vehicle::setArea);
+
+			    if (vehicle.getVehicleClass() == null)
+				x.optionalVehicleType().map(y -> {
+				    switch (y) {
+				    case MOTORBIKE:
+					return VehicleClass.MOTO;
+				    case TRAILER:
+					return VehicleClass.TRAILER;
+				    case CAR:
+				    default:
+					return null;
+				    }
+				}) //
+					.ifPresent(vehicle::setVehicleClass);
+			});
+
+	    }
 
 	    if (esbdEntity.getVehicleModel() != null) {
 		vehicle.setModel(esbdEntity.getVehicleModel().getName());
