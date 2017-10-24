@@ -141,7 +141,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
     }
 
     private final MyLogger logger = MyLogger.newBuilder() //
-	    .withPackageNameOf(InsuranceRequestFacade.class) //
+	    .withNameOf(InsuranceRequestFacade.class) //
 	    .build();
 
     private <T extends InsuranceRequest> T logInsuranceRequestAccepted(T request) {

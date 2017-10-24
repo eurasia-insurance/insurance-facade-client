@@ -22,7 +22,7 @@ public class UserFacadeBean implements UserFacade {
     private UserDAO userDAO;
 
     private final MyLogger logger = MyLogger.newBuilder() //
-	    .withPackageNameOf(UserFacade.class) //
+	    .withNameOf(UserFacade.class) //
 	    .build();
 
     @Override

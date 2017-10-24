@@ -49,7 +49,7 @@ public class CallbackRequestFacadeBean implements CallbackRequestFacade {
     }
 
     private final MyLogger logger = MyLogger.newBuilder() //
-	    .withPackageNameOf(CallbackRequestFacade.class) //
+	    .withNameOf(CallbackRequestFacade.class) //
 	    .build();
 
     private CallbackRequest logInsuranceRequestAccepted(CallbackRequest request) {
