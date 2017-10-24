@@ -2,7 +2,6 @@ package tech.lapsa.insurance.facade.beans;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import javax.ejb.Stateless;
@@ -13,6 +12,7 @@ import com.lapsa.insurance.domain.crm.UserLogin;
 
 import tech.lapsa.insurance.dao.UserDAO;
 import tech.lapsa.insurance.facade.UserFacade;
+import tech.lapsa.java.commons.logging.MyLogger;
 import tech.lapsa.patterns.dao.NotFound;
 
 @Stateless
@@ -21,7 +21,9 @@ public class UserFacadeBean implements UserFacade {
     @Inject
     private UserDAO userDAO;
 
-    private final Logger logger = Logger.getLogger(UserFacade.class.getPackage().getName());
+    private final MyLogger logger = MyLogger.newBuilder() //
+	    .withPackageNameOf(UserFacade.class) //
+	    .build();
 
     @Override
     public User findOrCreate(String principalName) {
@@ -30,7 +32,7 @@ public class UserFacadeBean implements UserFacade {
 	try {
 	    return userDAO.getByLogin(principalName);
 	} catch (NotFound e) {
-	    logger.info(String.format("New User creating '%1$s'", principalName));
+	    logger.INFO.log("New User creating '%1$s'", principalName);
 
 	    User value = new User();
 	    UserLogin login = value.addLogin(new UserLogin());

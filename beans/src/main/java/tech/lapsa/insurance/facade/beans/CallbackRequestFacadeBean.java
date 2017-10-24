@@ -1,7 +1,5 @@
 package tech.lapsa.insurance.facade.beans;
 
-import java.util.logging.Logger;
-
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -13,6 +11,7 @@ import tech.lapsa.insurance.notifier.NotificationChannel;
 import tech.lapsa.insurance.notifier.NotificationRecipientType;
 import tech.lapsa.insurance.notifier.NotificationRequestStage;
 import tech.lapsa.insurance.notifier.Notifier;
+import tech.lapsa.java.commons.logging.MyLogger;
 
 @Stateless
 public class CallbackRequestFacadeBean implements CallbackRequestFacade {
@@ -49,15 +48,17 @@ public class CallbackRequestFacadeBean implements CallbackRequestFacade {
 	return dao.save(request);
     }
 
-    private final Logger logger = Logger.getLogger(CallbackRequestFacade.class.getPackage().getName()); 
+    private final MyLogger logger = MyLogger.newBuilder() //
+	    .withPackageNameOf(CallbackRequestFacade.class) //
+	    .build();
 
     private CallbackRequest logInsuranceRequestAccepted(CallbackRequest request) {
-	logger.info(String.format("New %4$s accepded from '%1$s' '<%2$s>' tel '%3$s' ", //
+	logger.INFO.log("New %4$s accepded from '%1$s' '<%2$s>' tel '%3$s' ", //
 		request.getRequester().getName(), // 1
 		request.getRequester().getEmail(), // 2
 		request.getRequester().getPhone(), // 3
 		request.getClass().getSimpleName() // 4
-	));
+	);
 	return request;
     }
 }

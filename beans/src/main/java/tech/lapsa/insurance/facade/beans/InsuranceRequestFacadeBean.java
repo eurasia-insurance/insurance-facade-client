@@ -1,7 +1,6 @@
 package tech.lapsa.insurance.facade.beans;
 
 import java.time.Instant;
-import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -26,6 +25,7 @@ import tech.lapsa.insurance.notifier.Notifier.NotificationBuilder;
 import tech.lapsa.java.commons.function.MyNumbers;
 import tech.lapsa.java.commons.function.MyOptionals;
 import tech.lapsa.java.commons.function.MyStrings;
+import tech.lapsa.java.commons.logging.MyLogger;
 
 @Stateless
 public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
@@ -140,15 +140,17 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 	return dao.save(request);
     }
 
-    private final Logger logger = Logger.getLogger(InsuranceRequestFacade.class.getPackage().getName());
+    private final MyLogger logger = MyLogger.newBuilder() //
+	    .withPackageNameOf(InsuranceRequestFacade.class) //
+	    .build();
 
     private <T extends InsuranceRequest> T logInsuranceRequestAccepted(T request) {
-	logger.info(String.format("New %4$s accepded from '%1$s' '<%2$s>' tel '%3$s' ", //
+	logger.INFO.log("New %4$s accepded from '%1$s' '<%2$s>' tel '%3$s' ", //
 		request.getRequester().getName(), // 1
 		request.getRequester().getEmail(), // 2
 		request.getRequester().getPhone(), // 3
 		request.getClass().getSimpleName() // 4
-	));
+	);
 	return request;
     }
 
