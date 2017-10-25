@@ -9,6 +9,7 @@ import com.lapsa.insurance.domain.CalculationData;
 import com.lapsa.insurance.domain.InsuranceProduct;
 import com.lapsa.insurance.domain.InsuranceRequest;
 import com.lapsa.insurance.domain.RequesterData;
+import com.lapsa.insurance.domain.policy.PolicyRequest;
 import com.lapsa.insurance.elements.PaymentMethod;
 import com.lapsa.insurance.elements.PaymentStatus;
 import com.lapsa.international.localization.LocalizationLanguage;
@@ -23,6 +24,7 @@ import tech.lapsa.insurance.notifier.NotificationRequestStage;
 import tech.lapsa.insurance.notifier.Notifier;
 import tech.lapsa.insurance.notifier.Notifier.NotificationBuilder;
 import tech.lapsa.java.commons.function.MyNumbers;
+import tech.lapsa.java.commons.function.MyObjects;
 import tech.lapsa.java.commons.function.MyOptionals;
 import tech.lapsa.java.commons.function.MyStrings;
 import tech.lapsa.java.commons.logging.MyLogger;
@@ -49,13 +51,25 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 	request.getPayment().setPostInstant(paymentInstant);
 	request = dao.save(request);
 
+	// TODO This is requred to prevent ValidationExpression
+	// EclipseLink-7242 Exception Description: An attempt was made to
+	// traverse a relationship using indirection that had a null Session.
+	// This often occurs when an entity with an uninstantiated LAZY
+	// relationship is serialized and that relationship is traversed after
+	// serialization. To avoid this issue, instantiate the LAZY relationship
+	// prior to serialization.
+	request.getAcceptedBy();
+	if (MyObjects.isA(request, PolicyRequest.class)) {
+	    ((PolicyRequest) request).getPolicy();
+	}
+
 	notifier.newNotificationBuilder() //
 		.withEvent(NotificationRequestStage.REQUEST_PAID) //
 		.withChannel(NotificationChannel.EMAIL) //
 		.forEntity(request) //
 		.withRecipient(NotificationRecipientType.COMPANY) //
 		.build()
-		.notify();
+		.send();
     }
 
     // PRIVATE
