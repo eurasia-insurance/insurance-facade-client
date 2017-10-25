@@ -48,6 +48,14 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 	request.getPayment().setPostReference(paymentReference);
 	request.getPayment().setPostInstant(paymentInstant);
 	request = dao.save(request);
+
+	notifier.newNotificationBuilder() //
+		.withEvent(NotificationRequestStage.REQUEST_PAID) //
+		.withChannel(NotificationChannel.EMAIL) //
+		.forEntity(request) //
+		.withRecipient(NotificationRecipientType.COMPANY) //
+		.build()
+		.notify();
     }
 
     // PRIVATE
@@ -107,26 +115,24 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 
     private <T extends InsuranceRequest> T setupNotifications(T request) {
 	NotificationBuilder builder = notifier.newNotificationBuilder() //
-		.withEvent(NotificationRequestStage.NEW_REQUEST);
+		.withEvent(NotificationRequestStage.NEW_REQUEST) //
+		.forEntity(request);
 
 	switch (request.getType()) {
 	case ONLINE:
 	case EXPRESS:
 	    builder.withChannel(NotificationChannel.EMAIL) //
 		    .withRecipient(NotificationRecipientType.COMPANY) //
-		    .forEntity(request) //
 		    .build() //
 		    .send();
 	    if (request.getRequester().getEmail() != null)
 		builder.withChannel(NotificationChannel.EMAIL) //
 			.withRecipient(NotificationRecipientType.REQUESTER) //
-			.forEntity(request) //
 			.build() //
 			.send();
 	case UNCOMPLETE:
 	    builder.withChannel(NotificationChannel.PUSH) //
 		    .withRecipient(NotificationRecipientType.COMPANY) //
-		    .forEntity(request) //
 		    .build() //
 		    .send();
 	}
