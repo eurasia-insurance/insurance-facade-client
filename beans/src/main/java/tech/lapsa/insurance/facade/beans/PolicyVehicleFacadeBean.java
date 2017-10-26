@@ -2,6 +2,7 @@ package tech.lapsa.insurance.facade.beans;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import javax.ejb.Stateless;
@@ -15,6 +16,7 @@ import tech.lapsa.insurance.esbd.entities.VehicleEntity;
 import tech.lapsa.insurance.esbd.entities.VehicleEntityService;
 import tech.lapsa.insurance.facade.PolicyVehicleFacade;
 import tech.lapsa.java.commons.function.MyCollectors;
+import tech.lapsa.java.commons.function.MyObjects;
 import tech.lapsa.java.commons.function.MyOptionals;
 import tech.lapsa.java.commons.function.MyStrings;
 import tech.lapsa.kz.vehicle.VehicleRegNumber;
@@ -26,8 +28,9 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
     private VehicleEntityService vehicleService;
 
     @Override
-    public List<PolicyVehicle> fetchByRegNumber(String regNumber) {
-	MyStrings.requireNonEmpty(regNumber, "regNumber");
+    public List<PolicyVehicle> fetchByRegNumber(VehicleRegNumber regNumber) {
+	MyObjects.requireNonNull(regNumber, "regNumber")
+		.requireValid("regNumber");
 	return MyOptionals.streamOf(vehicleService.getByRegNumber(regNumber)) //
 		.orElseGet(Stream::empty) //
 		.map(this::fetchFrom) //
@@ -37,43 +40,37 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
     @Override
     public List<PolicyVehicle> fetchByVINCode(String vinCode) {
 	MyStrings.requireNonEmpty(vinCode, "vinCode");
-	return MyOptionals.streamOf(vehicleService.getByRegNumber(vinCode)) //
+	return MyOptionals.streamOf(vehicleService.getByVINCode(vinCode)) //
 		.orElseGet(Stream::empty) //
 		.map(this::fetchFrom) //
 		.collect(MyCollectors.unmodifiableList());
     }
 
     @Override
-    public PolicyVehicle fetchFirstByRegNumber(String regNumber) {
+    public Optional<PolicyVehicle> fetchFirstByRegNumber(VehicleRegNumber regNumber) {
 	return MyOptionals.streamOf(vehicleService.getByRegNumber(regNumber)) //
 		.orElseGet(Stream::empty) //
 		.findFirst()
-		.map(this::fetchFrom) //
-		.orElse(null);
+		.map(this::fetchFrom);
     }
 
     @Override
-    public PolicyVehicle fetchFirstByVINCode(String vinCode) {
+    public Optional<PolicyVehicle> fetchFirstByVINCode(String vinCode) {
 	return MyOptionals.streamOf(vehicleService.getByVINCode(vinCode)) //
 		.orElseGet(Stream::empty) //
 		.findFirst()
-		.map(this::fetchFrom) //
-		.orElse(null);
+		.map(this::fetchFrom);
     }
 
     @Deprecated
     public void fetch(PolicyVehicle vehicle) {
 	clearFetched(vehicle);
-	PolicyVehicle fetched = fetchFirstByVINCode(vehicle.getVinCode()); // TODO
-									   // fetchFirst
-									   // fetching
-									   // the
-									   // first
-									   // entity.
-									   // What
-									   // if
-									   // has
-									   // more?
+
+	// TODO fetchFirst fetching the first entity. What if has more?
+	PolicyVehicle fetched = fetchFirstByVINCode(vehicle.getVinCode()).orElse(null);
+	if (fetched == null)
+	    return;
+
 	vehicle.setFetched(fetched.isFetched());
 	vehicle.setVinCode(fetched.getVinCode());
 	vehicle.setVehicleAgeClass(fetched.getVehicleAgeClass());

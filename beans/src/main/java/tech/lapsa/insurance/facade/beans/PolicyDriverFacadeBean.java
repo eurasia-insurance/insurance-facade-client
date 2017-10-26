@@ -1,6 +1,7 @@
 package tech.lapsa.insurance.facade.beans;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -14,7 +15,6 @@ import com.lapsa.insurance.domain.policy.PolicyDriver;
 import com.lapsa.insurance.elements.InsuranceClassType;
 import com.lapsa.insurance.elements.InsuredAgeClass;
 import com.lapsa.insurance.elements.Sex;
-import com.lapsa.kz.idnumber.IdNumbers;
 
 import tech.lapsa.insurance.esbd.NotFound;
 import tech.lapsa.insurance.esbd.elements.InsuranceClassTypeService;
@@ -23,6 +23,7 @@ import tech.lapsa.insurance.esbd.entities.SubjectPersonEntityService;
 import tech.lapsa.insurance.facade.PolicyDriverFacade;
 import tech.lapsa.java.commons.function.MyOptionals;
 import tech.lapsa.java.commons.time.MyTemporals;
+import tech.lapsa.kz.taxpayer.TaxpayerNumber;
 
 @Stateless
 public class PolicyDriverFacadeBean implements PolicyDriverFacade {
@@ -39,17 +40,18 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
     }
 
     @Override
-    public PolicyDriver fetchByIdNumber(String idNumber) {
+    public Optional<PolicyDriver> fetchByIdNumber(TaxpayerNumber idNumber) {
 	return MyOptionals.of(idNumber) //
 		.flatMap(subjectPersonService::optionalByIIN) //
-		.map(this::fetchFrom) //
-		.orElse(null);
+		.map(this::fetchFrom);
     }
 
     @Deprecated
     public void fetch(PolicyDriver driver) {
 	clearFetched(driver);
-	PolicyDriver fetched = fetchByIdNumber(driver.getIdNumber());
+	PolicyDriver fetched = fetchByIdNumber(driver.getIdNumber()).orElse(null);
+	if (fetched == null)
+	    return;
 
 	driver.setFetched(fetched.isFetched());
 
@@ -87,7 +89,7 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 
 	if (esbdEntity != null) {
 
-	    String idNumber = esbdEntity.getIdNumber();
+	    TaxpayerNumber idNumber = TaxpayerNumber.of(esbdEntity.getIdNumber());
 
 	    if (idNumber != null) {
 		driver.setIdNumber(idNumber);
@@ -104,7 +106,8 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 
 	    LocalDate dobLocal = null;
 	    {
-		dobLocal = IdNumbers.dateOfBirthFrom(idNumber).orElse(null);
+		dobLocal = idNumber.optionalDateOfBirth() //
+			.orElse(null);
 		if (esbdEntity != null && esbdEntity.getPersonal() != null
 			&& esbdEntity.getPersonal().getDayOfBirth() != null)
 		    dobLocal = esbdEntity.getPersonal().getDayOfBirth();
@@ -118,7 +121,9 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 
 	    Sex sexLocal = null;
 	    {
-		sexLocal = convertKZLibSex(IdNumbers.genderFrom(idNumber).orElse(null));
+		sexLocal = idNumber.optionalGender() //
+			.map(PolicyDriverFacadeBean::convertKZLibSex) //
+			.orElse(null);
 		if (esbdEntity != null && esbdEntity.getPersonal() != null
 			&& esbdEntity.getPersonal().getSex() != null)
 		    sexLocal = esbdEntity.getPersonal().getSex();
@@ -155,7 +160,8 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 		if (esbdEntity.getIdentityCard() != null) {
 		    driver.getIdentityCardData().setNumber(esbdEntity.getIdentityCard().getNumber());
 		    driver.getIdentityCardData()
-			    .setDateOfIssue(MyTemporals.calendar().toLocalDate(esbdEntity.getIdentityCard().getDateOfIssue()));
+			    .setDateOfIssue(
+				    MyTemporals.calendar().toLocalDate(esbdEntity.getIdentityCard().getDateOfIssue()));
 		    driver.getIdentityCardData().setType(esbdEntity.getIdentityCard().getIdentityCardType());
 		    driver.getIdentityCardData()
 			    .setIssuingAuthority(esbdEntity.getIdentityCard().getIssuingAuthority());
@@ -176,7 +182,7 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 
     // PRIVATE STATIC
 
-    private static Sex convertKZLibSex(com.lapsa.kz.idnumber.IdNumbers.Gender kzLibSex) {
+    private static Sex convertKZLibSex(tech.lapsa.kz.taxpayer.Gender kzLibSex) {
 	if (kzLibSex == null)
 	    return null;
 	switch (kzLibSex) {
