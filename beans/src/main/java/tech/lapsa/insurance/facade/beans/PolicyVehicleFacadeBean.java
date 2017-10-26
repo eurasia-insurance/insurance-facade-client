@@ -2,6 +2,7 @@ package tech.lapsa.insurance.facade.beans;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import javax.ejb.Stateless;
@@ -15,9 +16,11 @@ import tech.lapsa.insurance.esbd.entities.VehicleEntity;
 import tech.lapsa.insurance.esbd.entities.VehicleEntityService;
 import tech.lapsa.insurance.facade.PolicyVehicleFacade;
 import tech.lapsa.java.commons.function.MyCollectors;
+import tech.lapsa.java.commons.function.MyObjects;
 import tech.lapsa.java.commons.function.MyOptionals;
 import tech.lapsa.java.commons.function.MyStrings;
 import tech.lapsa.kz.vehicle.VehicleRegNumber;
+import tech.lapsa.kz.vehicle.VehicleType;
 
 @Stateless
 public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
@@ -26,54 +29,58 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
     private VehicleEntityService vehicleService;
 
     @Override
-    public List<PolicyVehicle> fetchByRegNumber(String regNumber) {
-	MyStrings.requireNonEmpty(regNumber, "regNumber");
+    public List<PolicyVehicle> fetchByRegNumber(VehicleRegNumber regNumber) {
+	MyObjects.requireNonNull(regNumber, "regNumber")
+		.requireValid("regNumber");
 	return MyOptionals.streamOf(vehicleService.getByRegNumber(regNumber)) //
 		.orElseGet(Stream::empty) //
-		.map(this::fetchFrom) //
+		.map(this::fetchFromESBDEntity) //
 		.collect(MyCollectors.unmodifiableList());
     }
 
     @Override
     public List<PolicyVehicle> fetchByVINCode(String vinCode) {
 	MyStrings.requireNonEmpty(vinCode, "vinCode");
-	return MyOptionals.streamOf(vehicleService.getByRegNumber(vinCode)) //
+	return MyOptionals.streamOf(vehicleService.getByVINCode(vinCode)) //
 		.orElseGet(Stream::empty) //
-		.map(this::fetchFrom) //
+		.map(this::fetchFromESBDEntity) //
 		.collect(MyCollectors.unmodifiableList());
     }
 
     @Override
-    public PolicyVehicle fetchFirstByRegNumber(String regNumber) {
+    public Optional<PolicyVehicle> fetchFirstByRegNumber(VehicleRegNumber regNumber) {
 	return MyOptionals.streamOf(vehicleService.getByRegNumber(regNumber)) //
 		.orElseGet(Stream::empty) //
-		.findFirst()
-		.map(this::fetchFrom) //
-		.orElse(null);
+		.findFirst() //
+		.map(this::fetchFromESBDEntity) //
+		.map(x -> fillFromVehicleRegNumber(x, regNumber)) //
+	;
     }
 
     @Override
-    public PolicyVehicle fetchFirstByVINCode(String vinCode) {
+    public Optional<PolicyVehicle> fetchFirstByVINCode(String vinCode) {
 	return MyOptionals.streamOf(vehicleService.getByVINCode(vinCode)) //
 		.orElseGet(Stream::empty) //
 		.findFirst()
-		.map(this::fetchFrom) //
-		.orElse(null);
+		.map(this::fetchFromESBDEntity) //
+	;
+    }
+
+    @Override
+    public PolicyVehicle getByRegNumberOrDefault(VehicleRegNumber regNumber) {
+	return fetchFirstByRegNumber(regNumber) //
+		.orElseGet(() -> fillFromVehicleRegNumber(new PolicyVehicle(), regNumber));
     }
 
     @Deprecated
     public void fetch(PolicyVehicle vehicle) {
 	clearFetched(vehicle);
-	PolicyVehicle fetched = fetchFirstByVINCode(vehicle.getVinCode()); // TODO
-									   // fetchFirst
-									   // fetching
-									   // the
-									   // first
-									   // entity.
-									   // What
-									   // if
-									   // has
-									   // more?
+
+	// TODO fetchFirst fetching the first entity. What if has more?
+	PolicyVehicle fetched = fetchFirstByVINCode(vehicle.getVinCode()).orElse(null);
+	if (fetched == null)
+	    return;
+
 	vehicle.setFetched(fetched.isFetched());
 	vehicle.setVinCode(fetched.getVinCode());
 	vehicle.setVehicleAgeClass(fetched.getVehicleAgeClass());
@@ -104,7 +111,7 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
 
     // PRIVATE
 
-    private PolicyVehicle fetchFrom(VehicleEntity esbdEntity) {
+    private PolicyVehicle fetchFromESBDEntity(VehicleEntity esbdEntity) {
 	PolicyVehicle vehicle = new PolicyVehicle();
 
 	if (esbdEntity != null) {
@@ -120,31 +127,6 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
 
 	    vehicle.setColor(esbdEntity.getColor());
 
-	    {
-		MyOptionals.of(esbdEntity.getRegNum()) //
-			.map(VehicleRegNumber::of)
-			.ifPresent(x -> {
-			    vehicle.getCertificateData().setRegistrationNumber(x);
-			    x.optionalArea() //
-				    .ifPresent(vehicle::setArea);
-
-			    if (vehicle.getVehicleClass() == null)
-				x.optionalVehicleType().map(y -> {
-				    switch (y) {
-				    case MOTORBIKE:
-					return VehicleClass.MOTO;
-				    case TRAILER:
-					return VehicleClass.TRAILER;
-				    case CAR:
-				    default:
-					return null;
-				    }
-				}) //
-					.ifPresent(vehicle::setVehicleClass);
-			});
-
-	    }
-
 	    if (esbdEntity.getVehicleModel() != null) {
 		vehicle.setModel(esbdEntity.getVehicleModel().getName());
 		if (esbdEntity.getVehicleModel().getManufacturer() != null)
@@ -156,6 +138,35 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
     }
 
     // PRIVATE STATIC
+
+    private PolicyVehicle fillFromVehicleRegNumber(PolicyVehicle vehicle, VehicleRegNumber vehicleRegNumber) {
+
+	if (vehicle.getCertificateData().getRegistrationNumber() == null)
+	    vehicle.getCertificateData().setRegistrationNumber(vehicleRegNumber);
+
+	if (vehicle.getArea() == null)
+	    vehicleRegNumber.optionalArea() //
+		    .ifPresent(vehicle::setArea);
+
+	if (vehicle.getVehicleClass() == null)
+	    vehicleRegNumber.optionalVehicleType() //
+		    .map(this::converKZLibVehcileType) //
+		    .ifPresent(vehicle::setVehicleClass);
+
+	return vehicle;
+    }
+
+    private VehicleClass converKZLibVehcileType(VehicleType y) {
+	switch (y) {
+	case MOTORBIKE:
+	    return VehicleClass.MOTO;
+	case TRAILER:
+	    return VehicleClass.TRAILER;
+	case CAR:
+	default:
+	    return null;
+	}
+    }
 
     private static VehicleAgeClass _obtainVehicleAgeClass(int age) {
 	return age > 7 ? VehicleAgeClass.OVER7 : VehicleAgeClass.UNDER7;
@@ -173,5 +184,4 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
 	    throw new NullPointerException();
 	return dob.until(LocalDate.now()).getYears();
     }
-
 }
