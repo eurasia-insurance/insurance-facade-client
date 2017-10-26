@@ -20,4 +20,6 @@ public interface PolicyVehicleFacade {
 
     Optional<PolicyVehicle> fetchFirstByVINCode(String vinCode);
 
+    PolicyVehicle getByRegNumberOrDefault(VehicleRegNumber regNumber);
+
 }

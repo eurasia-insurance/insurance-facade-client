@@ -16,4 +16,6 @@ public interface PolicyDriverFacade {
 
     Optional<PolicyDriver> fetchByIdNumber(TaxpayerNumber idNumber);
 
+    PolicyDriver getByTaxpayerNumberOrDefault(TaxpayerNumber taxpayerNumber);
+
 }

@@ -43,7 +43,14 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
     public Optional<PolicyDriver> fetchByIdNumber(TaxpayerNumber idNumber) {
 	return MyOptionals.of(idNumber) //
 		.flatMap(subjectPersonService::optionalByIIN) //
-		.map(this::fetchFrom);
+		.map(this::fetchFromESBDEntity) //
+		.map(x -> fillFromTaxpayerNumber(x, idNumber));
+    }
+
+    @Override
+    public PolicyDriver getByTaxpayerNumberOrDefault(TaxpayerNumber taxpayerNumber) {
+	return fetchByIdNumber(taxpayerNumber) //
+		.orElseGet(() -> fillFromTaxpayerNumber(new PolicyDriver(), taxpayerNumber));
     }
 
     @Deprecated
@@ -83,7 +90,7 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 
     // PRIVATE
 
-    private PolicyDriver fetchFrom(SubjectPersonEntity esbdEntity) {
+    private PolicyDriver fetchFromESBDEntity(SubjectPersonEntity esbdEntity) {
 
 	PolicyDriver driver = new PolicyDriver();
 
@@ -106,8 +113,6 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 
 	    LocalDate dobLocal = null;
 	    {
-		dobLocal = idNumber.optionalDateOfBirth() //
-			.orElse(null);
 		if (esbdEntity != null && esbdEntity.getPersonal() != null
 			&& esbdEntity.getPersonal().getDayOfBirth() != null)
 		    dobLocal = esbdEntity.getPersonal().getDayOfBirth();
@@ -121,9 +126,6 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 
 	    Sex sexLocal = null;
 	    {
-		sexLocal = idNumber.optionalGender() //
-			.map(PolicyDriverFacadeBean::convertKZLibSex) //
-			.orElse(null);
 		if (esbdEntity != null && esbdEntity.getPersonal() != null
 			&& esbdEntity.getPersonal().getSex() != null)
 		    sexLocal = esbdEntity.getPersonal().getSex();
@@ -182,7 +184,32 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 
     // PRIVATE STATIC
 
-    private static Sex convertKZLibSex(tech.lapsa.kz.taxpayer.Gender kzLibSex) {
+    private PolicyDriver fillFromTaxpayerNumber(PolicyDriver driver, TaxpayerNumber taxpayerNumber) {
+
+	if (driver.getIdNumber() == null)
+	    driver.setIdNumber(taxpayerNumber);
+
+	if (driver.getInsuranceClassType() == null)
+	    driver.setInsuranceClassType(getDefaultInsuranceClass());
+
+	if (driver.getPersonalData().getDayOfBirth() == null)
+	    taxpayerNumber.optionalDateOfBirth() //
+		    .ifPresent(driver.getPersonalData()::setDayOfBirth);
+
+	if (driver.getAgeClass() == null)
+	    taxpayerNumber.optionalDateOfBirth() //
+		    .map(this::obtainInsuredAgeClass)
+		    .ifPresent(driver::setAgeClass);
+
+	if (driver.getPersonalData().getSex() == null)
+	    taxpayerNumber.optionalGender()
+		    .map(this::convertKZLibSex)
+		    .ifPresent(driver.getPersonalData()::setSex);
+
+	return driver;
+    }
+
+    private Sex convertKZLibSex(tech.lapsa.kz.taxpayer.Gender kzLibSex) {
 	if (kzLibSex == null)
 	    return null;
 	switch (kzLibSex) {
@@ -194,7 +221,7 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 	return null;
     }
 
-    private static InsuredAgeClass obtainInsuredAgeClass(LocalDate dayOfBirth) {
+    private InsuredAgeClass obtainInsuredAgeClass(LocalDate dayOfBirth) {
 	if (dayOfBirth == null)
 	    return null;
 	int years = calculateAgeByDOB(dayOfBirth);
@@ -210,5 +237,4 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
     private static InsuredAgeClass _obtainInsuredAgeClass(int years) {
 	return years < 25 ? InsuredAgeClass.UNDER25 : InsuredAgeClass.OVER25;
     }
-
 }
