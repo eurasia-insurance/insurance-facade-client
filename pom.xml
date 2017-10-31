@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>tech.lapsa.maven</groupId>
 		<artifactId>maven-general</artifactId>
-		<version>3.0-SNAPSHOT</version>
+		<version>3.0</version>
 	</parent>
 
 	<groupId>tech.lapsa.insurance</groupId>
@@ -22,15 +22,15 @@
 
 	<properties>
 		<!-- BOMS -->
-		<javax-javaee-bom.version>7.0-SNAPSHOT</javax-javaee-bom.version>
-		<java-commons-root.version>1.0-SNAPSHOT</java-commons-root.version>
+		<javax-javaee-bom.version>7.0</javax-javaee-bom.version>
+		<java-commons.version>1.0</java-commons.version>
 		<!-- tech -->
-		<epayment-facade.version>1.0-SNAPSHOT</epayment-facade.version>
-		<insurance-dao.version>1.0-SNAPSHOT</insurance-dao.version>
-		<insurance-esbd.version>1.0-SNAPSHOT</insurance-esbd.version>
-		<insurance-notifier.version>1.0-SNAPSHOT</insurance-notifier.version>
+		<epayment-facade.version>1.0</epayment-facade.version>
+		<insurance-dao.version>1.0</insurance-dao.version>
+		<insurance-esbd.version>1.0</insurance-esbd.version>
+		<insurance-notifier.version>1.0</insurance-notifier.version>
 		<!-- oldies -->
-		<insurance-lib.version>2.3-SNAPSHOT</insurance-lib.version>
+		<insurance-lib.version>2.3</insurance-lib.version>
 	</properties>
 
 	<dependencyManagement>
@@ -46,7 +46,7 @@
 			<dependency>
 				<groupId>tech.lapsa.java</groupId>
 				<artifactId>java-commons-root</artifactId>
-				<version>${java-commons-root.version}</version>
+				<version>${java-commons.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
