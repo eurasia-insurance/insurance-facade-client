@@ -51,7 +51,8 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 	request.getPayment().setPostInstant(paymentInstant);
 	request = dao.save(request);
 
-	// TODO This is requred to prevent ValidationExpression
+	// TODO initialize LAZY members before serialization 
+	// This is requred to prevent ValidationExpression
 	// EclipseLink-7242 Exception Description: An attempt was made to
 	// traverse a relationship using indirection that had a null Session.
 	// This often occurs when an entity with an uninstantiated LAZY

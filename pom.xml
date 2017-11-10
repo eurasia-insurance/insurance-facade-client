@@ -9,7 +9,7 @@
 
 	<groupId>tech.lapsa.insurance</groupId>
 	<artifactId>insurance-facade-root</artifactId>
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Insurance Lib : Facade</name>
@@ -24,12 +24,12 @@
 		<javax-javaee-bom.version>7.0</javax-javaee-bom.version>
 		<java-commons.version>1.0</java-commons.version>
 		<!-- tech -->
-		<epayment-facade.version>1.0</epayment-facade.version>
-		<insurance-dao.version>1.0</insurance-dao.version>
-		<insurance-esbd.version>1.0</insurance-esbd.version>
-		<insurance-notifier.version>1.0.1</insurance-notifier.version>
+		<epayment-facade.version>1.1-SNAPSHOT</epayment-facade.version>
+		<insurance-dao.version>1.1-SNAPSHOT</insurance-dao.version>
+		<insurance-esbd.version>1.1-SNAPSHOT</insurance-esbd.version>
+		<insurance-notifier.version>1.1-SNAPSHOT</insurance-notifier.version>
 		<!-- oldies -->
-		<insurance-lib.version>2.3</insurance-lib.version>
+		<insurance-lib.version>2.4-SNAPSHOT</insurance-lib.version>
 	</properties>
 
 	<dependencyManagement>
