@@ -146,10 +146,11 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 			.build() //
 			.send();
 	case UNCOMPLETE:
-	    builder.withChannel(NotificationChannel.PUSH) //
-		    .withRecipient(NotificationRecipientType.COMPANY) //
-		    .build() //
-		    .send();
+	    // TODO PUSH DISABLED temporary
+	    // builder.withChannel(NotificationChannel.PUSH) //
+	    // .withRecipient(NotificationRecipientType.COMPANY) //
+	    // .build() //
+	    // .send();
 	}
 	return request;
     }
