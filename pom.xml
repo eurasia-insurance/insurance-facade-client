@@ -27,7 +27,7 @@
 		<epayment-facade.version>1.0</epayment-facade.version>
 		<insurance-dao.version>1.0</insurance-dao.version>
 		<insurance-esbd.version>1.0</insurance-esbd.version>
-		<insurance-notifier.version>1.0.1-SNAPSHOT</insurance-notifier.version>
+		<insurance-notifier.version>1.0.1</insurance-notifier.version>
 		<!-- oldies -->
 		<insurance-lib.version>2.3</insurance-lib.version>
 	</properties>
