@@ -30,8 +30,8 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
 
     @Override
     public List<PolicyVehicle> fetchByRegNumber(VehicleRegNumber regNumber) {
-	MyObjects.requireNonNull(regNumber, "regNumber")
-		.requireValid("regNumber");
+	MyObjects.requireNonNull(regNumber, "regNumber");
+	VehicleRegNumber.requireValid(regNumber);
 	return MyOptionals.streamOf(vehicleService.getByRegNumber(regNumber)) //
 		.orElseGet(Stream::empty) //
 		.map(this::fetchFromESBDEntity) //
