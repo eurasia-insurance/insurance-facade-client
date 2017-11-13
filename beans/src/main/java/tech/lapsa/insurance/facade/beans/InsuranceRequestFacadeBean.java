@@ -1,21 +1,23 @@
 package tech.lapsa.insurance.facade.beans;
 
 import java.time.Instant;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import com.lapsa.fin.FinCurrency;
 import com.lapsa.insurance.domain.CalculationData;
 import com.lapsa.insurance.domain.InsuranceProduct;
 import com.lapsa.insurance.domain.InsuranceRequest;
 import com.lapsa.insurance.domain.RequesterData;
-import com.lapsa.insurance.domain.policy.PolicyRequest;
 import com.lapsa.insurance.elements.PaymentMethod;
 import com.lapsa.insurance.elements.PaymentStatus;
 import com.lapsa.international.localization.LocalizationLanguage;
 
+import tech.lapsa.epayment.domain.Invoice;
+import tech.lapsa.epayment.domain.Invoice.InvoiceBuilder;
 import tech.lapsa.epayment.facade.EpaymentFacade;
-import tech.lapsa.epayment.facade.EpaymentFacade.EbillAcceptorBuilder;
 import tech.lapsa.insurance.dao.InsuranceRequestDAO;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade;
 import tech.lapsa.insurance.notifier.NotificationChannel;
@@ -24,7 +26,6 @@ import tech.lapsa.insurance.notifier.NotificationRequestStage;
 import tech.lapsa.insurance.notifier.Notifier;
 import tech.lapsa.insurance.notifier.Notifier.NotificationBuilder;
 import tech.lapsa.java.commons.function.MyNumbers;
-import tech.lapsa.java.commons.function.MyObjects;
 import tech.lapsa.java.commons.function.MyOptionals;
 import tech.lapsa.java.commons.function.MyStrings;
 import tech.lapsa.java.commons.logging.MyLogger;
@@ -43,7 +44,8 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
     }
 
     @Override
-    public void markPaymentComplete(Integer id, String paymentReference, Instant paymentInstant) {
+    public void markPaymentSuccessful(Integer id, String methodName, Instant paymentInstant, Double amount,
+	    String paymentReference) {
 	InsuranceRequest request = dao.optionalById(id)
 		.orElseThrow(() -> new IllegalArgumentException("Request not found with id " + id));
 	request.getPayment().setStatus(PaymentStatus.DONE);
@@ -51,18 +53,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 	request.getPayment().setPostInstant(paymentInstant);
 	request = dao.save(request);
 
-	// TODO initialize LAZY members before serialization 
-	// This is requred to prevent ValidationExpression
-	// EclipseLink-7242 Exception Description: An attempt was made to
-	// traverse a relationship using indirection that had a null Session.
-	// This often occurs when an entity with an uninstantiated LAZY
-	// relationship is serialized and that relationship is traversed after
-	// serialization. To avoid this issue, instantiate the LAZY relationship
-	// prior to serialization.
-	request.getAcceptedBy();
-	if (MyObjects.isA(request, PolicyRequest.class)) {
-	    ((PolicyRequest) request).getPolicy();
-	}
+	request.unlazy();
 
 	notifier.newNotificationBuilder() //
 		.withEvent(NotificationRequestStage.REQUEST_PAID) //
@@ -76,32 +67,33 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
     // PRIVATE
 
     @Inject
-    private EpaymentFacade epaymentFacade;
+    private EpaymentFacade epayments;
 
     private <T extends InsuranceRequest> T setupPaymentOrder(T request) {
 	if (request.getPayment() != null //
 		&& MyStrings.empty(request.getPayment().getExternalId()) //
 		&& PaymentMethod.PAYCARD_ONLINE.equals(request.getPayment().getMethod())) {
 
-	    LocalizationLanguage consumerLanguage = MyOptionals.of(request.getRequester()) //
-		    .map(RequesterData::getPreferLanguage) //
+	    InvoiceBuilder builder = Invoice.builder() //
+		    .withGeneratedNumber() //
+		    .withCurrencty(FinCurrency.KZT) //
+		    .withExternalId(request.getId()) //
+	    ;
+
+	    Optional<RequesterData> ord = MyOptionals.of(request.getRequester());
+
+	    LocalizationLanguage consumerLanguage = ord.map(RequesterData::getPreferLanguage) //
 		    .orElseThrow(() -> new IllegalArgumentException("Can't determine the language"));
+	    builder.withConsumerPreferLanguage(consumerLanguage);
 
-	    String consumerEmail = MyOptionals.of(request.getRequester()) //
-		    .map(RequesterData::getEmail) //
-		    .orElseThrow(() -> new IllegalArgumentException("Can't determine a consumer email"));
+	    builder.withConsumerEmail(ord.map(RequesterData::getEmail) //
+		    .orElseThrow(() -> new IllegalArgumentException("Can't determine a consumer email")));
 
-	    String consumerName = MyOptionals.of(request.getRequester()) //
-		    .map(RequesterData::getName) //
-		    .orElseThrow(() -> new IllegalArgumentException("Can't determine a consumer name"));
+	    builder.withConsumerName(ord.map(RequesterData::getName) //
+		    .orElseThrow(() -> new IllegalArgumentException("Can't determine a consumer name")));
 
-	    EbillAcceptorBuilder builder = epaymentFacade.newEbillAcceptorBuilder() //
-		    .winthGeneratedId() //
-		    .withDefaultCurrency() //
-		    .withConsumerLanguage(consumerLanguage) //
-		    .withConsumerEmail(consumerEmail) //
-		    .withConsumerName(consumerName) //
-		    .withExternalId(request.getId());
+	    ord.map(RequesterData::getIdNumber) //
+		    .ifPresent(builder::withConsumerTaxpayerNumber);
 
 	    String itemName = MyOptionals.of(request.getProductType()) //
 		    .map(x -> x.regular(consumerLanguage.getLocale())) //
@@ -114,13 +106,13 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 		    .orElseThrow(() -> new IllegalArgumentException("Can't determine an item cost")) //
 		    .doubleValue();
 
-	    String ebillId = builder.withMoreItem(itemName, cost, 1) //
-		    .build() //
-		    .accept() //
-		    .getId();
+	    builder.withItem(itemName, 1, cost);
+
+	    String invoiceNumber = epayments.completeAndAccept(builder) //
+		    .getNumber();
 
 	    request.getPayment() //
-		    .setExternalId(ebillId);
+		    .setExternalId(invoiceNumber);
 	}
 	return request;
     }

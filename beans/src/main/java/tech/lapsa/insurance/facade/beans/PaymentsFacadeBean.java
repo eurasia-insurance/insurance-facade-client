@@ -5,7 +5,7 @@ import java.net.URI;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import tech.lapsa.epayment.facade.Ebill;
+import tech.lapsa.epayment.domain.Invoice;
 import tech.lapsa.epayment.facade.EpaymentFacade;
 import tech.lapsa.insurance.facade.PaymentsFacade;
 
@@ -13,12 +13,12 @@ import tech.lapsa.insurance.facade.PaymentsFacade;
 public class PaymentsFacadeBean implements PaymentsFacade {
 
     @Inject
-    private EpaymentFacade delegate;
+    private EpaymentFacade epayments;
 
     @Override
-    public URI getPaymentURI(String invoiceId) {
-	Ebill ebill = delegate.newEbillFetcherBuilder().usingId(invoiceId).build().fetch();
-	return delegate.getDefaultPaymentURI(ebill);
+    public URI getPaymentURI(String invoiceNumber) {
+	Invoice ebill = epayments.forNumber(invoiceNumber);
+	return epayments.getDefaultPaymentURI(ebill);
     }
 
 }
