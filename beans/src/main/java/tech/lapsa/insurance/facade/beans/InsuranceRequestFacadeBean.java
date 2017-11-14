@@ -138,7 +138,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 			.build() //
 			.send();
 	case UNCOMPLETE:
-	    // TODO PUSH DISABLED temporary
+	    // TODO DEBUG : Push disabled temporary. Need to debug
 	    // builder.withChannel(NotificationChannel.PUSH) //
 	    // .withRecipient(NotificationRecipientType.COMPANY) //
 	    // .build() //

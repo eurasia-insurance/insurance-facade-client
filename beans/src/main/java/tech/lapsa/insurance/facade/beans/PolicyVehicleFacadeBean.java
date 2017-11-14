@@ -76,7 +76,6 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
     public void fetch(PolicyVehicle vehicle) {
 	clearFetched(vehicle);
 
-	// TODO fetchFirst fetching the first entity. What if has more?
 	PolicyVehicle fetched = fetchFirstByVINCode(vehicle.getVinCode()).orElse(null);
 	if (fetched == null)
 	    return;
