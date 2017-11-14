@@ -30,32 +30,31 @@ public class UserFacadeBean implements UserFacade {
 	    .build();
 
     @Override
-    public User findOrCreate(String principalName) throws IllegalArgument, IllegalState {
+    public User findOrCreate(final String principalName) throws IllegalArgument, IllegalState {
 	return reThrowAsChecked(() -> {
 	    if (principalName == null)
 		return null;
 	    try {
 		return userDAO.getByLogin(principalName);
-	    } catch (NotFound e) {
+	    } catch (final NotFound e) {
 		logger.INFO.log("New User creating '%1$s'", principalName);
 
-		User value = new User();
-		UserLogin login = value.addLogin(new UserLogin());
+		final User value = new User();
+		final UserLogin login = value.addLogin(new UserLogin());
 		login.setName(principalName);
 
 		if (Util.isEmail(principalName)) {
 		    value.setEmail(principalName);
 		    value.setName(Util.stripEmailToName(principalName));
-		} else {
+		} else
 		    value.setName(principalName);
-		}
 		return userDAO.save(value);
 	    }
 	});
     }
 
     @Override
-    public User findOrCreate(Principal principal) throws IllegalArgument, IllegalState {
+    public User findOrCreate(final Principal principal) throws IllegalArgument, IllegalState {
 	return reThrowAsChecked(() -> {
 	    if (principal == null)
 		return null;
@@ -74,17 +73,17 @@ public class UserFacadeBean implements UserFacade {
 		+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 	private static final Pattern pattern = Pattern.compile(EMAIL_PATTERN);
 
-	public static boolean isEmail(String principalName) {
+	public static boolean isEmail(final String principalName) {
 	    return pattern.matcher(principalName).matches();
 	}
 
-	public static String stripEmailToName(String email) {
+	public static String stripEmailToName(final String email) {
 	    if (email == null)
 		return null;
-	    String[] verbs = email.split("\\@")[0].split("[\\.\\s]");
-	    StringBuffer sb = new StringBuffer();
+	    final String[] verbs = email.split("\\@")[0].split("[\\.\\s]");
+	    final StringBuffer sb = new StringBuffer();
 	    for (int i = 0; i < verbs.length; i++) {
-		String verb = verbs[i];
+		final String verb = verbs[i];
 		if (verb.length() == 0)
 		    continue;
 		sb.append(Character.toUpperCase(verb.charAt(0)));

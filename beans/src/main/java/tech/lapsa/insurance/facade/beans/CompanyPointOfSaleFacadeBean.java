@@ -89,7 +89,7 @@ public class CompanyPointOfSaleFacadeBean implements CompanyPointOfSaleFacade {
     // PRIVATE
 
     private Stream<CompanyPointOfSale> allAvailable() {
-	List<CompanyPointOfSale> poses = companyPointOfSaleDAO.findAll();
+	final List<CompanyPointOfSale> poses = companyPointOfSaleDAO.findAll();
 	return MyOptionals.streamOf(poses) //
 		.orElseGet(Stream::empty) //
 		.filter(CompanyPointOfSale::isAvailable);

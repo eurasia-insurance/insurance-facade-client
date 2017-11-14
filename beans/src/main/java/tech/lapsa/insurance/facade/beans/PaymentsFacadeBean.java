@@ -22,12 +22,12 @@ public class PaymentsFacadeBean implements PaymentsFacade {
     private EpaymentFacade epayments;
 
     @Override
-    public URI getPaymentURI(String invoiceNumber) throws IllegalArgument, IllegalState {
+    public URI getPaymentURI(final String invoiceNumber) throws IllegalArgument, IllegalState {
 	return reThrowAsChecked(() -> {
 	    try {
-		Invoice ebill = epayments.forNumber(invoiceNumber);
+		final Invoice ebill = epayments.forNumber(invoiceNumber);
 		return epayments.getDefaultPaymentURI(ebill);
-	    } catch (InvoiceNotFound e) {
+	    } catch (final InvoiceNotFound e) {
 		throw MyExceptions.illegalArgumentFormat("Invoice not found with number %1$s", invoiceNumber);
 	    }
 	});

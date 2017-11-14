@@ -33,7 +33,7 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
     private VehicleEntityService vehicleService;
 
     @Override
-    public List<PolicyVehicle> fetchByRegNumber(VehicleRegNumber regNumber) throws IllegalArgument, IllegalState {
+    public List<PolicyVehicle> fetchByRegNumber(final VehicleRegNumber regNumber) throws IllegalArgument, IllegalState {
 	return reThrowAsChecked(() -> {
 	    MyObjects.requireNonNull(regNumber, "regNumber");
 	    VehicleRegNumber.requireValid(regNumber);
@@ -45,7 +45,7 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
     }
 
     @Override
-    public List<PolicyVehicle> fetchByVINCode(String vinCode) throws IllegalArgument, IllegalState {
+    public List<PolicyVehicle> fetchByVINCode(final String vinCode) throws IllegalArgument, IllegalState {
 	return reThrowAsChecked(() -> {
 	    MyStrings.requireNonEmpty(vinCode, "vinCode");
 	    return MyOptionals.streamOf(vehicleService.getByVINCode(vinCode)) //
@@ -56,7 +56,7 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
     }
 
     @Override
-    public Optional<PolicyVehicle> fetchFirstByRegNumber(VehicleRegNumber regNumber)
+    public Optional<PolicyVehicle> fetchFirstByRegNumber(final VehicleRegNumber regNumber)
 	    throws IllegalArgument, IllegalState {
 	return reThrowAsChecked(() -> MyOptionals.streamOf(vehicleService.getByRegNumber(regNumber)) //
 		.orElseGet(Stream::empty) //
@@ -66,7 +66,7 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
     }
 
     @Override
-    public Optional<PolicyVehicle> fetchFirstByVINCode(String vinCode) throws IllegalArgument, IllegalState {
+    public Optional<PolicyVehicle> fetchFirstByVINCode(final String vinCode) throws IllegalArgument, IllegalState {
 	return reThrowAsChecked(() -> MyOptionals.streamOf(vehicleService.getByVINCode(vinCode)) //
 		.orElseGet(Stream::empty) //
 		.findFirst()
@@ -74,17 +74,18 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
     }
 
     @Override
-    public PolicyVehicle getByRegNumberOrDefault(VehicleRegNumber regNumber) throws IllegalArgument, IllegalState {
+    public PolicyVehicle getByRegNumberOrDefault(final VehicleRegNumber regNumber)
+	    throws IllegalArgument, IllegalState {
 	return reThrowAsChecked(() -> fetchFirstByRegNumber(regNumber) //
 		.orElseGet(() -> fillFromVehicleRegNumber(new PolicyVehicle(), regNumber)));
     }
 
     @Deprecated
-    public void fetch(PolicyVehicle vehicle) throws IllegalArgument, IllegalState {
+    public void fetch(final PolicyVehicle vehicle) throws IllegalArgument, IllegalState {
 	reThrowAsChecked(() -> {
 	    clearFetched(vehicle);
 
-	    PolicyVehicle fetched = fetchFirstByVINCode(vehicle.getVinCode()).orElse(null);
+	    final PolicyVehicle fetched = fetchFirstByVINCode(vehicle.getVinCode()).orElse(null);
 	    if (fetched == null)
 		return;
 
@@ -103,7 +104,7 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
     }
 
     @Deprecated
-    public void clearFetched(PolicyVehicle vehicle) throws IllegalArgument, IllegalState {
+    public void clearFetched(final PolicyVehicle vehicle) throws IllegalArgument, IllegalState {
 	reThrowAsChecked(() -> {
 	    vehicle.setFetched(false);
 
@@ -121,8 +122,8 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
 
     // PRIVATE
 
-    private PolicyVehicle fetchFromESBDEntity(VehicleEntity esbdEntity) {
-	PolicyVehicle vehicle = new PolicyVehicle();
+    private PolicyVehicle fetchFromESBDEntity(final VehicleEntity esbdEntity) {
+	final PolicyVehicle vehicle = new PolicyVehicle();
 
 	if (esbdEntity != null) {
 	    vehicle.setFetched(true);
@@ -149,7 +150,8 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
 
     // PRIVATE STATIC
 
-    private PolicyVehicle fillFromVehicleRegNumber(PolicyVehicle vehicle, VehicleRegNumber vehicleRegNumber) {
+    private PolicyVehicle fillFromVehicleRegNumber(final PolicyVehicle vehicle,
+	    final VehicleRegNumber vehicleRegNumber) {
 
 	if (vehicle.getCertificateData().getRegistrationNumber() == null)
 	    vehicle.getCertificateData().setRegistrationNumber(vehicleRegNumber);
@@ -166,7 +168,7 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
 	return vehicle;
     }
 
-    private VehicleClass converKZLibVehcileType(VehicleType y) {
+    private VehicleClass converKZLibVehcileType(final VehicleType y) {
 	switch (y) {
 	case MOTORBIKE:
 	    return VehicleClass.MOTO;
@@ -178,18 +180,18 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
 	}
     }
 
-    private static VehicleAgeClass _obtainVehicleAgeClass(int age) {
+    private static VehicleAgeClass _obtainVehicleAgeClass(final int age) {
 	return age > 7 ? VehicleAgeClass.OVER7 : VehicleAgeClass.UNDER7;
     }
 
-    private static VehicleAgeClass obtainVehicleAgeClass(LocalDate realeaseDate) {
+    private static VehicleAgeClass obtainVehicleAgeClass(final LocalDate realeaseDate) {
 	if (realeaseDate == null)
 	    return null;
-	int age = calculateAgeByDOB(realeaseDate);
+	final int age = calculateAgeByDOB(realeaseDate);
 	return _obtainVehicleAgeClass(age);
     }
 
-    private static int calculateAgeByDOB(LocalDate dob) {
+    private static int calculateAgeByDOB(final LocalDate dob) {
 	if (dob == null)
 	    throw new NullPointerException();
 	return dob.until(LocalDate.now()).getYears();

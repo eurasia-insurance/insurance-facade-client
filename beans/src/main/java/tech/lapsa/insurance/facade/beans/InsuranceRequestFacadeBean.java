@@ -38,10 +38,10 @@ import tech.lapsa.java.commons.logging.MyLogger;
 public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 
     @Override
-    public <T extends InsuranceRequest> T acceptAndReply(T request) throws IllegalArgument, IllegalState {
+    public <T extends InsuranceRequest> T acceptAndReply(final T request) throws IllegalArgument, IllegalState {
 	return reThrowAsChecked(() -> {
 	    Requests.preSave(request);
-	    T saved = persistRequest(request);
+	    final T saved = persistRequest(request);
 	    setupPaymentOrder(saved);
 	    setupNotifications(saved);
 	    logInsuranceRequestAccepted(saved);
@@ -50,8 +50,9 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
     }
 
     @Override
-    public void markPaymentSuccessful(Integer id, String methodName, Instant paymentInstant, Double amount,
-	    String paymentReference) throws IllegalArgument, IllegalState {
+    public void markPaymentSuccessful(final Integer id, final String methodName, final Instant paymentInstant,
+	    final Double amount,
+	    final String paymentReference) throws IllegalArgument, IllegalState {
 	reThrowAsChecked(() -> {
 	    InsuranceRequest request = dao.optionalById(id)
 		    .orElseThrow(() -> new IllegalArgumentException("Request not found with id " + id));
@@ -77,20 +78,20 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
     @Inject
     private EpaymentFacade epayments;
 
-    private <T extends InsuranceRequest> T setupPaymentOrder(T request) {
+    private <T extends InsuranceRequest> T setupPaymentOrder(final T request) {
 	if (request.getPayment() != null //
 		&& MyStrings.empty(request.getPayment().getExternalId()) //
 		&& PaymentMethod.PAYCARD_ONLINE.equals(request.getPayment().getMethod())) {
 
-	    InvoiceBuilder builder = Invoice.builder() //
+	    final InvoiceBuilder builder = Invoice.builder() //
 		    .withGeneratedNumber() //
 		    .withCurrency(FinCurrency.KZT) //
 		    .withExternalId(request.getId()) //
 	    ;
 
-	    Optional<RequesterData> ord = MyOptionals.of(request.getRequester());
+	    final Optional<RequesterData> ord = MyOptionals.of(request.getRequester());
 
-	    LocalizationLanguage consumerLanguage = ord.map(RequesterData::getPreferLanguage) //
+	    final LocalizationLanguage consumerLanguage = ord.map(RequesterData::getPreferLanguage) //
 		    .orElseThrow(() -> new IllegalArgumentException("Can't determine the language"));
 	    builder.withConsumerPreferLanguage(consumerLanguage);
 
@@ -103,11 +104,11 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 	    ord.map(RequesterData::getIdNumber) //
 		    .ifPresent(builder::withConsumerTaxpayerNumber);
 
-	    String itemName = MyOptionals.of(request.getProductType()) //
+	    final String itemName = MyOptionals.of(request.getProductType()) //
 		    .map(x -> x.regular(consumerLanguage.getLocale())) //
 		    .orElseThrow(() -> new IllegalArgumentException("Can't determine an item name"));
 
-	    double cost = MyOptionals.of(request.getProduct()) //
+	    final double cost = MyOptionals.of(request.getProduct()) //
 		    .map(InsuranceProduct::getCalculation) //
 		    .map(CalculationData::getPremiumCost) //
 		    .filter(MyNumbers::nonZero) //
@@ -116,7 +117,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 
 	    builder.withItem(itemName, 1, cost);
 
-	    String invoiceNumber = reThrowAsUnchecked(() -> epayments.completeAndAccept(builder) //
+	    final String invoiceNumber = reThrowAsUnchecked(() -> epayments.completeAndAccept(builder) //
 		    .getNumber());
 
 	    request.getPayment() //
@@ -128,8 +129,8 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
     @Inject
     private Notifier notifier;
 
-    private <T extends InsuranceRequest> T setupNotifications(T request) {
-	NotificationBuilder builder = notifier.newNotificationBuilder() //
+    private <T extends InsuranceRequest> T setupNotifications(final T request) {
+	final NotificationBuilder builder = notifier.newNotificationBuilder() //
 		.withEvent(NotificationRequestStage.NEW_REQUEST) //
 		.forEntity(request);
 
@@ -166,7 +167,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 	    .withNameOf(InsuranceRequestFacade.class) //
 	    .build();
 
-    private <T extends InsuranceRequest> T logInsuranceRequestAccepted(T request) {
+    private <T extends InsuranceRequest> T logInsuranceRequestAccepted(final T request) {
 	logger.INFO.log("New %4$s accepded from '%1$s' '<%2$s>' tel '%3$s' ", //
 		request.getRequester().getName(), // 1
 		request.getRequester().getEmail(), // 2
