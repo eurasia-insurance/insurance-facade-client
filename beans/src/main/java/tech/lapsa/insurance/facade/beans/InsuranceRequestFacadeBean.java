@@ -76,7 +76,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 
 	    InvoiceBuilder builder = Invoice.builder() //
 		    .withGeneratedNumber() //
-		    .withCurrencty(FinCurrency.KZT) //
+		    .withCurrency(FinCurrency.KZT) //
 		    .withExternalId(request.getId()) //
 	    ;
 
