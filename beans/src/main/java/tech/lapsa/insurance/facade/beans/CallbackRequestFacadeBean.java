@@ -1,5 +1,7 @@
 package tech.lapsa.insurance.facade.beans;
 
+import static tech.lapsa.java.commons.function.MyExceptions.*;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -11,18 +13,22 @@ import tech.lapsa.insurance.notifier.NotificationChannel;
 import tech.lapsa.insurance.notifier.NotificationRecipientType;
 import tech.lapsa.insurance.notifier.NotificationRequestStage;
 import tech.lapsa.insurance.notifier.Notifier;
+import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
+import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
 import tech.lapsa.java.commons.logging.MyLogger;
 
 @Stateless
 public class CallbackRequestFacadeBean implements CallbackRequestFacade {
 
     @Override
-    public <T extends CallbackRequest> T acceptAndReply(T request) {
-	Requests.preSave(request);
-	T saved = persistRequest(request);
-	setupNotifications(saved);
-	logInsuranceRequestAccepted(saved);
-	return saved;
+    public <T extends CallbackRequest> T acceptAndReply(T request) throws IllegalArgument, IllegalState {
+	return reThrowAsChecked(() -> {
+	    Requests.preSave(request);
+	    T saved = persistRequest(request);
+	    setupNotifications(saved);
+	    logInsuranceRequestAccepted(saved);
+	    return saved;
+	});
     }
 
     @Inject

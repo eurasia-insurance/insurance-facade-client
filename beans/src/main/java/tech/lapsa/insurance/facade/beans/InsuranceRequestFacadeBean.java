@@ -1,5 +1,7 @@
 package tech.lapsa.insurance.facade.beans;
 
+import static tech.lapsa.java.commons.function.MyExceptions.*;
+
 import java.time.Instant;
 import java.util.Optional;
 
@@ -25,6 +27,8 @@ import tech.lapsa.insurance.notifier.NotificationRecipientType;
 import tech.lapsa.insurance.notifier.NotificationRequestStage;
 import tech.lapsa.insurance.notifier.Notifier;
 import tech.lapsa.insurance.notifier.Notifier.NotificationBuilder;
+import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
+import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
 import tech.lapsa.java.commons.function.MyNumbers;
 import tech.lapsa.java.commons.function.MyOptionals;
 import tech.lapsa.java.commons.function.MyStrings;
@@ -34,34 +38,38 @@ import tech.lapsa.java.commons.logging.MyLogger;
 public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 
     @Override
-    public <T extends InsuranceRequest> T acceptAndReply(T request) {
-	Requests.preSave(request);
-	T saved = persistRequest(request);
-	setupPaymentOrder(saved);
-	setupNotifications(saved);
-	logInsuranceRequestAccepted(saved);
-	return saved;
+    public <T extends InsuranceRequest> T acceptAndReply(T request) throws IllegalArgument, IllegalState {
+	return reThrowAsChecked(() -> {
+	    Requests.preSave(request);
+	    T saved = persistRequest(request);
+	    setupPaymentOrder(saved);
+	    setupNotifications(saved);
+	    logInsuranceRequestAccepted(saved);
+	    return saved;
+	});
     }
 
     @Override
     public void markPaymentSuccessful(Integer id, String methodName, Instant paymentInstant, Double amount,
-	    String paymentReference) {
-	InsuranceRequest request = dao.optionalById(id)
-		.orElseThrow(() -> new IllegalArgumentException("Request not found with id " + id));
-	request.getPayment().setStatus(PaymentStatus.DONE);
-	request.getPayment().setPostReference(paymentReference);
-	request.getPayment().setPostInstant(paymentInstant);
-	request = dao.save(request);
+	    String paymentReference) throws IllegalArgument, IllegalState {
+	reThrowAsChecked(() -> {
+	    InsuranceRequest request = dao.optionalById(id)
+		    .orElseThrow(() -> new IllegalArgumentException("Request not found with id " + id));
+	    request.getPayment().setStatus(PaymentStatus.DONE);
+	    request.getPayment().setPostReference(paymentReference);
+	    request.getPayment().setPostInstant(paymentInstant);
+	    request = dao.save(request);
 
-	request.unlazy();
+	    request.unlazy();
 
-	notifier.newNotificationBuilder() //
-		.withEvent(NotificationRequestStage.REQUEST_PAID) //
-		.withChannel(NotificationChannel.EMAIL) //
-		.forEntity(request) //
-		.withRecipient(NotificationRecipientType.COMPANY) //
-		.build()
-		.send();
+	    notifier.newNotificationBuilder() //
+		    .withEvent(NotificationRequestStage.REQUEST_PAID) //
+		    .withChannel(NotificationChannel.EMAIL) //
+		    .forEntity(request) //
+		    .withRecipient(NotificationRecipientType.COMPANY) //
+		    .build()
+		    .send();
+	});
     }
 
     // PRIVATE
@@ -108,8 +116,8 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 
 	    builder.withItem(itemName, 1, cost);
 
-	    String invoiceNumber = epayments.completeAndAccept(builder) //
-		    .getNumber();
+	    String invoiceNumber = reThrowAsUnchecked(() -> epayments.completeAndAccept(builder) //
+		    .getNumber());
 
 	    request.getPayment() //
 		    .setExternalId(invoiceNumber);

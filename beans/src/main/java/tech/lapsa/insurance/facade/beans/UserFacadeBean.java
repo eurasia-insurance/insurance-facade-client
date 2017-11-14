@@ -1,5 +1,7 @@
 package tech.lapsa.insurance.facade.beans;
 
+import static tech.lapsa.java.commons.function.MyExceptions.*;
+
 import java.security.Principal;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -12,6 +14,8 @@ import com.lapsa.insurance.domain.crm.UserLogin;
 
 import tech.lapsa.insurance.dao.UserDAO;
 import tech.lapsa.insurance.facade.UserFacade;
+import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
+import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
 import tech.lapsa.java.commons.logging.MyLogger;
 import tech.lapsa.patterns.dao.NotFound;
 
@@ -26,38 +30,42 @@ public class UserFacadeBean implements UserFacade {
 	    .build();
 
     @Override
-    public User findOrCreate(String principalName) {
-	if (principalName == null)
-	    return null;
-	try {
-	    return userDAO.getByLogin(principalName);
-	} catch (NotFound e) {
-	    logger.INFO.log("New User creating '%1$s'", principalName);
+    public User findOrCreate(String principalName) throws IllegalArgument, IllegalState {
+	return reThrowAsChecked(() -> {
+	    if (principalName == null)
+		return null;
+	    try {
+		return userDAO.getByLogin(principalName);
+	    } catch (NotFound e) {
+		logger.INFO.log("New User creating '%1$s'", principalName);
 
-	    User value = new User();
-	    UserLogin login = value.addLogin(new UserLogin());
-	    login.setName(principalName);
+		User value = new User();
+		UserLogin login = value.addLogin(new UserLogin());
+		login.setName(principalName);
 
-	    if (Util.isEmail(principalName)) {
-		value.setEmail(principalName);
-		value.setName(Util.stripEmailToName(principalName));
-	    } else {
-		value.setName(principalName);
+		if (Util.isEmail(principalName)) {
+		    value.setEmail(principalName);
+		    value.setName(Util.stripEmailToName(principalName));
+		} else {
+		    value.setName(principalName);
+		}
+		return userDAO.save(value);
 	    }
-	    return userDAO.save(value);
-	}
+	});
     }
 
     @Override
-    public User findOrCreate(Principal principal) {
-	if (principal == null)
-	    return null;
-	return findOrCreate(principal.getName());
+    public User findOrCreate(Principal principal) throws IllegalArgument, IllegalState {
+	return reThrowAsChecked(() -> {
+	    if (principal == null)
+		return null;
+	    return findOrCreate(principal.getName());
+	});
     }
 
     @Override
-    public List<User> getWhoEverCreatedRequests() {
-	return userDAO.findAllWhoCreatedRequest();
+    public List<User> getWhoEverCreatedRequests() throws IllegalArgument, IllegalState {
+	return reThrowAsChecked(() -> userDAO.findAllWhoCreatedRequest());
     }
 
     private static class Util {

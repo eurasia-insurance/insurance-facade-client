@@ -1,5 +1,7 @@
 package tech.lapsa.insurance.facade.beans;
 
+import static tech.lapsa.java.commons.function.MyExceptions.*;
+
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -21,6 +23,8 @@ import tech.lapsa.insurance.esbd.elements.InsuranceClassTypeService;
 import tech.lapsa.insurance.esbd.entities.SubjectPersonEntity;
 import tech.lapsa.insurance.esbd.entities.SubjectPersonEntityService;
 import tech.lapsa.insurance.facade.PolicyDriverFacade;
+import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
+import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
 import tech.lapsa.java.commons.function.MyOptionals;
 import tech.lapsa.java.commons.time.MyTemporals;
 import tech.lapsa.kz.taxpayer.TaxpayerNumber;
@@ -40,52 +44,57 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
     }
 
     @Override
-    public Optional<PolicyDriver> fetchByIdNumber(TaxpayerNumber idNumber) {
-	return MyOptionals.of(idNumber) //
+    public Optional<PolicyDriver> fetchByIdNumber(TaxpayerNumber idNumber) throws IllegalArgument, IllegalState {
+	return reThrowAsChecked(() -> MyOptionals.of(idNumber) //
 		.flatMap(subjectPersonService::optionalByIIN) //
 		.map(this::fetchFromESBDEntity) //
-		.map(x -> fillFromTaxpayerNumber(x, idNumber));
+		.map(x -> fillFromTaxpayerNumber(x, idNumber)));
     }
 
     @Override
-    public PolicyDriver getByTaxpayerNumberOrDefault(TaxpayerNumber taxpayerNumber) {
-	return fetchByIdNumber(taxpayerNumber) //
-		.orElseGet(() -> fillFromTaxpayerNumber(new PolicyDriver(), taxpayerNumber));
+    public PolicyDriver getByTaxpayerNumberOrDefault(TaxpayerNumber taxpayerNumber)
+	    throws IllegalArgument, IllegalState {
+	return reThrowAsChecked(() -> fetchByIdNumber(taxpayerNumber) //
+		.orElseGet(() -> fillFromTaxpayerNumber(new PolicyDriver(), taxpayerNumber)));
     }
 
     @Deprecated
-    public void fetch(PolicyDriver driver) {
-	clearFetched(driver);
-	PolicyDriver fetched = fetchByIdNumber(driver.getIdNumber()).orElse(null);
-	if (fetched == null)
-	    return;
+    public void fetch(PolicyDriver driver) throws IllegalArgument, IllegalState {
+	reThrowAsChecked(() -> {
+	    clearFetched(driver);
+	    PolicyDriver fetched = fetchByIdNumber(driver.getIdNumber()).orElse(null);
+	    if (fetched == null)
+		return;
 
-	driver.setFetched(fetched.isFetched());
+	    driver.setFetched(fetched.isFetched());
 
-	driver.setInsuranceClassType(fetched.getInsuranceClassType());
-	driver.setAgeClass(fetched.getAgeClass());
+	    driver.setInsuranceClassType(fetched.getInsuranceClassType());
+	    driver.setAgeClass(fetched.getAgeClass());
 
-	driver.setPersonalData(fetched.getPersonalData());
-	driver.setResidenceData(fetched.getResidenceData());
-	driver.setOriginData(fetched.getOriginData());
-	driver.setIdentityCardData(fetched.getIdentityCardData());
-	driver.setTaxPayerNumber(fetched.getTaxPayerNumber());
-	driver.setContactData(fetched.getContactData());
+	    driver.setPersonalData(fetched.getPersonalData());
+	    driver.setResidenceData(fetched.getResidenceData());
+	    driver.setOriginData(fetched.getOriginData());
+	    driver.setIdentityCardData(fetched.getIdentityCardData());
+	    driver.setTaxPayerNumber(fetched.getTaxPayerNumber());
+	    driver.setContactData(fetched.getContactData());
+	});
     }
 
     @Deprecated
-    public void clearFetched(PolicyDriver driver) {
-	driver.setFetched(false);
+    public void clearFetched(PolicyDriver driver) throws IllegalArgument, IllegalState {
+	reThrowAsChecked(() -> {
+	    driver.setFetched(false);
 
-	driver.setInsuranceClassType(getDefaultInsuranceClass());
-	driver.setAgeClass(null);
+	    driver.setInsuranceClassType(getDefaultInsuranceClass());
+	    driver.setAgeClass(null);
 
-	driver.setPersonalData(new PersonalData());
-	driver.setResidenceData(new ResidenceData());
-	driver.setOriginData(new OriginData());
-	driver.setIdentityCardData(new IdentityCardData());
-	driver.setTaxPayerNumber(null);
-	driver.setContactData(new ContactData());
+	    driver.setPersonalData(new PersonalData());
+	    driver.setResidenceData(new ResidenceData());
+	    driver.setOriginData(new OriginData());
+	    driver.setIdentityCardData(new IdentityCardData());
+	    driver.setTaxPayerNumber(null);
+	    driver.setContactData(new ContactData());
+	});
     }
 
     // PRIVATE
