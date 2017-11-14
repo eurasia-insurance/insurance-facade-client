@@ -7,6 +7,6 @@ import javax.ejb.Local;
 @Local
 public interface PaymentsFacade {
 
-    URI getPaymentURI(String invoiceId);
+    URI getPaymentURI(String invoiceId) throws IllegalArgumentException;
 
 }
