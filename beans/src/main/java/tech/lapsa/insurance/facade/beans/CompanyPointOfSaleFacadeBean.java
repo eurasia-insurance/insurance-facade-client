@@ -1,5 +1,7 @@
 package tech.lapsa.insurance.facade.beans;
 
+import static tech.lapsa.java.commons.function.MyExceptions.*;
+
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -13,6 +15,8 @@ import com.lapsa.kz.country.KZCity;
 import tech.lapsa.insurance.dao.CompanyPointOfSaleDAO;
 import tech.lapsa.insurance.facade.CompanyPointOfSaleFacade;
 import tech.lapsa.java.commons.function.MyCollectors;
+import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
+import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
 import tech.lapsa.java.commons.function.MyObjects;
 import tech.lapsa.java.commons.function.MyOptionals;
 
@@ -23,60 +27,69 @@ public class CompanyPointOfSaleFacadeBean implements CompanyPointOfSaleFacade {
     private CompanyPointOfSaleDAO companyPointOfSaleDAO;
 
     @Override
-    public List<CompanyPointOfSale> pointOfSalesForPickup() {
-	return allAvailable() //
-		.filter(CompanyPointOfSale::isPickupAvailable) //
-		.collect(MyCollectors.unmodifiableList());
+    public List<CompanyPointOfSale> pointOfSalesForPickup() throws IllegalArgument, IllegalState {
+	return reThrowAsChecked(() -> {
+	    return allAvailable() //
+		    .filter(CompanyPointOfSale::isPickupAvailable) //
+		    .collect(MyCollectors.unmodifiableList());
+	});
     }
 
     @Override
-    public List<CompanyPointOfSale> pointOfSalesForPickup(final KZCity city) {
-	MyObjects.requireNonNull(city, "city");
-	return allAvailable() //
-		.filter(CompanyPointOfSale::isPickupAvailable)
-		.filter(x -> MyObjects.nonNull(x.getAddress()))
-		.filter(x -> city.equals(x.getAddress().getCity()))
-		.collect(MyCollectors.unmodifiableList());
+    public List<CompanyPointOfSale> pointOfSalesForPickup(final KZCity city) throws IllegalArgument, IllegalState {
+	return reThrowAsChecked(() -> {
+	    MyObjects.requireNonNull(city, "city");
+	    return allAvailable() //
+		    .filter(CompanyPointOfSale::isPickupAvailable)
+		    .filter(x -> MyObjects.nonNull(x.getAddress()))
+		    .filter(x -> city.equals(x.getAddress().getCity()))
+		    .collect(MyCollectors.unmodifiableList());
+	});
     }
 
     @Override
-    public List<CompanyPointOfSale> pointOfSalesForDelivery() {
-	return allAvailable() //
-		.filter(CompanyPointOfSale::isDeliveryServicesAvailable) //
-		.collect(MyCollectors.unmodifiableList());
+    public List<CompanyPointOfSale> pointOfSalesForDelivery() throws IllegalArgument, IllegalState {
+	return reThrowAsChecked(() -> {
+	    return allAvailable() //
+		    .filter(CompanyPointOfSale::isDeliveryServicesAvailable) //
+		    .collect(MyCollectors.unmodifiableList());
+	});
     }
 
     @Override
-    public List<CompanyPointOfSale> pointOfSalesForDelivery(final KZCity city) {
-	MyObjects.requireNonNull(city, "city");
-	return allAvailable() //
-		.filter(CompanyPointOfSale::isDeliveryServicesAvailable) //
-		.filter(x -> MyObjects.nonNull(x.getAddress())) //
-		.filter(x -> city.equals(x.getAddress().getCity())) //
-		.collect(MyCollectors.unmodifiableList());
+    public List<CompanyPointOfSale> pointOfSalesForDelivery(final KZCity city) throws IllegalArgument, IllegalState {
+	return reThrowAsChecked(() -> {
+	    MyObjects.requireNonNull(city, "city");
+	    return allAvailable() //
+		    .filter(CompanyPointOfSale::isDeliveryServicesAvailable) //
+		    .filter(x -> MyObjects.nonNull(x.getAddress())) //
+		    .filter(x -> city.equals(x.getAddress().getCity())) //
+		    .collect(MyCollectors.unmodifiableList());
+	});
     }
 
     @Override
-    public List<KZCity> getCitiesForPickup() {
-	return allAvailable() //
+    public List<KZCity> getCitiesForPickup() throws IllegalArgument, IllegalState {
+	return reThrowAsChecked(() -> allAvailable() //
 		.filter(CompanyPointOfSale::isPickupAvailable) //
 		.map(CompanyPointOfSale::getAddress) //
 		.map(PostAddress::getCity) //
 		.distinct() //
-		.collect(MyCollectors.unmodifiableList());
+		.collect(MyCollectors.unmodifiableList()));
     }
 
     @Override
-    public List<CompanyPointOfSale> findAllOwnOffices() {
-	return allAvailable() //
+    public List<CompanyPointOfSale> findAllOwnOffices() throws IllegalArgument, IllegalState {
+	return reThrowAsChecked(() -> allAvailable() //
 		.filter(CompanyPointOfSale::isCompanyOwnOffice)
-		.collect(MyCollectors.unmodifiableList());
+		.collect(MyCollectors.unmodifiableList()));
+
     }
 
     // PRIVATE
 
     private Stream<CompanyPointOfSale> allAvailable() {
-	List<CompanyPointOfSale> poses = companyPointOfSaleDAO.findAll();
+	final List<CompanyPointOfSale> poses = companyPointOfSaleDAO.findAll();
 	return MyOptionals.streamOf(poses) //
 		.orElseGet(Stream::empty) //
 		.filter(CompanyPointOfSale::isAvailable);

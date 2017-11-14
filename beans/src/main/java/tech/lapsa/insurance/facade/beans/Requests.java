@@ -19,7 +19,7 @@ final class Requests {
     private Requests() {
     }
 
-    static <T extends InsuranceRequest> T preSave(T request) {
+    static <T extends InsuranceRequest> T preSave(final T request) {
 	preDates(request);
 	preStatus(request);
 	preProgressStatus(request);
@@ -29,7 +29,7 @@ final class Requests {
 	return request;
     }
 
-    static <T extends CallbackRequest> T preSave(T request) {
+    static <T extends CallbackRequest> T preSave(final T request) {
 	preDates(request);
 	preStatus(request);
 	preProgressStatus(request);

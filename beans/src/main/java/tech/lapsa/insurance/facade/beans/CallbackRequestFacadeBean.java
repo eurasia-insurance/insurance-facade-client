@@ -1,5 +1,7 @@
 package tech.lapsa.insurance.facade.beans;
 
+import static tech.lapsa.java.commons.function.MyExceptions.*;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -11,24 +13,28 @@ import tech.lapsa.insurance.notifier.NotificationChannel;
 import tech.lapsa.insurance.notifier.NotificationRecipientType;
 import tech.lapsa.insurance.notifier.NotificationRequestStage;
 import tech.lapsa.insurance.notifier.Notifier;
+import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
+import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
 import tech.lapsa.java.commons.logging.MyLogger;
 
 @Stateless
 public class CallbackRequestFacadeBean implements CallbackRequestFacade {
 
     @Override
-    public <T extends CallbackRequest> T acceptAndReply(T request) {
-	Requests.preSave(request);
-	T saved = persistRequest(request);
-	setupNotifications(saved);
-	logInsuranceRequestAccepted(saved);
-	return saved;
+    public <T extends CallbackRequest> T acceptAndReply(final T request) throws IllegalArgument, IllegalState {
+	return reThrowAsChecked(() -> {
+	    Requests.preSave(request);
+	    final T saved = persistRequest(request);
+	    setupNotifications(saved);
+	    logInsuranceRequestAccepted(saved);
+	    return saved;
+	});
     }
 
     @Inject
     private Notifier notifier;
 
-    private CallbackRequest setupNotifications(CallbackRequest request) {
+    private CallbackRequest setupNotifications(final CallbackRequest request) {
 
 	notifier.newNotificationBuilder() //
 		.withEvent(NotificationRequestStage.NEW_REQUEST) //
@@ -52,7 +58,7 @@ public class CallbackRequestFacadeBean implements CallbackRequestFacade {
 	    .withNameOf(CallbackRequestFacade.class) //
 	    .build();
 
-    private CallbackRequest logInsuranceRequestAccepted(CallbackRequest request) {
+    private CallbackRequest logInsuranceRequestAccepted(final CallbackRequest request) {
 	logger.INFO.log("New %4$s accepded from '%1$s' '<%2$s>' tel '%3$s' ", //
 		request.getRequester().getName(), // 1
 		request.getRequester().getEmail(), // 2
