@@ -27,6 +27,7 @@ import tech.lapsa.insurance.notifier.NotificationRecipientType;
 import tech.lapsa.insurance.notifier.NotificationRequestStage;
 import tech.lapsa.insurance.notifier.Notifier;
 import tech.lapsa.insurance.notifier.Notifier.NotificationBuilder;
+import tech.lapsa.java.commons.function.MyExceptions;
 import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
 import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
 import tech.lapsa.java.commons.function.MyNumbers;
@@ -85,37 +86,37 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 
 	    final InvoiceBuilder builder = Invoice.builder() //
 		    .withGeneratedNumber() //
-		    .withCurrency(FinCurrency.KZT) //
-		    .withExternalId(request.getId()) //
-	    ;
+		    .withExternalId(request.getId());
 
 	    final Optional<RequesterData> ord = MyOptionals.of(request.getRequester());
 
 	    final LocalizationLanguage consumerLanguage = ord.map(RequesterData::getPreferLanguage) //
-		    .orElseThrow(() -> new IllegalArgumentException("Can't determine the language"));
+		    .orElseThrow(MyExceptions.illegalStateSupplierFormat("Can't determine the language"));
 	    builder.withConsumerPreferLanguage(consumerLanguage);
 
 	    builder.withConsumerEmail(ord.map(RequesterData::getEmail) //
-		    .orElseThrow(() -> new IllegalArgumentException("Can't determine a consumer email")));
+		    .orElseThrow(MyExceptions.illegalStateSupplierFormat("Can't determine a consumer email")));
 
 	    builder.withConsumerName(ord.map(RequesterData::getName) //
-		    .orElseThrow(() -> new IllegalArgumentException("Can't determine a consumer name")));
+		    .orElseThrow(MyExceptions.illegalStateSupplierFormat("Can't determine a consumer name")));
 
 	    ord.map(RequesterData::getIdNumber) //
 		    .ifPresent(builder::withConsumerTaxpayerNumber);
 
-	    final String itemName = MyOptionals.of(request.getProductType()) //
+	    final Optional<CalculationData> ocd = MyOptionals.of(request.getProduct()) //
+		    .map(InsuranceProduct::getCalculation);
+
+	    builder.withCurrency(ocd.map(CalculationData::getPremiumCurrency) //
+		    .map(FinCurrency::getCurrency)
+		    .orElseThrow(MyExceptions.illegalStateSupplierFormat("Can't determine an premium currency")));
+
+	    builder.withItem(MyOptionals.of(request.getProductType()) //
 		    .map(x -> x.regular(consumerLanguage.getLocale())) //
-		    .orElseThrow(() -> new IllegalArgumentException("Can't determine an item name"));
-
-	    final double cost = MyOptionals.of(request.getProduct()) //
-		    .map(InsuranceProduct::getCalculation) //
-		    .map(CalculationData::getPremiumCost) //
-		    .filter(MyNumbers::nonZero) //
-		    .orElseThrow(() -> new IllegalArgumentException("Can't determine an item cost")) //
-		    .doubleValue();
-
-	    builder.withItem(itemName, 1, cost);
+		    .orElseThrow(MyExceptions.illegalStateSupplierFormat("Can't determine an item name")), //
+		    1, //
+		    ocd.map(CalculationData::getPremiumCost) //
+			    .filter(MyNumbers::nonZero) //
+			    .orElseThrow(MyExceptions.illegalStateSupplierFormat("Can't determine an premium amount")));
 
 	    final String invoiceNumber = reThrowAsUnchecked(() -> epayments.completeAndAccept(builder) //
 		    .getNumber());
