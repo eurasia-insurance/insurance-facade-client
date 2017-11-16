@@ -58,8 +58,9 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 	    InsuranceRequest request = dao.optionalById(id)
 		    .orElseThrow(() -> new IllegalArgumentException("Request not found with id " + id));
 	    request.getPayment().setStatus(PaymentStatus.DONE);
-	    request.getPayment().setPostReference(paymentReference);
-	    request.getPayment().setPostInstant(paymentInstant);
+	    request.getPayment().setMethodName(methodName);
+	    request.getPayment().setPaymentReference(paymentReference);
+	    request.getPayment().setPaymentInstant(paymentInstant);
 	    request = dao.save(request);
 
 	    request.unlazy();
