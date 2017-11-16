@@ -51,15 +51,17 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
     }
 
     @Override
+    //TODO REFACT : rename to completePayment
     public void markPaymentSuccessful(final Integer id, final String methodName, final Instant paymentInstant,
-	    final Double amount,
-	    final String paymentReference) throws IllegalArgument, IllegalState {
+	    final Double paymentAmount, final String paymentReference) throws IllegalArgument, IllegalState {
 	reThrowAsChecked(() -> {
 	    InsuranceRequest request = dao.optionalById(id)
 		    .orElseThrow(() -> new IllegalArgumentException("Request not found with id " + id));
 	    request.getPayment().setStatus(PaymentStatus.DONE);
-	    request.getPayment().setPostReference(paymentReference);
-	    request.getPayment().setPostInstant(paymentInstant);
+	    request.getPayment().setMethodName(methodName);
+	    request.getPayment().setPaymentAmount(paymentAmount);
+	    request.getPayment().setPaymentReference(paymentReference);
+	    request.getPayment().setPaymentInstant(paymentInstant);
 	    request = dao.save(request);
 
 	    request.unlazy();
