@@ -25,8 +25,8 @@ public class PaymentsFacadeBean implements PaymentsFacade {
     public URI getPaymentURI(final String invoiceNumber) throws IllegalArgument, IllegalState {
 	return reThrowAsChecked(() -> {
 	    try {
-		final Invoice ebill = epayments.invoiceByNumber(invoiceNumber);
-		return epayments.getDefaultPaymentURI(ebill);
+		final Invoice invoice = epayments.invoiceByNumber(invoiceNumber);
+		return epayments.getDefaultPaymentURI(invoice);
 	    } catch (final InvoiceNotFound e) {
 		throw MyExceptions.illegalArgumentFormat("Invoice not found with number %1$s", invoiceNumber);
 	    }
