@@ -104,6 +104,9 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 	ord.map(RequesterData::getEmail) //
 		.ifPresent(builder::withConsumerEmail);
 
+	ord.map(RequesterData::getPhone) //
+		.ifPresent(builder::withConsumerPhone);
+
 	ord.map(RequesterData::getIdNumber) //
 		.ifPresent(builder::withConsumerTaxpayerNumber);
 
