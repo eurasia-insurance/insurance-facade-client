@@ -9,10 +9,6 @@ import com.lapsa.insurance.domain.CallbackRequest;
 
 import tech.lapsa.insurance.dao.CallbackRequestDAO;
 import tech.lapsa.insurance.facade.CallbackRequestFacade;
-import tech.lapsa.insurance.notifier.NotificationChannel;
-import tech.lapsa.insurance.notifier.NotificationRecipientType;
-import tech.lapsa.insurance.notifier.NotificationRequestStage;
-import tech.lapsa.insurance.notifier.Notifier;
 import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
 import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
 import tech.lapsa.java.commons.logging.MyLogger;
@@ -31,19 +27,18 @@ public class CallbackRequestFacadeBean implements CallbackRequestFacade {
 	});
     }
 
-    @Inject
-    private Notifier notifier;
+    // TODO DEBUG : Push disabled temporary. Need to debug
+    // @Inject
+    // private Notifier notifier;
 
     private CallbackRequest setupNotifications(final CallbackRequest request) {
-
-	notifier.newNotificationBuilder() //
-		.withEvent(NotificationRequestStage.NEW_REQUEST) //
-		.withChannel(NotificationChannel.PUSH) //
-		.withRecipient(NotificationRecipientType.COMPANY) //
-		.forEntity(request) //
-		.build() //
-		.send();
-
+	// notifier.newNotificationBuilder() //
+	// .withEvent(NotificationRequestStage.NEW_REQUEST) //
+	// .withChannel(NotificationChannel.PUSH) //
+	// .withRecipient(NotificationRecipientType.COMPANY) //
+	// .forEntity(request) //
+	// .build() //
+	// .send();
 	return request;
     }
 
