@@ -1,6 +1,7 @@
 package tech.lapsa.insurance.facade;
 
 import java.time.Instant;
+import java.util.Currency;
 
 import javax.ejb.Local;
 
@@ -15,5 +16,5 @@ public interface InsuranceRequestFacade extends Acceptor<InsuranceRequest> {
     <T extends InsuranceRequest> T acceptAndReply(T request) throws IllegalArgument, IllegalState;
 
     void markPaymentSuccessful(Integer id, String methodName, Instant paymentInstant, Double amount,
-	    String paymentReference) throws IllegalArgument, IllegalState;
+	    Currency currency, String paymentReference) throws IllegalArgument, IllegalState;
 }

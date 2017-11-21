@@ -3,6 +3,7 @@ package tech.lapsa.insurance.facade.beans;
 import static tech.lapsa.java.commons.function.MyExceptions.*;
 
 import java.time.Instant;
+import java.util.Currency;
 import java.util.Optional;
 
 import javax.ejb.Stateless;
@@ -51,9 +52,10 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
     }
 
     @Override
-    //TODO REFACT : rename to completePayment
+    // TODO REFACT : rename to completePayment
     public void markPaymentSuccessful(final Integer id, final String methodName, final Instant paymentInstant,
-	    final Double paymentAmount, final String paymentReference) throws IllegalArgument, IllegalState {
+	    final Double paymentAmount, Currency paymentCurrency, final String paymentReference)
+	    throws IllegalArgument, IllegalState {
 	reThrowAsChecked(() -> {
 	    InsuranceRequest request = dao.optionalById(id)
 		    .orElseThrow(() -> new IllegalArgumentException("Request not found with id " + id));
@@ -62,6 +64,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 	    request.getPayment().setPaymentAmount(paymentAmount);
 	    request.getPayment().setPaymentReference(paymentReference);
 	    request.getPayment().setPaymentInstant(paymentInstant);
+	    // TODO FEAUTURE : Save paymentCurrency or not?
 	    request = dao.save(request);
 
 	    request.unlazy();
