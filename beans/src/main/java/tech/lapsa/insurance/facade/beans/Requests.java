@@ -9,7 +9,6 @@ import com.lapsa.insurance.domain.PaymentData;
 import com.lapsa.insurance.domain.Request;
 import com.lapsa.insurance.elements.ObtainingMethod;
 import com.lapsa.insurance.elements.ObtainingStatus;
-import com.lapsa.insurance.elements.PaymentMethod;
 import com.lapsa.insurance.elements.PaymentStatus;
 import com.lapsa.insurance.elements.ProgressStatus;
 import com.lapsa.insurance.elements.RequestStatus;
@@ -70,8 +69,6 @@ final class Requests {
     private static <T extends InsuranceRequest> T prePayment(final T request) {
 	if (request.getPayment() == null)
 	    request.setPayment(new PaymentData());
-	if (request.getPayment().getMethod() == null)
-	    request.getPayment().setMethod(PaymentMethod.UNDEFINED);
 	if (request.getPayment().getStatus() == null)
 	    request.getPayment().setStatus(PaymentStatus.UNDEFINED);
 	return request;

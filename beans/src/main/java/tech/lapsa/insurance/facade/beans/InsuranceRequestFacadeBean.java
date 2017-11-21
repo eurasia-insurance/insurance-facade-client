@@ -14,7 +14,6 @@ import com.lapsa.insurance.domain.CalculationData;
 import com.lapsa.insurance.domain.InsuranceProduct;
 import com.lapsa.insurance.domain.InsuranceRequest;
 import com.lapsa.insurance.domain.RequesterData;
-import com.lapsa.insurance.elements.PaymentMethod;
 import com.lapsa.insurance.elements.PaymentStatus;
 import com.lapsa.international.localization.LocalizationLanguage;
 
@@ -85,9 +84,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
     private EpaymentFacade epayments;
 
     private <T extends InsuranceRequest> T setupPaymentOrder(final T request) {
-	if (request.getPayment() != null //
-		&& MyStrings.empty(request.getPayment().getExternalId()) //
-		&& PaymentMethod.PAYCARD_ONLINE.equals(request.getPayment().getMethod())) {
+	if (MyStrings.empty(request.getPayment().getExternalId())) {
 
 	    final InvoiceBuilder builder = Invoice.builder() //
 		    .withGeneratedNumber() //
@@ -99,11 +96,11 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 		    .orElseThrow(MyExceptions.illegalStateSupplierFormat("Can't determine the language"));
 	    builder.withConsumerPreferLanguage(consumerLanguage);
 
-	    builder.withConsumerEmail(ord.map(RequesterData::getEmail) //
-		    .orElseThrow(MyExceptions.illegalStateSupplierFormat("Can't determine a consumer email")));
-
 	    builder.withConsumerName(ord.map(RequesterData::getName) //
 		    .orElseThrow(MyExceptions.illegalStateSupplierFormat("Can't determine a consumer name")));
+
+	    ord.map(RequesterData::getEmail) //
+		    .ifPresent(builder::withConsumerEmail);
 
 	    ord.map(RequesterData::getIdNumber) //
 		    .ifPresent(builder::withConsumerTaxpayerNumber);
