@@ -22,11 +22,12 @@ import tech.lapsa.epayment.domain.Invoice.InvoiceBuilder;
 import tech.lapsa.epayment.facade.EpaymentFacade;
 import tech.lapsa.insurance.dao.InsuranceRequestDAO;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade;
+import tech.lapsa.insurance.notifier.Notification;
+import tech.lapsa.insurance.notifier.Notification.NotificationBuilder;
 import tech.lapsa.insurance.notifier.NotificationChannel;
 import tech.lapsa.insurance.notifier.NotificationRecipientType;
 import tech.lapsa.insurance.notifier.NotificationRequestStage;
 import tech.lapsa.insurance.notifier.Notifier;
-import tech.lapsa.insurance.notifier.Notifier.NotificationBuilder;
 import tech.lapsa.java.commons.function.MyExceptions;
 import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
 import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
@@ -68,13 +69,13 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 
 	    request.unlazy();
 
-	    notifier.newNotificationBuilder() //
+	    notifier.send(Notification.builder() //
 		    .withEvent(NotificationRequestStage.REQUEST_PAID) //
 		    .withChannel(NotificationChannel.EMAIL) //
 		    .forEntity(request) //
 		    .withRecipient(NotificationRecipientType.COMPANY) //
-		    .build()
-		    .send();
+		    .build() //
+	    );
 	});
     }
 
@@ -138,22 +139,23 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
     private Notifier notifier;
 
     private <T extends InsuranceRequest> T setupNotifications(final T request) {
-	final NotificationBuilder builder = notifier.newNotificationBuilder() //
+	final NotificationBuilder builder = Notification.builder() //
 		.withEvent(NotificationRequestStage.NEW_REQUEST) //
 		.forEntity(request);
 
 	switch (request.getType()) {
 	case ONLINE:
 	case EXPRESS:
-	    builder.withChannel(NotificationChannel.EMAIL) //
+	    notifier.send(builder.withChannel(NotificationChannel.EMAIL) //
 		    .withRecipient(NotificationRecipientType.COMPANY) //
 		    .build() //
-		    .send();
-	    if (request.getRequester().getEmail() != null)
-		builder.withChannel(NotificationChannel.EMAIL) //
+	    );
+	    if (request.getRequester().getEmail() != null) {
+		notifier.send(builder.withChannel(NotificationChannel.EMAIL) //
 			.withRecipient(NotificationRecipientType.REQUESTER) //
 			.build() //
-			.send();
+		);
+	    }
 	case UNCOMPLETE:
 	    // TODO DEBUG : Push disabled temporary. Need to debug
 	    // builder.withChannel(NotificationChannel.PUSH) //
