@@ -17,7 +17,7 @@ import com.lapsa.insurance.domain.RequesterData;
 import com.lapsa.insurance.elements.PaymentStatus;
 
 import tech.lapsa.epayment.shared.entity.XmlInvoiceAcceptRequest;
-import tech.lapsa.epayment.shared.entity.XmlInvoiceAcceptResponce;
+import tech.lapsa.epayment.shared.entity.XmlInvoiceAcceptResponse;
 import tech.lapsa.epayment.shared.entity.XmlInvoicePurposeItem;
 import tech.lapsa.epayment.shared.jms.EpaymentDestinations;
 import tech.lapsa.insurance.dao.InsuranceRequestDAO;
@@ -88,8 +88,8 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
     @Inject
     @JmsDestinationMappedName(EpaymentDestinations.ACCEPT_INVOICE)
     @JmsServiceEntityType(XmlInvoiceAcceptRequest.class)
-    @JmsCallableResultType(XmlInvoiceAcceptResponce.class)
-    private JmsCallable<XmlInvoiceAcceptRequest, XmlInvoiceAcceptResponce> invoiceAcceptor;
+    @JmsCallableResultType(XmlInvoiceAcceptResponse.class)
+    private JmsCallable<XmlInvoiceAcceptRequest, XmlInvoiceAcceptResponse> invoiceAcceptorCallable;
 
     private <T extends InsuranceRequest> T setupPaymentOrder(final T request) {
 
@@ -132,7 +132,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 
 	r.setItem(p);
 
-	final XmlInvoiceAcceptResponce resp = invoiceAcceptor.call(r);
+	final XmlInvoiceAcceptResponse resp = invoiceAcceptorCallable.call(r);
 
 	request.getPayment().setExternalId(resp.getInvoiceNumber());
 
