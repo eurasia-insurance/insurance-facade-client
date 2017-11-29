@@ -7,8 +7,8 @@ import java.net.URI;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import tech.lapsa.epayment.shared.entity.XmlPaymentURIQualifierRequest;
-import tech.lapsa.epayment.shared.entity.XmlPaymentURIQualifierResponse;
+import tech.lapsa.epayment.shared.entity.XmlPaymentURISpecifierRequest;
+import tech.lapsa.epayment.shared.entity.XmlPaymentURISpecifierResponse;
 import tech.lapsa.epayment.shared.jms.EpaymentDestinations;
 import tech.lapsa.insurance.facade.PaymentsFacade;
 import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
@@ -22,16 +22,16 @@ import tech.lapsa.javax.jms.JmsServiceEntityType;
 public class PaymentsFacadeBean implements PaymentsFacade {
 
     @Inject
-    @JmsDestinationMappedName(EpaymentDestinations.PAYMENT_URI_QUALIFIER)
-    @JmsServiceEntityType(XmlPaymentURIQualifierRequest.class)
-    @JmsCallableResultType(XmlPaymentURIQualifierResponse.class)
-    private JmsCallable<XmlPaymentURIQualifierRequest, XmlPaymentURIQualifierResponse> paymentURIQualifier;
+    @JmsDestinationMappedName(EpaymentDestinations.SPECIFY_PAYMENT_URI)
+    @JmsServiceEntityType(XmlPaymentURISpecifierRequest.class)
+    @JmsCallableResultType(XmlPaymentURISpecifierResponse.class)
+    private JmsCallable<XmlPaymentURISpecifierRequest, XmlPaymentURISpecifierResponse> paymentURISpecifier;
 
     @Override
     public URI getPaymentURI(final String invoiceNumber) throws IllegalArgument, IllegalState {
 	return reThrowAsChecked(() -> {
-	    final XmlPaymentURIQualifierRequest r = new XmlPaymentURIQualifierRequest(invoiceNumber);
-	    final XmlPaymentURIQualifierResponse resp = paymentURIQualifier.call(r);
+	    final XmlPaymentURISpecifierRequest r = new XmlPaymentURISpecifierRequest(invoiceNumber);
+	    final XmlPaymentURISpecifierResponse resp = paymentURISpecifier.call(r);
 	    return resp.getURI();
 	});
     }
