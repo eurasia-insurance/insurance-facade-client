@@ -21,16 +21,15 @@
 			<optional>false</optional>
 		</dependency>
 		<dependency>
-			<groupId>tech.lapsa.epayment</groupId>
-			<artifactId>epayment-facade-client</artifactId>
+			<groupId>tech.lapsa.javax</groupId>
+			<artifactId>javax-jms-commons</artifactId>
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
 		<dependency>
 			<groupId>tech.lapsa.epayment</groupId>
-			<artifactId>epayment-facade</artifactId>
-			<type>ejb</type>
-			<scope>runtime</scope>
+			<artifactId>epayment-shared</artifactId>
+			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
 		<dependency>
