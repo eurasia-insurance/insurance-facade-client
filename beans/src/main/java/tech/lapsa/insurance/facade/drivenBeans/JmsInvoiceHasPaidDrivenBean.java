@@ -12,10 +12,10 @@ import javax.inject.Inject;
 import tech.lapsa.epayment.shared.entity.XmlInvoiceHasPaidEvent;
 import tech.lapsa.epayment.shared.jms.EpaymentDestinations;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade;
-import tech.lapsa.javax.jms.ConsumerServiceDrivenBean;
+import tech.lapsa.javax.jms.service.JmsReceiverServiceDrivenBean;
 
 @MessageDriven(mappedName = EpaymentDestinations.INVOICE_HAS_PAID)
-public class InvoiceHasPaidDrivenBean extends ConsumerServiceDrivenBean<XmlInvoiceHasPaidEvent> {
+public class InvoiceHasPaidDrivenBean extends JmsReceiverServiceDrivenBean<XmlInvoiceHasPaidEvent> {
 
     public InvoiceHasPaidDrivenBean() {
 	super(XmlInvoiceHasPaidEvent.class);

@@ -35,10 +35,9 @@ import tech.lapsa.java.commons.function.MyNumbers;
 import tech.lapsa.java.commons.function.MyOptionals;
 import tech.lapsa.java.commons.function.MyStrings;
 import tech.lapsa.java.commons.logging.MyLogger;
-import tech.lapsa.javax.jms.JmsCallableResultType;
-import tech.lapsa.javax.jms.JmsClientFactory.JmsCallable;
-import tech.lapsa.javax.jms.JmsDestinationMappedName;
-import tech.lapsa.javax.jms.JmsServiceEntityType;
+import tech.lapsa.javax.jms.client.JmsResultType;
+import tech.lapsa.javax.jms.client.JmsCallableClient;
+import tech.lapsa.javax.jms.client.JmsDestination;
 
 @Stateless
 public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
@@ -86,10 +85,9 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
     // PRIVATE
 
     @Inject
-    @JmsDestinationMappedName(EpaymentDestinations.ACCEPT_INVOICE)
-    @JmsServiceEntityType(XmlInvoiceAcceptRequest.class)
-    @JmsCallableResultType(XmlInvoiceAcceptResponse.class)
-    private JmsCallable<XmlInvoiceAcceptRequest, XmlInvoiceAcceptResponse> invoiceAcceptorCallable;
+    @JmsDestination(EpaymentDestinations.ACCEPT_INVOICE)
+    @JmsResultType(XmlInvoiceAcceptResponse.class)
+    private JmsCallableClient<XmlInvoiceAcceptRequest, XmlInvoiceAcceptResponse> invoiceAcceptorCallableClient;
 
     private <T extends InsuranceRequest> T setupPaymentOrder(final T request) {
 
@@ -132,7 +130,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 
 	r.setItem(p);
 
-	final XmlInvoiceAcceptResponse resp = invoiceAcceptorCallable.call(r);
+	final XmlInvoiceAcceptResponse resp = invoiceAcceptorCallableClient.call(r);
 
 	request.getPayment().setExternalId(resp.getInvoiceNumber());
 

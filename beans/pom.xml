@@ -22,7 +22,7 @@
 		</dependency>
 		<dependency>
 			<groupId>tech.lapsa.javax</groupId>
-			<artifactId>javax-jms-commons</artifactId>
+			<artifactId>javax-jms-rpc</artifactId>
 			<type>ejb</type>
 			<scope>compile</scope>
 			<optional>false</optional>
