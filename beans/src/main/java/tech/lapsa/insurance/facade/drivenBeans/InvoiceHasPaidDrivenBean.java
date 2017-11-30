@@ -15,9 +15,9 @@ import tech.lapsa.insurance.facade.InsuranceRequestFacade;
 import tech.lapsa.javax.jms.service.JmsReceiverServiceDrivenBean;
 
 @MessageDriven(mappedName = EpaymentDestinations.INVOICE_HAS_PAID)
-public class JmsInvoiceHasPaidDrivenBean extends JmsReceiverServiceDrivenBean<XmlInvoiceHasPaidEvent> {
+public class InvoiceHasPaidDrivenBean extends JmsReceiverServiceDrivenBean<XmlInvoiceHasPaidEvent> {
 
-    public JmsInvoiceHasPaidDrivenBean() {
+    public InvoiceHasPaidDrivenBean() {
 	super(XmlInvoiceHasPaidEvent.class);
     }
 
