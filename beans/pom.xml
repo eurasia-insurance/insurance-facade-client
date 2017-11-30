@@ -21,16 +21,22 @@
 			<optional>false</optional>
 		</dependency>
 		<dependency>
-			<groupId>tech.lapsa.epayment</groupId>
-			<artifactId>epayment-facade-client</artifactId>
+			<groupId>tech.lapsa.javax</groupId>
+			<artifactId>javax-jms-rpc</artifactId>
+			<type>ejb</type>
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
 		<dependency>
-			<groupId>tech.lapsa.epayment</groupId>
-			<artifactId>epayment-facade</artifactId>
-			<type>ejb</type>
+			<groupId>tech.lapsa.payara</groupId>
+			<artifactId>payara-hibernate-validation</artifactId>
 			<scope>runtime</scope>
+			<optional>false</optional>
+		</dependency>
+		<dependency>
+			<groupId>tech.lapsa.epayment</groupId>
+			<artifactId>epayment-shared</artifactId>
+			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
 		<dependency>
@@ -88,6 +94,16 @@
 		<dependency>
 			<groupId>javax.ejb</groupId>
 			<artifactId>javax.ejb-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.jms</groupId>
+			<artifactId>javax.jms-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

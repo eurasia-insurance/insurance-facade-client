@@ -7,29 +7,30 @@ import java.net.URI;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import tech.lapsa.epayment.domain.Invoice;
-import tech.lapsa.epayment.facade.EpaymentFacade;
-import tech.lapsa.epayment.facade.InvoiceNotFound;
+import tech.lapsa.epayment.shared.entity.XmlPaymentURISpecifierRequest;
+import tech.lapsa.epayment.shared.entity.XmlPaymentURISpecifierResponse;
+import tech.lapsa.epayment.shared.jms.EpaymentDestinations;
 import tech.lapsa.insurance.facade.PaymentsFacade;
-import tech.lapsa.java.commons.function.MyExceptions;
 import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
 import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
+import tech.lapsa.javax.jms.client.JmsCallableClient;
+import tech.lapsa.javax.jms.client.JmsDestination;
+import tech.lapsa.javax.jms.client.JmsResultType;
 
 @Stateless
 public class PaymentsFacadeBean implements PaymentsFacade {
 
     @Inject
-    private EpaymentFacade epayments;
+    @JmsDestination(EpaymentDestinations.SPECIFY_PAYMENT_URI)
+    @JmsResultType(XmlPaymentURISpecifierResponse.class)
+    private JmsCallableClient<XmlPaymentURISpecifierRequest, XmlPaymentURISpecifierResponse> paymentURISpecifierClient;
 
     @Override
     public URI getPaymentURI(final String invoiceNumber) throws IllegalArgument, IllegalState {
 	return reThrowAsChecked(() -> {
-	    try {
-		final Invoice invoice = epayments.invoiceByNumber(invoiceNumber);
-		return epayments.getDefaultPaymentURI(invoice);
-	    } catch (final InvoiceNotFound e) {
-		throw MyExceptions.illegalArgumentFormat("Invoice not found with number %1$s", invoiceNumber);
-	    }
+	    final XmlPaymentURISpecifierRequest r = new XmlPaymentURISpecifierRequest(invoiceNumber);
+	    final XmlPaymentURISpecifierResponse resp = paymentURISpecifierClient.call(r);
+	    return resp.getURI();
 	});
     }
 }
