@@ -35,9 +35,9 @@ import tech.lapsa.java.commons.function.MyNumbers;
 import tech.lapsa.java.commons.function.MyOptionals;
 import tech.lapsa.java.commons.function.MyStrings;
 import tech.lapsa.java.commons.logging.MyLogger;
-import tech.lapsa.javax.jms.client.JmsResultType;
 import tech.lapsa.javax.jms.client.JmsCallableClient;
 import tech.lapsa.javax.jms.client.JmsDestination;
+import tech.lapsa.javax.jms.client.JmsResultType;
 
 @Stateless
 public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
@@ -57,7 +57,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
     @Override
     // TODO REFACT : rename to completePayment
     public void markPaymentSuccessful(final Integer id, final String methodName, final Instant paymentInstant,
-	    final Double paymentAmount, Currency paymentCurrency, final String paymentReference)
+	    final Double paymentAmount, final Currency paymentCurrency, final String paymentReference)
 	    throws IllegalArgument, IllegalState {
 	reThrowAsChecked(() -> {
 	    InsuranceRequest request = dao.optionalById(id)
@@ -152,12 +152,11 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 		    .withRecipient(NotificationRecipientType.COMPANY) //
 		    .build() //
 	    );
-	    if (request.getRequester().getEmail() != null) {
+	    if (request.getRequester().getEmail() != null)
 		notifier.send(builder.withChannel(NotificationChannel.EMAIL) //
 			.withRecipient(NotificationRecipientType.REQUESTER) //
 			.build() //
 		);
-	    }
 	case UNCOMPLETE:
 	    // TODO DEBUG : Push disabled temporary. Need to debug
 	    // builder.withChannel(NotificationChannel.PUSH) //
