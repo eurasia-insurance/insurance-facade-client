@@ -3,8 +3,9 @@ package tech.lapsa.insurance.facade.beans;
 import java.util.List;
 import java.util.Optional;
 
-import javax.ejb.EJB;
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.lapsa.insurance.domain.policy.PolicyVehicle;
 
@@ -18,33 +19,33 @@ import tech.lapsa.kz.vehicle.VehicleRegNumber;
 @QDelegateToEJB
 public class PolicyVehicleFacadeDelegatingCDIBean implements PolicyVehicleFacade {
 
-    @EJB
-    private PolicyVehicleFacade delegate;
+    @Inject
+    private Provider<PolicyVehicleFacade> delegateProvider;
 
     @Override
     public List<PolicyVehicle> fetchByRegNumber(final VehicleRegNumber regNumber) throws IllegalArgument, IllegalState {
-	return delegate.fetchByRegNumber(regNumber);
+	return delegateProvider.get().fetchByRegNumber(regNumber);
     }
 
     @Override
     public Optional<PolicyVehicle> fetchFirstByRegNumber(final VehicleRegNumber regNumber)
 	    throws IllegalArgument, IllegalState {
-	return delegate.fetchFirstByRegNumber(regNumber);
+	return delegateProvider.get().fetchFirstByRegNumber(regNumber);
     }
 
     @Override
     public List<PolicyVehicle> fetchByVINCode(final String vinCode) throws IllegalArgument, IllegalState {
-	return delegate.fetchByVINCode(vinCode);
+	return delegateProvider.get().fetchByVINCode(vinCode);
     }
 
     @Override
     public Optional<PolicyVehicle> fetchFirstByVINCode(final String vinCode) throws IllegalArgument, IllegalState {
-	return delegate.fetchFirstByVINCode(vinCode);
+	return delegateProvider.get().fetchFirstByVINCode(vinCode);
     }
 
     @Override
     public PolicyVehicle getByRegNumberOrDefault(final VehicleRegNumber regNumber)
 	    throws IllegalArgument, IllegalState {
-	return delegate.getByRegNumberOrDefault(regNumber);
+	return delegateProvider.get().getByRegNumberOrDefault(regNumber);
     }
 }

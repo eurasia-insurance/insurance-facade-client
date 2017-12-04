@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.Dependent;
+import javax.inject.Provider;
 
 import com.lapsa.insurance.domain.crm.User;
 
@@ -18,21 +19,21 @@ import tech.lapsa.javax.cdi.qualifiers.QDelegateToEJB;
 public class UserFacadeDelegatingCDIBean implements UserFacade {
 
     @EJB
-    private UserFacade delegate;
+    private Provider<UserFacade> delegateProvider;
 
     @Override
     public User findOrCreate(final String principalName) throws IllegalArgument, IllegalState {
-	return delegate.findOrCreate(principalName);
+	return delegateProvider.get().findOrCreate(principalName);
     }
 
     @Override
     public User findOrCreate(final Principal principal) throws IllegalArgument, IllegalState {
-	return delegate.findOrCreate(principal);
+	return delegateProvider.get().findOrCreate(principal);
     }
 
     @Override
     public List<User> getWhoEverCreatedRequests() throws IllegalArgument, IllegalState {
-	return delegate.getWhoEverCreatedRequests();
+	return delegateProvider.get().getWhoEverCreatedRequests();
     }
 
 }

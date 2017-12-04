@@ -2,8 +2,9 @@ package tech.lapsa.insurance.facade.beans;
 
 import java.util.Optional;
 
-import javax.ejb.EJB;
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.lapsa.insurance.domain.policy.PolicyDriver;
 import com.lapsa.insurance.elements.InsuranceClassType;
@@ -18,22 +19,22 @@ import tech.lapsa.kz.taxpayer.TaxpayerNumber;
 @QDelegateToEJB
 public class PolicyDriverFacadeDelegatingCDIBean implements PolicyDriverFacade {
 
-    @EJB
-    private PolicyDriverFacade delegate;
+    @Inject
+    private Provider<PolicyDriverFacade> delegateProvider;
 
     @Override
     public InsuranceClassType getDefaultInsuranceClass() throws IllegalArgument {
-	return delegate.getDefaultInsuranceClass();
+	return delegateProvider.get().getDefaultInsuranceClass();
     }
 
     @Override
     public Optional<PolicyDriver> fetchByIdNumber(final TaxpayerNumber idNumber) throws IllegalArgument, IllegalState {
-	return delegate.fetchByIdNumber(idNumber);
+	return delegateProvider.get().fetchByIdNumber(idNumber);
     }
 
     @Override
     public PolicyDriver getByTaxpayerNumberOrDefault(final TaxpayerNumber taxpayerNumber)
 	    throws IllegalArgument, IllegalState {
-	return delegate.getByTaxpayerNumberOrDefault(taxpayerNumber);
+	return delegateProvider.get().getByTaxpayerNumberOrDefault(taxpayerNumber);
     }
 }

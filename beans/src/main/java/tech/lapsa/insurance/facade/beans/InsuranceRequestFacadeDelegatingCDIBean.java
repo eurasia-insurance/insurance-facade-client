@@ -3,8 +3,9 @@ package tech.lapsa.insurance.facade.beans;
 import java.time.Instant;
 import java.util.Currency;
 
-import javax.ejb.EJB;
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+import javax.inject.Provider;
 
 import com.lapsa.insurance.domain.InsuranceRequest;
 
@@ -17,19 +18,20 @@ import tech.lapsa.javax.cdi.qualifiers.QDelegateToEJB;
 @QDelegateToEJB
 public class InsuranceRequestFacadeDelegatingCDIBean implements InsuranceRequestFacade {
 
-    @EJB
-    private InsuranceRequestFacade delegate;
+    @Inject
+    private Provider<InsuranceRequestFacade> delegateProvider;
 
     @Override
     public <T extends InsuranceRequest> T acceptAndReply(final T request) throws IllegalArgument, IllegalState {
-	return delegate.acceptAndReply(request);
+	return delegateProvider.get().acceptAndReply(request);
     }
 
     @Override
     public void markPaymentSuccessful(final Integer id, final String methodName, final Instant paymentInstant,
-	    final Double amount,
-	    final Currency currency, final String paymentReference) throws IllegalArgument, IllegalState {
-	delegate.markPaymentSuccessful(id, methodName, paymentInstant, amount, currency, paymentReference);
+	    final Double amount, final Currency currency, final String paymentReference)
+	    throws IllegalArgument, IllegalState {
+	delegateProvider.get().markPaymentSuccessful(id, methodName, paymentInstant, amount, currency,
+		paymentReference);
     }
 
 }

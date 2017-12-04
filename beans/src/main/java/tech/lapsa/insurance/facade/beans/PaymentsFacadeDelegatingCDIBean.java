@@ -2,8 +2,9 @@ package tech.lapsa.insurance.facade.beans;
 
 import java.net.URI;
 
-import javax.ejb.EJB;
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+import javax.inject.Provider;
 
 import tech.lapsa.insurance.facade.PaymentsFacade;
 import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
@@ -14,11 +15,11 @@ import tech.lapsa.javax.cdi.qualifiers.QDelegateToEJB;
 @QDelegateToEJB
 public class PaymentsFacadeDelegatingCDIBean implements PaymentsFacade {
 
-    @EJB
-    private PaymentsFacade delegate;
+    @Inject
+    private Provider<PaymentsFacade> delegateProvider;
 
     @Override
     public URI getPaymentURI(final String invoiceId) throws IllegalArgument, IllegalState {
-	return delegate.getPaymentURI(invoiceId);
+	return delegateProvider.get().getPaymentURI(invoiceId);
     }
 }
