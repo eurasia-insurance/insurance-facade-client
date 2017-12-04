@@ -91,7 +91,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 
     private <T extends InsuranceRequest> T setupPaymentOrder(final T request) {
 
-	if (MyStrings.nonEmpty(request.getPayment().getExternalId()))
+	if (MyStrings.nonEmpty(request.getPayment().getInvoiceNumber()))
 	    return request;
 
 	final XmlInvoiceAcceptRequest r = new XmlInvoiceAcceptRequest();
@@ -132,7 +132,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 
 	final XmlInvoiceAcceptResponse resp = invoiceAcceptorCallableClient.call(r);
 
-	request.getPayment().setExternalId(resp.getInvoiceNumber());
+	request.getPayment().setInvoiceNumber(resp.getInvoiceNumber());
 
 	return request;
     }
