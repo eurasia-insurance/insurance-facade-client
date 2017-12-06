@@ -10,7 +10,7 @@ import javax.inject.Inject;
 import tech.lapsa.epayment.shared.entity.XmlPaymentURISpecifierRequest;
 import tech.lapsa.epayment.shared.entity.XmlPaymentURISpecifierResponse;
 import tech.lapsa.epayment.shared.jms.EpaymentDestinations;
-import tech.lapsa.insurance.facade.PaymentsFacade;
+import tech.lapsa.insurance.facade.ToEpaymentFacade;
 import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
 import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
 import tech.lapsa.javax.jms.client.JmsCallableClient;
@@ -18,7 +18,7 @@ import tech.lapsa.javax.jms.client.JmsDestination;
 import tech.lapsa.javax.jms.client.JmsResultType;
 
 @Stateless
-public class PaymentsFacadeBean implements PaymentsFacade {
+public class ToEpaymentFacadeBean implements ToEpaymentFacade {
 
     @Inject
     @JmsDestination(EpaymentDestinations.SPECIFY_PAYMENT_URI)

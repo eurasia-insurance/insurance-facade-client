@@ -8,7 +8,7 @@ import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
 import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
 
 @Local
-public interface PaymentsFacade {
+public interface ToEpaymentFacade {
 
     URI getPaymentURI(String invoiceNumber) throws IllegalArgument, IllegalState;
 
