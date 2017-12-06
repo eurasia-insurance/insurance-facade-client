@@ -10,6 +10,6 @@ import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
 @Local
 public interface PaymentsFacade {
 
-    URI getPaymentURI(String invoiceId) throws IllegalArgument, IllegalState;
+    URI getPaymentURI(String invoiceNumber) throws IllegalArgument, IllegalState;
 
 }
