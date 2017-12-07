@@ -43,8 +43,8 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public PolicyDriver fetchByIdNumber(final TaxpayerNumber idNumber) throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> _fetchByIdNumber(idNumber));
+    public PolicyDriver getByTaxpayerNumber(final TaxpayerNumber idNumber) throws IllegalArgument, IllegalState {
+	return reThrowAsChecked(() -> _getByTaxpayerNumber(idNumber));
     }
 
     @Override
@@ -82,11 +82,11 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 
     private PolicyDriver _getByTaxpayerNumberOrDefault(final TaxpayerNumber taxpayerNumber)
 	    throws IllegalArgument, IllegalState {
-	return MyOptionals.of(_fetchByIdNumber(taxpayerNumber)) //
+	return MyOptionals.of(_getByTaxpayerNumber(taxpayerNumber)) //
 		.orElseGet(() -> fillFromTaxpayerNumber(new PolicyDriver(), taxpayerNumber));
     }
 
-    private PolicyDriver _fetchByIdNumber(final TaxpayerNumber idNumber) {
+    private PolicyDriver _getByTaxpayerNumber(final TaxpayerNumber idNumber) {
 	return MyOptionals.of(idNumber) //
 		.flatMap(number -> MyOptionals.ifAnyException(() -> subjectPersonService.getByIIN(number))) //
 		.map(this::fetchFromESBDEntity) //
@@ -97,7 +97,7 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
     @Deprecated
     private void _fetch(final PolicyDriver driver) {
 	_clearFetched(driver);
-	final PolicyDriver fetched = _fetchByIdNumber(driver.getIdNumber());
+	final PolicyDriver fetched = _getByTaxpayerNumber(driver.getIdNumber());
 	if (fetched == null)
 	    return;
 

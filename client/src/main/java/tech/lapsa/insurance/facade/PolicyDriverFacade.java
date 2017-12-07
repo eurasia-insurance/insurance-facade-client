@@ -14,7 +14,7 @@ public interface PolicyDriverFacade {
 
     InsuranceClassType getDefaultInsuranceClass() throws IllegalArgument, IllegalState;
 
-    PolicyDriver fetchByIdNumber(TaxpayerNumber idNumber) throws IllegalArgument, IllegalState;
+    PolicyDriver getByTaxpayerNumber(TaxpayerNumber idNumber) throws IllegalArgument, IllegalState;
 
     PolicyDriver getByTaxpayerNumberOrDefault(TaxpayerNumber taxpayerNumber) throws IllegalArgument, IllegalState;
 
