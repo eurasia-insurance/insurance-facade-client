@@ -34,6 +34,12 @@
 			<optional>false</optional>
 		</dependency>
 		<dependency>
+			<groupId>tech.lapsa.insurance</groupId>
+			<artifactId>insurance-shared</artifactId>
+			<scope>compile</scope>
+			<optional>false</optional>
+		</dependency>
+		<dependency>
 			<groupId>tech.lapsa.epayment</groupId>
 			<artifactId>epayment-shared</artifactId>
 			<scope>compile</scope>
@@ -61,19 +67,6 @@
 		<dependency>
 			<groupId>tech.lapsa.insurance</groupId>
 			<artifactId>insurance-esbd</artifactId>
-			<type>ejb</type>
-			<scope>runtime</scope>
-			<optional>false</optional>
-		</dependency>
-		<dependency>
-			<groupId>tech.lapsa.insurance</groupId>
-			<artifactId>insurance-notifier-client</artifactId>
-			<scope>compile</scope>
-			<optional>false</optional>
-		</dependency>
-		<dependency>
-			<groupId>tech.lapsa.insurance</groupId>
-			<artifactId>insurance-notifier</artifactId>
 			<type>ejb</type>
 			<scope>runtime</scope>
 			<optional>false</optional>
