@@ -15,6 +15,6 @@ public interface InsuranceRequestFacade extends Acceptor<InsuranceRequest> {
 
     <T extends InsuranceRequest> T acceptAndReply(T request) throws IllegalArgument, IllegalState;
 
-    void markPaymentSuccessful(Integer id, String methodName, Instant paymentInstant, Double amount,
+    void completePayment(Integer id, String methodName, Instant paymentInstant, Double amount,
 	    Currency currency, String paymentReference) throws IllegalArgument, IllegalState;
 }

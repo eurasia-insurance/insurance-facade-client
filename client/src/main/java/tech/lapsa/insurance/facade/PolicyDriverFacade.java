@@ -14,7 +14,7 @@ import tech.lapsa.kz.taxpayer.TaxpayerNumber;
 @Local
 public interface PolicyDriverFacade {
 
-    InsuranceClassType getDefaultInsuranceClass() throws IllegalArgument;
+    InsuranceClassType getDefaultInsuranceClass() throws IllegalArgument, IllegalState;
 
     Optional<PolicyDriver> fetchByIdNumber(TaxpayerNumber idNumber) throws IllegalArgument, IllegalState;
 

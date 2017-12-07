@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import com.lapsa.insurance.domain.ContactData;
@@ -32,72 +34,100 @@ import tech.lapsa.kz.taxpayer.TaxpayerNumber;
 @Stateless
 public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 
+    // READERS
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public InsuranceClassType getDefaultInsuranceClass() throws IllegalArgument, IllegalState {
+	return reThrowAsChecked(() -> _getDefaultInsuranceClass());
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public Optional<PolicyDriver> fetchByIdNumber(final TaxpayerNumber idNumber) throws IllegalArgument, IllegalState {
+	return reThrowAsChecked(() -> _fetchByIdNumber(idNumber));
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public PolicyDriver getByTaxpayerNumberOrDefault(final TaxpayerNumber taxpayerNumber)
+	    throws IllegalArgument, IllegalState {
+	return reThrowAsChecked(() -> _getByTaxpayerNumberOrDefault(taxpayerNumber));
+    }
+
+    @Deprecated
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public void fetch(final PolicyDriver driver) throws IllegalArgument, IllegalState {
+	reThrowAsChecked(() -> _fetch(driver));
+    }
+
+    @Deprecated
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public void clearFetched(final PolicyDriver driver) throws IllegalArgument, IllegalState {
+	reThrowAsChecked(() -> _clearFetched(driver));
+    }
+
+    // MODIFIERS
+
+    // PRIVATE
+
     @Inject
     private SubjectPersonEntityService subjectPersonService;
 
     @Inject
     private InsuranceClassTypeService insuranceClassTypeService;
 
-    @Override
-    public InsuranceClassType getDefaultInsuranceClass() {
+    private InsuranceClassType _getDefaultInsuranceClass() {
 	return insuranceClassTypeService.getDefault();
     }
 
-    @Override
-    public Optional<PolicyDriver> fetchByIdNumber(final TaxpayerNumber idNumber) throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> MyOptionals.of(idNumber) //
+    private PolicyDriver _getByTaxpayerNumberOrDefault(final TaxpayerNumber taxpayerNumber)
+	    throws IllegalArgument, IllegalState {
+	return fetchByIdNumber(taxpayerNumber) //
+		.orElseGet(() -> fillFromTaxpayerNumber(new PolicyDriver(), taxpayerNumber));
+    }
+
+    private Optional<PolicyDriver> _fetchByIdNumber(final TaxpayerNumber idNumber) {
+	return MyOptionals.of(idNumber) //
 		.flatMap(subjectPersonService::optionalByIIN) //
 		.map(this::fetchFromESBDEntity) //
-		.map(x -> fillFromTaxpayerNumber(x, idNumber)));
-    }
-
-    @Override
-    public PolicyDriver getByTaxpayerNumberOrDefault(final TaxpayerNumber taxpayerNumber)
-	    throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> fetchByIdNumber(taxpayerNumber) //
-		.orElseGet(() -> fillFromTaxpayerNumber(new PolicyDriver(), taxpayerNumber)));
+		.map(x -> fillFromTaxpayerNumber(x, idNumber));
     }
 
     @Deprecated
-    public void fetch(final PolicyDriver driver) throws IllegalArgument, IllegalState {
-	reThrowAsChecked(() -> {
-	    clearFetched(driver);
-	    final PolicyDriver fetched = fetchByIdNumber(driver.getIdNumber()).orElse(null);
-	    if (fetched == null)
-		return;
+    private void _fetch(final PolicyDriver driver) {
+	_clearFetched(driver);
+	final PolicyDriver fetched = _fetchByIdNumber(driver.getIdNumber()).orElse(null);
+	if (fetched == null)
+	    return;
 
-	    driver.setFetched(fetched.isFetched());
+	driver.setFetched(fetched.isFetched());
 
-	    driver.setInsuranceClassType(fetched.getInsuranceClassType());
-	    driver.setAgeClass(fetched.getAgeClass());
+	driver.setInsuranceClassType(fetched.getInsuranceClassType());
+	driver.setAgeClass(fetched.getAgeClass());
 
-	    driver.setPersonalData(fetched.getPersonalData());
-	    driver.setResidenceData(fetched.getResidenceData());
-	    driver.setOriginData(fetched.getOriginData());
-	    driver.setIdentityCardData(fetched.getIdentityCardData());
-	    driver.setTaxPayerNumber(fetched.getTaxPayerNumber());
-	    driver.setContactData(fetched.getContactData());
-	});
+	driver.setPersonalData(fetched.getPersonalData());
+	driver.setResidenceData(fetched.getResidenceData());
+	driver.setOriginData(fetched.getOriginData());
+	driver.setIdentityCardData(fetched.getIdentityCardData());
+	driver.setTaxPayerNumber(fetched.getTaxPayerNumber());
+	driver.setContactData(fetched.getContactData());
     }
 
     @Deprecated
-    public void clearFetched(final PolicyDriver driver) throws IllegalArgument, IllegalState {
-	reThrowAsChecked(() -> {
-	    driver.setFetched(false);
+    private void _clearFetched(final PolicyDriver driver) {
+	driver.setFetched(false);
 
-	    driver.setInsuranceClassType(getDefaultInsuranceClass());
-	    driver.setAgeClass(null);
+	driver.setInsuranceClassType(_getDefaultInsuranceClass());
+	driver.setAgeClass(null);
 
-	    driver.setPersonalData(new PersonalData());
-	    driver.setResidenceData(new ResidenceData());
-	    driver.setOriginData(new OriginData());
-	    driver.setIdentityCardData(new IdentityCardData());
-	    driver.setTaxPayerNumber(null);
-	    driver.setContactData(new ContactData());
-	});
+	driver.setPersonalData(new PersonalData());
+	driver.setResidenceData(new ResidenceData());
+	driver.setOriginData(new OriginData());
+	driver.setIdentityCardData(new IdentityCardData());
+	driver.setTaxPayerNumber(null);
+	driver.setContactData(new ContactData());
     }
-
-    // PRIVATE
 
     private PolicyDriver fetchFromESBDEntity(final SubjectPersonEntity esbdEntity) {
 
@@ -198,7 +228,7 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 	    driver.setIdNumber(taxpayerNumber);
 
 	if (driver.getInsuranceClassType() == null)
-	    driver.setInsuranceClassType(getDefaultInsuranceClass());
+	    driver.setInsuranceClassType(_getDefaultInsuranceClass());
 
 	if (driver.getPersonalData().getDayOfBirth() == null)
 	    taxpayerNumber.optionalDateOfBirth() //

@@ -58,10 +58,10 @@ public class UserFacadeBean implements UserFacade {
 	return userDAO.findAllWhoCreatedRequest();
     }
 
-    private User _findOrCreate(final Principal principal) throws IllegalArgument, IllegalState {
+    private User _findOrCreate(final Principal principal) {
 	if (principal == null)
 	    return null;
-	return findOrCreate(principal.getName());
+	return _findOrCreate(principal.getName());
     }
 
     private User _findOrCreate(final String principalName) {
