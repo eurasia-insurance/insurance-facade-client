@@ -37,8 +37,8 @@ public class EpaymentConnectionFacadeBean implements EpaymentConnectionFacade {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void markInvoiceHasPaid(String invoiceNumber, Double paidAmount, Instant paidInstant,
-	    String paidReference) throws IllegalArgument, IllegalState {
+    public void markInvoiceHasPaid(final String invoiceNumber, final Double paidAmount, final Instant paidInstant,
+	    final String paidReference) throws IllegalArgument, IllegalState {
 	reThrowAsChecked(() -> _markInvoiceHasPaid(invoiceNumber, paidAmount, paidInstant, paidReference));
     }
 
@@ -60,8 +60,8 @@ public class EpaymentConnectionFacadeBean implements EpaymentConnectionFacade {
     @JmsResultType(XmlPaymentCompleteUnkownTypeRequest.class)
     private JmsConsumerClient<XmlPaymentCompleteUnkownTypeRequest> paymentWithUnknwonTypeCompleterClient;
 
-    private void _markInvoiceHasPaid(String invoiceNumber, Double paidAmount, Instant paidInstant,
-	    String paidReference) {
+    private void _markInvoiceHasPaid(final String invoiceNumber, final Double paidAmount, final Instant paidInstant,
+	    final String paidReference) {
 	final XmlPaymentCompleteUnkownTypeRequest r = new XmlPaymentCompleteUnkownTypeRequest(
 		invoiceNumber, paidAmount, paidInstant, paidReference);
 	paymentWithUnknwonTypeCompleterClient.accept(r);
