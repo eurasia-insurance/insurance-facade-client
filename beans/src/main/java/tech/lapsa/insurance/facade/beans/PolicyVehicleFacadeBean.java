@@ -47,19 +47,6 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Optional<PolicyVehicle> fetchFirstByRegNumber(final VehicleRegNumber regNumber)
-	    throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> _fetchFirstByRegNumber(regNumber));
-    }
-
-    @Override
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Optional<PolicyVehicle> fetchFirstByVINCode(final String vinCode) throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> _fetchFirstByVINCode(vinCode));
-    }
-
-    @Override
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public PolicyVehicle getByRegNumberOrDefault(final VehicleRegNumber regNumber)
 	    throws IllegalArgument, IllegalState {
 	return reThrowAsChecked(() -> _getByRegNumberOrDefault(regNumber));
@@ -100,7 +87,7 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
     private void _fetch(final PolicyVehicle vehicle) throws IllegalArgument, IllegalState {
 	clearFetched(vehicle);
 
-	final PolicyVehicle fetched = fetchFirstByVINCode(vehicle.getVinCode()).orElse(null);
+	final PolicyVehicle fetched = _fetchFirstByVINCode(vehicle.getVinCode()).orElse(null);
 	if (fetched == null)
 	    return;
 

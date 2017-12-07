@@ -3,7 +3,6 @@ package tech.lapsa.insurance.facade.beans;
 import static tech.lapsa.java.commons.function.MyExceptions.*;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -44,7 +43,7 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Optional<PolicyDriver> fetchByIdNumber(final TaxpayerNumber idNumber) throws IllegalArgument, IllegalState {
+    public PolicyDriver fetchByIdNumber(final TaxpayerNumber idNumber) throws IllegalArgument, IllegalState {
 	return reThrowAsChecked(() -> _fetchByIdNumber(idNumber));
     }
 
@@ -83,21 +82,22 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 
     private PolicyDriver _getByTaxpayerNumberOrDefault(final TaxpayerNumber taxpayerNumber)
 	    throws IllegalArgument, IllegalState {
-	return fetchByIdNumber(taxpayerNumber) //
+	return MyOptionals.of(_fetchByIdNumber(taxpayerNumber)) //
 		.orElseGet(() -> fillFromTaxpayerNumber(new PolicyDriver(), taxpayerNumber));
     }
 
-    private Optional<PolicyDriver> _fetchByIdNumber(final TaxpayerNumber idNumber) {
+    private PolicyDriver _fetchByIdNumber(final TaxpayerNumber idNumber) {
 	return MyOptionals.of(idNumber) //
-		.flatMap(subjectPersonService::optionalByIIN) //
+		.flatMap(number -> MyOptionals.ifAnyException(() -> subjectPersonService.getByIIN(number))) //
 		.map(this::fetchFromESBDEntity) //
-		.map(x -> fillFromTaxpayerNumber(x, idNumber));
+		.map(x -> fillFromTaxpayerNumber(x, idNumber)) //
+		.orElse(null);
     }
 
     @Deprecated
     private void _fetch(final PolicyDriver driver) {
 	_clearFetched(driver);
-	final PolicyDriver fetched = _fetchByIdNumber(driver.getIdNumber()).orElse(null);
+	final PolicyDriver fetched = _fetchByIdNumber(driver.getIdNumber());
 	if (fetched == null)
 	    return;
 

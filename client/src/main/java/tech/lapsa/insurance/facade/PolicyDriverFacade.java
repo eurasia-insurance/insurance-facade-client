@@ -1,7 +1,5 @@
 package tech.lapsa.insurance.facade;
 
-import java.util.Optional;
-
 import javax.ejb.Local;
 
 import com.lapsa.insurance.domain.policy.PolicyDriver;
@@ -16,7 +14,7 @@ public interface PolicyDriverFacade {
 
     InsuranceClassType getDefaultInsuranceClass() throws IllegalArgument, IllegalState;
 
-    Optional<PolicyDriver> fetchByIdNumber(TaxpayerNumber idNumber) throws IllegalArgument, IllegalState;
+    PolicyDriver fetchByIdNumber(TaxpayerNumber idNumber) throws IllegalArgument, IllegalState;
 
     PolicyDriver getByTaxpayerNumberOrDefault(TaxpayerNumber taxpayerNumber) throws IllegalArgument, IllegalState;
 
