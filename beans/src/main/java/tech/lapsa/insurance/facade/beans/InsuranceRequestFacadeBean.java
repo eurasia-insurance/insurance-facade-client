@@ -28,8 +28,8 @@ import tech.lapsa.insurance.facade.NotificationFacade;
 import tech.lapsa.insurance.facade.NotificationFacade.Notification;
 import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationBuilder;
 import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationChannel;
+import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationEventType;
 import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationRecipientType;
-import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationRequestStage;
 import tech.lapsa.java.commons.function.MyExceptions;
 import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
 import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
@@ -97,7 +97,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 	reThrowAsUnchecked(() ->
 	//
 	notifications.send(Notification.builder() //
-		.withEvent(NotificationRequestStage.REQUEST_PAID) //
+		.withEvent(NotificationEventType.REQUEST_PAID) //
 		.withChannel(NotificationChannel.EMAIL) //
 		.forEntity(request) //
 		.withRecipient(NotificationRecipientType.COMPANY) //
@@ -161,7 +161,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 
     private <T extends InsuranceRequest> T setupNotifications(final T request) {
 	final NotificationBuilder builder = Notification.builder() //
-		.withEvent(NotificationRequestStage.NEW_REQUEST) //
+		.withEvent(NotificationEventType.NEW_REQUEST) //
 		.forEntity(request);
 
 	switch (request.getType()) {
