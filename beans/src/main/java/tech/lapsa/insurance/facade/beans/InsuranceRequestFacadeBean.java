@@ -7,6 +7,8 @@ import java.util.Currency;
 import java.util.Optional;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import com.lapsa.fin.FinCurrency;
@@ -42,47 +44,57 @@ import tech.lapsa.javax.jms.client.JmsResultType;
 @Stateless
 public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 
+    // READERS
+
+    // MODIFIERS
+
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public <T extends InsuranceRequest> T acceptAndReply(final T request) throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> {
-	    Requests.preSave(request);
-	    final T saved = persistRequest(request);
-	    setupPaymentOrder(saved);
-	    setupNotifications(saved);
-	    logInsuranceRequestAccepted(saved);
-	    return saved;
-	});
+	return reThrowAsChecked(() -> _acceptAndReply(request));
     }
 
     @Override
-    // TODO REFACT : rename to completePayment
-    public void markPaymentSuccessful(final Integer id, final String methodName, final Instant paymentInstant,
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void completePayment(final Integer id, final String methodName, final Instant paymentInstant,
 	    final Double paymentAmount, final Currency paymentCurrency, final String paymentReference)
 	    throws IllegalArgument, IllegalState {
-	reThrowAsChecked(() -> {
-	    InsuranceRequest request = dao.optionalById(id)
-		    .orElseThrow(() -> new IllegalArgumentException("Request not found with id " + id));
-	    request.getPayment().setStatus(PaymentStatus.DONE);
-	    request.getPayment().setMethodName(methodName);
-	    request.getPayment().setPaymentAmount(paymentAmount);
-	    request.getPayment().setPaymentReference(paymentReference);
-	    request.getPayment().setPaymentInstant(paymentInstant);
-	    // TODO FEAUTURE : Save paymentCurrency or not?
-	    request = dao.save(request);
-
-	    request.unlazy();
-
-	    notifier.send(Notification.builder() //
-		    .withEvent(NotificationRequestStage.REQUEST_PAID) //
-		    .withChannel(NotificationChannel.EMAIL) //
-		    .forEntity(request) //
-		    .withRecipient(NotificationRecipientType.COMPANY) //
-		    .build() //
-	    );
-	});
+	reThrowAsChecked(() -> _completePayment(id, methodName, paymentInstant, paymentAmount, paymentReference));
     }
 
     // PRIVATE
+
+    private <T extends InsuranceRequest> T _acceptAndReply(final T request) {
+	Requests.preSave(request);
+	final T saved = persistRequest(request);
+	setupPaymentOrder(saved);
+	setupNotifications(saved);
+	logInsuranceRequestAccepted(saved);
+	return saved;
+    }
+
+    private void _completePayment(final Integer id, final String methodName, final Instant paymentInstant,
+	    final Double paymentAmount, final String paymentReference) {
+	InsuranceRequest request = dao.optionalById(id)
+		.orElseThrow(() -> new IllegalArgumentException("Request not found with id " + id));
+	request.getPayment().setStatus(PaymentStatus.DONE);
+	request.getPayment().setMethodName(methodName);
+	request.getPayment().setPaymentAmount(paymentAmount);
+	request.getPayment().setPaymentReference(paymentReference);
+	request.getPayment().setPaymentInstant(paymentInstant);
+	// TODO FEAUTURE : Save paymentCurrency or not?
+	request = dao.save(request);
+
+	request.unlazy();
+
+	notifier.send(Notification.builder() //
+		.withEvent(NotificationRequestStage.REQUEST_PAID) //
+		.withChannel(NotificationChannel.EMAIL) //
+		.forEntity(request) //
+		.withRecipient(NotificationRecipientType.COMPANY) //
+		.build() //
+	);
+    }
 
     @Inject
     @JmsDestination(EpaymentDestinations.ACCEPT_INVOICE)

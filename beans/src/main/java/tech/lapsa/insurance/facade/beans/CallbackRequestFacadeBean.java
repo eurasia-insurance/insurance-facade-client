@@ -3,6 +3,8 @@ package tech.lapsa.insurance.facade.beans;
 import static tech.lapsa.java.commons.function.MyExceptions.*;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import com.lapsa.insurance.domain.CallbackRequest;
@@ -16,15 +18,24 @@ import tech.lapsa.java.commons.logging.MyLogger;
 @Stateless
 public class CallbackRequestFacadeBean implements CallbackRequestFacade {
 
+    // READERS
+
+    // MODIFIERS
+
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public <T extends CallbackRequest> T acceptAndReply(final T request) throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> {
-	    Requests.preSave(request);
-	    final T saved = persistRequest(request);
-	    setupNotifications(saved);
-	    logInsuranceRequestAccepted(saved);
-	    return saved;
-	});
+	return reThrowAsChecked(() -> _acceptAndReply(request));
+    }
+
+    // PRIVATE
+
+    private <T extends CallbackRequest> T _acceptAndReply(final T request) {
+	Requests.preSave(request);
+	final T saved = persistRequest(request);
+	setupNotifications(saved);
+	logInsuranceRequestAccepted(saved);
+	return saved;
     }
 
     // TODO DEBUG : Push disabled temporary. Need to debug

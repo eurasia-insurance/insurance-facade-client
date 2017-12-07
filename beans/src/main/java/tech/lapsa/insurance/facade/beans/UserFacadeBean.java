@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import com.lapsa.insurance.domain.crm.User;
@@ -22,6 +24,29 @@ import tech.lapsa.patterns.dao.NotFound;
 @Stateless
 public class UserFacadeBean implements UserFacade {
 
+    // READERS
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<User> getWhoEverCreatedRequests() throws IllegalArgument, IllegalState {
+	return reThrowAsChecked(() -> _getWhoEverCreatedRequests());
+    }
+
+    // MODIFIERS
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public User findOrCreate(final String principalName) throws IllegalArgument, IllegalState {
+	return reThrowAsChecked(() -> _findOrCreate(principalName));
+    }
+
+    @Override
+    public User findOrCreate(final Principal principal) throws IllegalArgument, IllegalState {
+	return reThrowAsChecked(() -> _findOrCreate(principal));
+    }
+
+    // PRIVATE
+
     @Inject
     private UserDAO userDAO;
 
@@ -29,42 +54,35 @@ public class UserFacadeBean implements UserFacade {
 	    .withNameOf(UserFacade.class) //
 	    .build();
 
-    @Override
-    public User findOrCreate(final String principalName) throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> {
-	    if (principalName == null)
-		return null;
-	    try {
-		return userDAO.getByLogin(principalName);
-	    } catch (final NotFound e) {
-		logger.INFO.log("New User creating '%1$s'", principalName);
-
-		final User value = new User();
-		final UserLogin login = value.addLogin(new UserLogin());
-		login.setName(principalName);
-
-		if (Util.isEmail(principalName)) {
-		    value.setEmail(principalName);
-		    value.setName(Util.stripEmailToName(principalName));
-		} else
-		    value.setName(principalName);
-		return userDAO.save(value);
-	    }
-	});
+    private List<User> _getWhoEverCreatedRequests() {
+	return userDAO.findAllWhoCreatedRequest();
     }
 
-    @Override
-    public User findOrCreate(final Principal principal) throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> {
-	    if (principal == null)
-		return null;
-	    return findOrCreate(principal.getName());
-	});
+    private User _findOrCreate(final Principal principal) {
+	if (principal == null)
+	    return null;
+	return _findOrCreate(principal.getName());
     }
 
-    @Override
-    public List<User> getWhoEverCreatedRequests() throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> userDAO.findAllWhoCreatedRequest());
+    private User _findOrCreate(final String principalName) {
+	if (principalName == null)
+	    return null;
+	try {
+	    return userDAO.getByLogin(principalName);
+	} catch (final NotFound e) {
+	    logger.INFO.log("New User creating '%1$s'", principalName);
+
+	    final User value = new User();
+	    final UserLogin login = value.addLogin(new UserLogin());
+	    login.setName(principalName);
+
+	    if (Util.isEmail(principalName)) {
+		value.setEmail(principalName);
+		value.setName(Util.stripEmailToName(principalName));
+	    } else
+		value.setName(principalName);
+	    return userDAO.save(value);
+	}
     }
 
     private static class Util {

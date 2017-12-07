@@ -8,6 +8,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import com.lapsa.insurance.domain.policy.PolicyVehicle;
@@ -29,98 +31,131 @@ import tech.lapsa.kz.vehicle.VehicleType;
 @Stateless
 public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
 
-    @Inject
-    private VehicleEntityService vehicleService;
+    // READERS
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PolicyVehicle> fetchByRegNumber(final VehicleRegNumber regNumber) throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> {
-	    MyObjects.requireNonNull(regNumber, "regNumber");
-	    VehicleRegNumber.requireValid(regNumber);
-	    return MyOptionals.streamOf(vehicleService.getByRegNumber(regNumber)) //
-		    .orElseGet(Stream::empty) //
-		    .map(this::fetchFromESBDEntity) //
-		    .collect(MyCollectors.unmodifiableList());
-	});
+	return reThrowAsChecked(() -> _fetchByRegNumber(regNumber));
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PolicyVehicle> fetchByVINCode(final String vinCode) throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> {
-	    MyStrings.requireNonEmpty(vinCode, "vinCode");
-	    return MyOptionals.streamOf(vehicleService.getByVINCode(vinCode)) //
-		    .orElseGet(Stream::empty) //
-		    .map(this::fetchFromESBDEntity) //
-		    .collect(MyCollectors.unmodifiableList());
-	});
+	return reThrowAsChecked(() -> _fetchByVINCode(vinCode));
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Optional<PolicyVehicle> fetchFirstByRegNumber(final VehicleRegNumber regNumber)
 	    throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> MyOptionals.streamOf(vehicleService.getByRegNumber(regNumber)) //
+	return reThrowAsChecked(() -> _fetchFirstByRegNumber(regNumber));
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public Optional<PolicyVehicle> fetchFirstByVINCode(final String vinCode) throws IllegalArgument, IllegalState {
+	return reThrowAsChecked(() -> _fetchFirstByVINCode(vinCode));
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public PolicyVehicle getByRegNumberOrDefault(final VehicleRegNumber regNumber)
+	    throws IllegalArgument, IllegalState {
+	return reThrowAsChecked(() -> _getByRegNumberOrDefault(regNumber));
+    }
+
+    @Deprecated
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public void fetch(final PolicyVehicle vehicle) throws IllegalArgument, IllegalState {
+	reThrowAsChecked(() -> _fetch(vehicle));
+    }
+
+    @Deprecated
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public void clearFetched(final PolicyVehicle vehicle) throws IllegalArgument, IllegalState {
+	reThrowAsChecked(() -> _clearFetched(vehicle));
+    }
+
+    // MODIFIERS
+
+    // PRIVATE
+
+    @Deprecated
+    private void _clearFetched(final PolicyVehicle vehicle) {
+	vehicle.setFetched(false);
+
+	vehicle.setFetched(false);
+	vehicle.setVehicleClass(null);
+	vehicle.setVehicleAgeClass(null);
+	vehicle.setColor(null);
+	vehicle.setManufacturer(null);
+	vehicle.setModel(null);
+	vehicle.setYearOfManufacture(null);
+
+	vehicle.getCertificateData().setRegistrationNumber(null);
+    }
+
+    @Deprecated
+    private void _fetch(final PolicyVehicle vehicle) throws IllegalArgument, IllegalState {
+	clearFetched(vehicle);
+
+	final PolicyVehicle fetched = fetchFirstByVINCode(vehicle.getVinCode()).orElse(null);
+	if (fetched == null)
+	    return;
+
+	vehicle.setFetched(fetched.isFetched());
+	vehicle.setVinCode(fetched.getVinCode());
+	vehicle.setVehicleAgeClass(fetched.getVehicleAgeClass());
+	vehicle.setYearOfManufacture(fetched.getYearOfManufacture());
+	vehicle.setVehicleClass(fetched.getVehicleClass());
+
+	vehicle.setColor(fetched.getColor());
+	vehicle.setModel(fetched.getModel());
+	vehicle.setManufacturer(fetched.getManufacturer());
+
+	vehicle.getCertificateData().setRegistrationNumber(fetched.getCertificateData().getRegistrationNumber());
+    }
+
+    private PolicyVehicle _getByRegNumberOrDefault(final VehicleRegNumber regNumber) {
+	return _fetchFirstByRegNumber(regNumber) //
+		.orElseGet(() -> fillFromVehicleRegNumber(new PolicyVehicle(), regNumber));
+    }
+
+    private Optional<PolicyVehicle> _fetchFirstByVINCode(final String vinCode) {
+	return MyOptionals.streamOf(vehicleService.getByVINCode(vinCode)) //
+		.orElseGet(Stream::empty) //
+		.findFirst()
+		.map(this::fetchFromESBDEntity);
+    }
+
+    private Optional<PolicyVehicle> _fetchFirstByRegNumber(final VehicleRegNumber regNumber) {
+	return MyOptionals.streamOf(vehicleService.getByRegNumber(regNumber)) //
 		.orElseGet(Stream::empty) //
 		.findFirst() //
 		.map(this::fetchFromESBDEntity) //
-		.map(x -> fillFromVehicleRegNumber(x, regNumber)));
+		.map(x -> fillFromVehicleRegNumber(x, regNumber));
     }
 
-    @Override
-    public Optional<PolicyVehicle> fetchFirstByVINCode(final String vinCode) throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> MyOptionals.streamOf(vehicleService.getByVINCode(vinCode)) //
+    private List<PolicyVehicle> _fetchByVINCode(final String vinCode) {
+	MyStrings.requireNonEmpty(vinCode, "vinCode");
+	return MyOptionals.streamOf(vehicleService.getByVINCode(vinCode)) //
 		.orElseGet(Stream::empty) //
-		.findFirst()
-		.map(this::fetchFromESBDEntity));
+		.map(this::fetchFromESBDEntity) //
+		.collect(MyCollectors.unmodifiableList());
     }
 
-    @Override
-    public PolicyVehicle getByRegNumberOrDefault(final VehicleRegNumber regNumber)
-	    throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> fetchFirstByRegNumber(regNumber) //
-		.orElseGet(() -> fillFromVehicleRegNumber(new PolicyVehicle(), regNumber)));
+    @Inject
+    private VehicleEntityService vehicleService;
+
+    private List<PolicyVehicle> _fetchByRegNumber(final VehicleRegNumber regNumber) {
+	MyObjects.requireNonNull(regNumber, "regNumber");
+	VehicleRegNumber.requireValid(regNumber);
+	return MyOptionals.streamOf(vehicleService.getByRegNumber(regNumber)) //
+		.orElseGet(Stream::empty) //
+		.map(this::fetchFromESBDEntity) //
+		.collect(MyCollectors.unmodifiableList());
     }
-
-    @Deprecated
-    public void fetch(final PolicyVehicle vehicle) throws IllegalArgument, IllegalState {
-	reThrowAsChecked(() -> {
-	    clearFetched(vehicle);
-
-	    final PolicyVehicle fetched = fetchFirstByVINCode(vehicle.getVinCode()).orElse(null);
-	    if (fetched == null)
-		return;
-
-	    vehicle.setFetched(fetched.isFetched());
-	    vehicle.setVinCode(fetched.getVinCode());
-	    vehicle.setVehicleAgeClass(fetched.getVehicleAgeClass());
-	    vehicle.setYearOfManufacture(fetched.getYearOfManufacture());
-	    vehicle.setVehicleClass(fetched.getVehicleClass());
-
-	    vehicle.setColor(fetched.getColor());
-	    vehicle.setModel(fetched.getModel());
-	    vehicle.setManufacturer(fetched.getManufacturer());
-
-	    vehicle.getCertificateData().setRegistrationNumber(fetched.getCertificateData().getRegistrationNumber());
-	});
-    }
-
-    @Deprecated
-    public void clearFetched(final PolicyVehicle vehicle) throws IllegalArgument, IllegalState {
-	reThrowAsChecked(() -> {
-	    vehicle.setFetched(false);
-
-	    vehicle.setFetched(false);
-	    vehicle.setVehicleClass(null);
-	    vehicle.setVehicleAgeClass(null);
-	    vehicle.setColor(null);
-	    vehicle.setManufacturer(null);
-	    vehicle.setModel(null);
-	    vehicle.setYearOfManufacture(null);
-
-	    vehicle.getCertificateData().setRegistrationNumber(null);
-	});
-    }
-
-    // PRIVATE
 
     private PolicyVehicle fetchFromESBDEntity(final VehicleEntity esbdEntity) {
 	final PolicyVehicle vehicle = new PolicyVehicle();
@@ -196,4 +231,5 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
 	    throw new NullPointerException();
 	return dob.until(LocalDate.now()).getYears();
     }
+
 }
