@@ -4,10 +4,10 @@ import static tech.lapsa.java.commons.function.MyExceptions.*;
 
 import java.time.LocalDate;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 
 import com.lapsa.insurance.domain.ContactData;
 import com.lapsa.insurance.domain.IdentityCardData;
@@ -70,10 +70,10 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 
     // PRIVATE
 
-    @Inject
+    @EJB
     private SubjectPersonEntityService subjectPersonService;
 
-    @Inject
+    @EJB
     private InsuranceClassTypeService insuranceClassTypeService;
 
     private InsuranceClassType _getDefaultInsuranceClass() {

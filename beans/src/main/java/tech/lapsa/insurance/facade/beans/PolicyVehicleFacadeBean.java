@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 
 import com.lapsa.insurance.domain.policy.PolicyVehicle;
 import com.lapsa.insurance.elements.VehicleAgeClass;
@@ -132,7 +132,7 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
 		.collect(MyCollectors.unmodifiableList());
     }
 
-    @Inject
+    @EJB
     private VehicleEntityService vehicleService;
 
     private List<PolicyVehicle> _fetchByRegNumber(final VehicleRegNumber regNumber) {
