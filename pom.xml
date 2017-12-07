@@ -27,9 +27,9 @@
 		<javax-jms-rpc.version>1.0-SNAPSHOT</javax-jms-rpc.version>
 		<payara-hibernate-validation.version>1.0</payara-hibernate-validation.version>
 		<epayment-shared.version>1.0-SNAPSHOT</epayment-shared.version>
+		<insurance-shared.version>1.0-SNAPSHOT</insurance-shared.version>
 		<insurance-dao.version>1.1-SNAPSHOT</insurance-dao.version>
 		<insurance-esbd.version>1.1-SNAPSHOT</insurance-esbd.version>
-		<insurance-notifier.version>1.1-SNAPSHOT</insurance-notifier.version>
 		<!-- oldies -->
 		<insurance-lib.version>2.4-SNAPSHOT</insurance-lib.version>
 	</properties>
@@ -65,13 +65,6 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			<dependency>
-				<groupId>tech.lapsa.insurance</groupId>
-				<artifactId>insurance-notifier-root</artifactId>
-				<version>${insurance-notifier.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
 			<!-- tech -->
 			<dependency>
 				<groupId>tech.lapsa.javax</groupId>
@@ -88,6 +81,11 @@
 				<groupId>tech.lapsa.epayment</groupId>
 				<artifactId>epayment-shared</artifactId>
 				<version>${epayment-shared.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>tech.lapsa.insurance</groupId>
+				<artifactId>insurance-shared</artifactId>
+				<version>${insurance-shared.version}</version>
 			</dependency>
 			<!-- own -->
 			<dependency>

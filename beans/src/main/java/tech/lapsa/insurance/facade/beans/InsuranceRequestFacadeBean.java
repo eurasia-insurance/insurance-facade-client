@@ -24,12 +24,12 @@ import tech.lapsa.epayment.shared.entity.XmlInvoicePurposeItem;
 import tech.lapsa.epayment.shared.jms.EpaymentDestinations;
 import tech.lapsa.insurance.dao.InsuranceRequestDAO;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade;
-import tech.lapsa.insurance.notifier.Notification;
-import tech.lapsa.insurance.notifier.Notification.NotificationBuilder;
-import tech.lapsa.insurance.notifier.NotificationChannel;
-import tech.lapsa.insurance.notifier.NotificationRecipientType;
-import tech.lapsa.insurance.notifier.NotificationRequestStage;
-import tech.lapsa.insurance.notifier.Notifier;
+import tech.lapsa.insurance.facade.NotificationFacade;
+import tech.lapsa.insurance.facade.NotificationFacade.Notification;
+import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationBuilder;
+import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationChannel;
+import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationRecipientType;
+import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationRequestStage;
 import tech.lapsa.java.commons.function.MyExceptions;
 import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
 import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
@@ -64,6 +64,9 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 
     // PRIVATE
 
+    @Inject
+    private NotificationFacade notifications;
+
     private <T extends InsuranceRequest> T _acceptAndReply(final T request) {
 	Requests.preSave(request);
 	final T saved = persistRequest(request);
@@ -75,24 +78,31 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 
     private void _completePayment(final Integer id, final String methodName, final Instant paymentInstant,
 	    final Double paymentAmount, final String paymentReference) {
-	InsuranceRequest request = dao.optionalById(id)
-		.orElseThrow(() -> new IllegalArgumentException("Request not found with id " + id));
-	request.getPayment().setStatus(PaymentStatus.DONE);
-	request.getPayment().setMethodName(methodName);
-	request.getPayment().setPaymentAmount(paymentAmount);
-	request.getPayment().setPaymentReference(paymentReference);
-	request.getPayment().setPaymentInstant(paymentInstant);
-	// TODO FEAUTURE : Save paymentCurrency or not?
-	request = dao.save(request);
+
+	final InsuranceRequest request;
+	{
+	    InsuranceRequest temp = dao.optionalById(id)
+		    .orElseThrow(() -> new IllegalArgumentException("Request not found with id " + id));
+	    temp.getPayment().setStatus(PaymentStatus.DONE);
+	    temp.getPayment().setMethodName(methodName);
+	    temp.getPayment().setPaymentAmount(paymentAmount);
+	    temp.getPayment().setPaymentReference(paymentReference);
+	    temp.getPayment().setPaymentInstant(paymentInstant);
+	    // TODO FEAUTURE : Save paymentCurrency or not?
+	    request = dao.save(temp);
+	}
 
 	request.unlazy();
 
-	notifier.send(Notification.builder() //
+	reThrowAsUnchecked(() ->
+	//
+	notifications.send(Notification.builder() //
 		.withEvent(NotificationRequestStage.REQUEST_PAID) //
 		.withChannel(NotificationChannel.EMAIL) //
 		.forEntity(request) //
 		.withRecipient(NotificationRecipientType.COMPANY) //
-		.build() //
+		.build())
+	//
 	);
     }
 
@@ -149,9 +159,6 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 	return request;
     }
 
-    @Inject
-    private Notifier notifier;
-
     private <T extends InsuranceRequest> T setupNotifications(final T request) {
 	final NotificationBuilder builder = Notification.builder() //
 		.withEvent(NotificationRequestStage.NEW_REQUEST) //
@@ -160,14 +167,20 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 	switch (request.getType()) {
 	case ONLINE:
 	case EXPRESS:
-	    notifier.send(builder.withChannel(NotificationChannel.EMAIL) //
+	    reThrowAsUnchecked(() ->
+	    //
+	    notifications.send(builder.withChannel(NotificationChannel.EMAIL) //
 		    .withRecipient(NotificationRecipientType.COMPANY) //
-		    .build() //
+		    .build())
+	    //
 	    );
 	    if (request.getRequester().getEmail() != null)
-		notifier.send(builder.withChannel(NotificationChannel.EMAIL) //
+		reThrowAsUnchecked(() ->
+		//
+		notifications.send(builder.withChannel(NotificationChannel.EMAIL) //
 			.withRecipient(NotificationRecipientType.REQUESTER) //
-			.build() //
+			.build())
+		//
 		);
 	case UNCOMPLETE:
 	    // TODO DEBUG : Push disabled temporary. Need to debug
