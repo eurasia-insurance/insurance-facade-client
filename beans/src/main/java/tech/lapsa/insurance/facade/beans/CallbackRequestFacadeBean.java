@@ -25,9 +25,7 @@ public class CallbackRequestFacadeBean implements CallbackRequestFacade {
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public <T extends CallbackRequest> T acceptAndReply(final T request) throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> {
-	    return _acceptAndReply(request);
-	});
+	return reThrowAsChecked(() -> _acceptAndReply(request));
     }
 
     // PRIVATE
