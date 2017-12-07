@@ -32,7 +32,7 @@ public interface NotificationFacade {
 	    COMPANY, REQUESTER;
 	}
 
-	public static enum NotificationRequestStage {
+	public static enum NotificationEventType {
 	    NEW_REQUEST, REQUEST_PAID;
 	}
 
@@ -44,7 +44,7 @@ public interface NotificationFacade {
 
 	    private NotificationChannel channel;
 	    private NotificationRecipientType recipientType;
-	    private NotificationRequestStage event;
+	    private NotificationEventType event;
 	    private Request entity;
 	    private Map<String, String> properties = new HashMap<>();
 
@@ -61,7 +61,7 @@ public interface NotificationFacade {
 		return this;
 	    }
 
-	    public NotificationBuilder withEvent(final NotificationRequestStage event) {
+	    public NotificationBuilder withEvent(final NotificationEventType event) {
 		this.event = MyObjects.requireNonNull(event, "event");
 		return this;
 	    }
@@ -84,12 +84,12 @@ public interface NotificationFacade {
 
 	private final NotificationChannel channel;
 	private final NotificationRecipientType recipientType;
-	private final NotificationRequestStage event;
+	private final NotificationEventType event;
 	private final Request entity;
 	private final Map<String, String> propsMap;
 
 	private Notification(NotificationChannel channel, NotificationRecipientType recipientType,
-		NotificationRequestStage event, Request entity, Map<String, String> propsMap) {
+		NotificationEventType event, Request entity, Map<String, String> propsMap) {
 	    this.channel = MyObjects.requireNonNull(channel, "channel");
 	    this.recipientType = MyObjects.requireNonNull(recipientType, "recipientType");
 	    this.event = MyObjects.requireNonNull(event, "event");
@@ -105,7 +105,7 @@ public interface NotificationFacade {
 	    return recipientType;
 	}
 
-	public NotificationRequestStage getEvent() {
+	public NotificationEventType getEvent() {
 	    return event;
 	}
 
