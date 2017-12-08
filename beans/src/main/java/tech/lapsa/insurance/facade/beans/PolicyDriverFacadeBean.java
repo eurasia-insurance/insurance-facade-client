@@ -20,9 +20,9 @@ import com.lapsa.insurance.elements.InsuredAgeClass;
 import com.lapsa.insurance.elements.Sex;
 
 import tech.lapsa.insurance.esbd.NotFound;
-import tech.lapsa.insurance.esbd.elements.InsuranceClassTypeService;
+import tech.lapsa.insurance.esbd.elements.InsuranceClassTypeService.InsuranceClassTypeServiceRemote;
 import tech.lapsa.insurance.esbd.entities.SubjectPersonEntity;
-import tech.lapsa.insurance.esbd.entities.SubjectPersonEntityService;
+import tech.lapsa.insurance.esbd.entities.SubjectPersonEntityService.SubjectPersonEntityServiceRemote;
 import tech.lapsa.insurance.facade.PolicyDriverFacade;
 import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
 import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
@@ -71,10 +71,10 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
     // PRIVATE
 
     @EJB
-    private SubjectPersonEntityService subjectPersonService;
+    private SubjectPersonEntityServiceRemote subjectPersonService;
 
     @EJB
-    private InsuranceClassTypeService insuranceClassTypeService;
+    private InsuranceClassTypeServiceRemote insuranceClassTypeService;
 
     private InsuranceClassType _getDefaultInsuranceClass() {
 	return insuranceClassTypeService.getDefault();

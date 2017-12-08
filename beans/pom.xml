@@ -64,13 +64,6 @@
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
-		<dependency>
-			<groupId>tech.lapsa.insurance</groupId>
-			<artifactId>insurance-esbd</artifactId>
-			<type>ejb</type>
-			<scope>runtime</scope>
-			<optional>false</optional>
-		</dependency>
 		<!-- own -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
