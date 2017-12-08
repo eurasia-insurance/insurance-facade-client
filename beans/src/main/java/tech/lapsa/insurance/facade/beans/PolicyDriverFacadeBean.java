@@ -3,12 +3,11 @@ package tech.lapsa.insurance.facade.beans;
 import static tech.lapsa.java.commons.function.MyExceptions.*;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 
 import com.lapsa.insurance.domain.ContactData;
 import com.lapsa.insurance.domain.IdentityCardData;
@@ -44,8 +43,8 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Optional<PolicyDriver> fetchByIdNumber(final TaxpayerNumber idNumber) throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> _fetchByIdNumber(idNumber));
+    public PolicyDriver getByTaxpayerNumber(final TaxpayerNumber idNumber) throws IllegalArgument, IllegalState {
+	return reThrowAsChecked(() -> _getByTaxpayerNumber(idNumber));
     }
 
     @Override
@@ -71,10 +70,10 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 
     // PRIVATE
 
-    @Inject
+    @EJB
     private SubjectPersonEntityService subjectPersonService;
 
-    @Inject
+    @EJB
     private InsuranceClassTypeService insuranceClassTypeService;
 
     private InsuranceClassType _getDefaultInsuranceClass() {
@@ -83,21 +82,22 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 
     private PolicyDriver _getByTaxpayerNumberOrDefault(final TaxpayerNumber taxpayerNumber)
 	    throws IllegalArgument, IllegalState {
-	return fetchByIdNumber(taxpayerNumber) //
+	return MyOptionals.of(_getByTaxpayerNumber(taxpayerNumber)) //
 		.orElseGet(() -> fillFromTaxpayerNumber(new PolicyDriver(), taxpayerNumber));
     }
 
-    private Optional<PolicyDriver> _fetchByIdNumber(final TaxpayerNumber idNumber) {
+    private PolicyDriver _getByTaxpayerNumber(final TaxpayerNumber idNumber) {
 	return MyOptionals.of(idNumber) //
-		.flatMap(subjectPersonService::optionalByIIN) //
+		.flatMap(number -> MyOptionals.ifAnyException(() -> subjectPersonService.getByIIN(number))) //
 		.map(this::fetchFromESBDEntity) //
-		.map(x -> fillFromTaxpayerNumber(x, idNumber));
+		.map(x -> fillFromTaxpayerNumber(x, idNumber)) //
+		.orElse(null);
     }
 
     @Deprecated
     private void _fetch(final PolicyDriver driver) {
 	_clearFetched(driver);
-	final PolicyDriver fetched = _fetchByIdNumber(driver.getIdNumber()).orElse(null);
+	final PolicyDriver fetched = _getByTaxpayerNumber(driver.getIdNumber());
 	if (fetched == null)
 	    return;
 

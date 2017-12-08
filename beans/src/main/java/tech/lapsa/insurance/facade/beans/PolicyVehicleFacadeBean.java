@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 
 import com.lapsa.insurance.domain.policy.PolicyVehicle;
 import com.lapsa.insurance.elements.VehicleAgeClass;
@@ -43,19 +43,6 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PolicyVehicle> fetchByVINCode(final String vinCode) throws IllegalArgument, IllegalState {
 	return reThrowAsChecked(() -> _fetchByVINCode(vinCode));
-    }
-
-    @Override
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Optional<PolicyVehicle> fetchFirstByRegNumber(final VehicleRegNumber regNumber)
-	    throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> _fetchFirstByRegNumber(regNumber));
-    }
-
-    @Override
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Optional<PolicyVehicle> fetchFirstByVINCode(final String vinCode) throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> _fetchFirstByVINCode(vinCode));
     }
 
     @Override
@@ -100,7 +87,7 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
     private void _fetch(final PolicyVehicle vehicle) throws IllegalArgument, IllegalState {
 	clearFetched(vehicle);
 
-	final PolicyVehicle fetched = fetchFirstByVINCode(vehicle.getVinCode()).orElse(null);
+	final PolicyVehicle fetched = _fetchFirstByVINCode(vehicle.getVinCode()).orElse(null);
 	if (fetched == null)
 	    return;
 
@@ -145,7 +132,7 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
 		.collect(MyCollectors.unmodifiableList());
     }
 
-    @Inject
+    @EJB
     private VehicleEntityService vehicleService;
 
     private List<PolicyVehicle> _fetchByRegNumber(final VehicleRegNumber regNumber) {
