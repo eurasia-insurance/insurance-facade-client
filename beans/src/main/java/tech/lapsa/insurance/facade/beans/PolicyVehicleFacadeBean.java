@@ -17,7 +17,7 @@ import com.lapsa.insurance.elements.VehicleAgeClass;
 import com.lapsa.insurance.elements.VehicleClass;
 
 import tech.lapsa.insurance.esbd.entities.VehicleEntity;
-import tech.lapsa.insurance.esbd.entities.VehicleEntityService.VehicleEntityServiceLocal;
+import tech.lapsa.insurance.esbd.entities.VehicleEntityService.VehicleEntityServiceRemote;
 import tech.lapsa.insurance.facade.PolicyVehicleFacade;
 import tech.lapsa.java.commons.function.MyCollectors;
 import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
@@ -133,7 +133,7 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
     }
 
     @EJB
-    private VehicleEntityServiceLocal vehicleService;
+    private VehicleEntityServiceRemote vehicleService;
 
     private List<PolicyVehicle> _fetchByRegNumber(final VehicleRegNumber regNumber) {
 	MyObjects.requireNonNull(regNumber, "regNumber");
