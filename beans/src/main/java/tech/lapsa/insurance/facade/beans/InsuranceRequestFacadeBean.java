@@ -40,6 +40,7 @@ import tech.lapsa.java.commons.logging.MyLogger;
 import tech.lapsa.javax.jms.client.JmsCallableClient;
 import tech.lapsa.javax.jms.client.JmsDestination;
 import tech.lapsa.javax.jms.client.JmsResultType;
+import tech.lapsa.patterns.dao.NotFound;
 
 @Stateless
 public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
@@ -81,7 +82,8 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 
 	final InsuranceRequest request;
 	{
-	    InsuranceRequest temp = dao.optionalById(id)
+	    InsuranceRequest temp = MyOptionals //
+		    .ifCheckedException(() -> dao.getById(id), NotFound.class) //
 		    .orElseThrow(() -> new IllegalArgumentException("Request not found with id " + id));
 	    temp.getPayment().setStatus(PaymentStatus.DONE);
 	    temp.getPayment().setMethodName(methodName);
