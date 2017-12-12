@@ -1,13 +1,13 @@
 package tech.lapsa.insurance.facade.beans;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 
 import com.lapsa.insurance.domain.CallbackRequest;
 
-import tech.lapsa.insurance.dao.CallbackRequestDAO.CallbackRequestDAORemote;
+import tech.lapsa.insurance.dao.CallbackRequestDAO;
 import tech.lapsa.insurance.facade.CallbackRequestFacade;
 import tech.lapsa.insurance.facade.CallbackRequestFacade.CallbackRequestFacadeLocal;
 import tech.lapsa.insurance.facade.CallbackRequestFacade.CallbackRequestFacadeRemote;
@@ -22,7 +22,7 @@ public class CallbackRequestFacadeBean implements CallbackRequestFacadeLocal, Ca
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public CallbackRequest acceptAndReply(final CallbackRequest request) throws IllegalArgumentException {
+    public <Y extends CallbackRequest> Y acceptAndReply(final Y request) throws IllegalArgumentException {
 	return _acceptAndReply(request);
     }
 
@@ -34,9 +34,9 @@ public class CallbackRequestFacadeBean implements CallbackRequestFacadeLocal, Ca
 
     // PRIVATE
 
-    private <T extends CallbackRequest> T _acceptAndReply(final T request) {
+    private <Y extends CallbackRequest> Y _acceptAndReply(final Y request) {
 	Requests.preSave(request);
-	final T saved = persistRequest(request);
+	final Y saved = persistRequest(request);
 	setupNotifications(saved);
 	logInsuranceRequestAccepted(saved);
 	return saved;
@@ -57,10 +57,11 @@ public class CallbackRequestFacadeBean implements CallbackRequestFacadeLocal, Ca
 	return request;
     }
 
-    @EJB
-    private CallbackRequestDAORemote dao;
+    @Inject
+    @EJBViaCDI
+    private CallbackRequestDAO dao;
 
-    private <T extends CallbackRequest> T persistRequest(final T request) {
+    private <Y extends CallbackRequest> Y persistRequest(final Y request) {
 	return dao.save(request);
     }
 

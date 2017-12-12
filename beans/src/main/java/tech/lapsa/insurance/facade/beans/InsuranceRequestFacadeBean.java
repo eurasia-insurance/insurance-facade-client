@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.util.Currency;
 import java.util.Optional;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -21,16 +20,16 @@ import tech.lapsa.epayment.shared.entity.XmlInvoiceAcceptRequest;
 import tech.lapsa.epayment.shared.entity.XmlInvoiceAcceptResponse;
 import tech.lapsa.epayment.shared.entity.XmlInvoicePurposeItem;
 import tech.lapsa.epayment.shared.jms.EpaymentDestinations;
-import tech.lapsa.insurance.dao.InsuranceRequestDAO.InsuranceRequestDAORemote;
+import tech.lapsa.insurance.dao.InsuranceRequestDAO;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade.InsuranceRequestFacadeLocal;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade.InsuranceRequestFacadeRemote;
+import tech.lapsa.insurance.facade.NotificationFacade;
 import tech.lapsa.insurance.facade.NotificationFacade.Notification;
 import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationBuilder;
 import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationChannel;
 import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationEventType;
 import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationRecipientType;
-import tech.lapsa.insurance.facade.NotificationFacade.NotificationFacadeRemote;
 import tech.lapsa.java.commons.function.MyExceptions;
 import tech.lapsa.java.commons.function.MyNumbers;
 import tech.lapsa.java.commons.function.MyOptionals;
@@ -50,7 +49,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public InsuranceRequest acceptAndReply(final InsuranceRequest request) throws IllegalArgumentException {
+    public <Y extends InsuranceRequest> Y acceptAndReply(final Y request) throws IllegalArgumentException {
 	return _acceptAndReply(request);
     }
 
@@ -70,13 +69,14 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 
     // PRIVATE
 
-    @EJB
-    private NotificationFacadeRemote notifications;
+    @Inject
+    @EJBViaCDI
+    private NotificationFacade notifications;
 
-    private <T extends InsuranceRequest> T _acceptAndReply(final T request) {
+    private <Y extends InsuranceRequest> Y _acceptAndReply(final Y request) {
 	// TODO FEAUTURE : check parameter for requirements
 	Requests.preSave(request);
-	final T saved = persistRequest(request);
+	final Y saved = persistRequest(request);
 	setupPaymentOrder(saved);
 	setupNotifications(saved);
 	logInsuranceRequestAccepted(saved);
@@ -191,10 +191,12 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 	return request;
     }
 
-    @EJB
-    private InsuranceRequestDAORemote dao;
+    
+    @Inject
+    @EJBViaCDI
+    private InsuranceRequestDAO dao;
 
-    private <T extends InsuranceRequest> T persistRequest(final T request) {
+    private <Y extends InsuranceRequest> Y persistRequest(final Y request) {
 	return dao.save(request);
     }
 

@@ -2,10 +2,10 @@ package tech.lapsa.insurance.facade.beans;
 
 import java.time.LocalDate;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 
 import com.lapsa.insurance.domain.ContactData;
 import com.lapsa.insurance.domain.IdentityCardData;
@@ -18,9 +18,9 @@ import com.lapsa.insurance.elements.InsuredAgeClass;
 import com.lapsa.insurance.elements.Sex;
 
 import tech.lapsa.insurance.esbd.NotFound;
-import tech.lapsa.insurance.esbd.elements.InsuranceClassTypeService.InsuranceClassTypeServiceRemote;
+import tech.lapsa.insurance.esbd.elements.InsuranceClassTypeService;
 import tech.lapsa.insurance.esbd.entities.SubjectPersonEntity;
-import tech.lapsa.insurance.esbd.entities.SubjectPersonEntityService.SubjectPersonEntityServiceRemote;
+import tech.lapsa.insurance.esbd.entities.SubjectPersonEntityService;
 import tech.lapsa.insurance.facade.PolicyDriverFacade.PolicyDriverFacadeLocal;
 import tech.lapsa.insurance.facade.PolicyDriverFacade.PolicyDriverFacadeRemote;
 import tech.lapsa.java.commons.function.MyObjects;
@@ -70,11 +70,13 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacadeLocal, PolicyDr
 
     // PRIVATE
 
-    @EJB
-    private SubjectPersonEntityServiceRemote subjectPersonService;
+    @Inject
+    @EJBViaCDI
+    private SubjectPersonEntityService subjectPersonService;
 
-    @EJB
-    private InsuranceClassTypeServiceRemote insuranceClassTypeService;
+    @Inject
+    @EJBViaCDI
+    private InsuranceClassTypeService insuranceClassTypeService;
 
     private InsuranceClassType _getDefaultInsuranceClass() {
 	return insuranceClassTypeService.getDefault();

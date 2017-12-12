@@ -66,6 +66,7 @@ public class CompanyPointOfSaleFacadeBean implements CompanyPointOfSaleFacadeLoc
     // PRIVATE
 
     @Inject
+    @EJBViaCDI
     private CompanyPointOfSaleDAO companyPointOfSaleDAO;
 
     private List<CompanyPointOfSale> _findAllOwnOffices() {
