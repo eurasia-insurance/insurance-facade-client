@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>tech.lapsa.insurance</groupId>
@@ -7,24 +8,18 @@
 		<version>1.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>insurance-facade-client</artifactId>
+	<artifactId>insurance-facade-producer-local</artifactId>
 	<packaging>jar</packaging>
 
-	<name>Insurance Lib : Facade : EJB-client</name>
+	<name>Insurance Lib : Facade : EJB producer : Local</name>
 
 	<dependencies>
-		<!-- oldies -->
+		<!-- own -->
 		<dependency>
-			<groupId>com.lapsa.insurance-lib</groupId>
-			<artifactId>insurance-domain</artifactId>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>insurance-facade-client</artifactId>
 			<scope>compile</scope>
 			<optional>false</optional>
-		</dependency>
-		<!-- Payara -->
-		<dependency>
-			<groupId>org.eclipse.persistence</groupId>
-			<artifactId>org.eclipse.persistence.core</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<!-- JavaEE -->
 		<dependency>
