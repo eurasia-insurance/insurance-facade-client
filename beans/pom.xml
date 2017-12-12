@@ -53,7 +53,7 @@
 		</dependency>
 		<dependency>
 			<groupId>tech.lapsa.insurance</groupId>
-			<artifactId>insurance-esbd-client</artifactId>
+			<artifactId>insurance-esbd-producer-remote</artifactId>
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
