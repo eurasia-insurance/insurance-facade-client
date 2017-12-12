@@ -74,6 +74,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
     private NotificationFacadeRemote notifications;
 
     private <T extends InsuranceRequest> T _acceptAndReply(final T request) {
+	// TODO FEAUTURE : check parameter for requirements
 	Requests.preSave(request);
 	final T saved = persistRequest(request);
 	setupPaymentOrder(saved);
@@ -84,6 +85,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 
     private void _completePayment(final Integer id, final String methodName, final Instant paymentInstant,
 	    final Double paymentAmount, final String paymentReference) {
+	// TODO FEAUTURE : check parameter for requirements
 
 	final InsuranceRequest request;
 	{
@@ -115,6 +117,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
     private JmsCallableClient<XmlInvoiceAcceptRequest, XmlInvoiceAcceptResponse> invoiceAcceptorCallableClient;
 
     private <T extends InsuranceRequest> T setupPaymentOrder(final T request) {
+	// TODO FEAUTURE : check parameter for requirements
 
 	if (MyStrings.nonEmpty(request.getPayment().getInvoiceNumber()))
 	    return request;
@@ -163,6 +166,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
     }
 
     private <T extends InsuranceRequest> T setupNotifications(final T request) {
+	// TODO FEAUTURE : check parameter for requirements
 	final NotificationBuilder builder = Notification.builder() //
 		.withEvent(NotificationEventType.NEW_REQUEST) //
 		.forEntity(request);
