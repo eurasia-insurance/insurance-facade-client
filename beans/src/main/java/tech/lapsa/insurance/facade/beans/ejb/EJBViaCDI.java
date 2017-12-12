@@ -14,7 +14,7 @@ import javax.inject.Qualifier;
 @Target({ FIELD, TYPE, METHOD })
 public @interface EJBViaCDI {
 
-    public static EJBViaCDI INSTANCE = new EJBViaCDI() {
+    public static final EJBViaCDI INSTANCE = new EJBViaCDI() {
 	@Override
 	public Class<? extends Annotation> annotationType() {
 	    return EJBViaCDI.class;
