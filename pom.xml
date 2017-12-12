@@ -17,6 +17,7 @@
 	<modules>
 		<module>client</module>
 		<module>beans</module>
+		<module>ear</module>
 	</modules>
 
 	<properties>
