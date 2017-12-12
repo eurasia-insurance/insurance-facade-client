@@ -44,8 +44,8 @@ public class CallbackRequestFacadeBean implements CallbackRequestFacadeLocal, Ca
     }
 
     // TODO DEBUG : Push disabled temporary. Need to debug
-    // @Inject
-    // private Notifier notifier;
+//    @Inject
+//    private NotificationFacade notifications;
 
     private CallbackRequest setupNotifications(final CallbackRequest request) {
 	// notifier.newNotificationBuilder() //

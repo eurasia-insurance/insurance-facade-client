@@ -71,7 +71,6 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
     // PRIVATE
 
     @Inject
-    @EJBViaCDI
     private NotificationFacade notifications;
 
     private <Y extends InsuranceRequest> Y _acceptAndReply(final Y request) {
