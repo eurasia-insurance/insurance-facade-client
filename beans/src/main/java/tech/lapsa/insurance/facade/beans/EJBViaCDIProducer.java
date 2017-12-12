@@ -24,12 +24,12 @@ import tech.lapsa.insurance.facade.NotificationFacade.NotificationFacadeLocal;
 @Dependent
 public class EJBViaCDIProducer {
 
-    // own
+    // own (local)
 
     @EJB
     private NotificationFacadeLocal notifications;
 
-    // insurance-dao
+    // insurance-dao (remote)
 
     @EJB
     private CallbackRequestDAORemote callbackRequestDAO;
@@ -43,7 +43,7 @@ public class EJBViaCDIProducer {
     @EJB
     private UserDAORemote userDAO;
 
-    // insurance-esbd
+    // insurance-esbd (remote)
 
     @EJB
     private SubjectPersonEntityServiceRemote subjectPersonEntityService;
