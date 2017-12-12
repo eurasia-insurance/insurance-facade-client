@@ -1,21 +1,27 @@
 package tech.lapsa.insurance.facade;
 
 import javax.ejb.Local;
+import javax.ejb.Remote;
 
 import com.lapsa.insurance.domain.policy.PolicyDriver;
 import com.lapsa.insurance.elements.InsuranceClassType;
 
-import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
-import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
 import tech.lapsa.kz.taxpayer.TaxpayerNumber;
 
-@Local
 public interface PolicyDriverFacade {
 
-    InsuranceClassType getDefaultInsuranceClass() throws IllegalArgument, IllegalState;
+    @Local
+    public interface PolicyDriverFacadeLocal extends PolicyDriverFacade {
+    }
 
-    PolicyDriver getByTaxpayerNumber(TaxpayerNumber idNumber) throws IllegalArgument, IllegalState;
+    @Remote
+    public interface PolicyDriverFacadeRemote extends PolicyDriverFacade {
+    }
 
-    PolicyDriver getByTaxpayerNumberOrDefault(TaxpayerNumber taxpayerNumber) throws IllegalArgument, IllegalState;
+    InsuranceClassType getDefaultInsuranceClass();
+
+    PolicyDriver getByTaxpayerNumber(TaxpayerNumber idNumber) throws IllegalArgumentException;
+
+    PolicyDriver getByTaxpayerNumberOrDefault(TaxpayerNumber taxpayerNumber) throws IllegalArgumentException;
 
 }

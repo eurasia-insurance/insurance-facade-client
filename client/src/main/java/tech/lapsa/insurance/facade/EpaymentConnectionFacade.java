@@ -4,15 +4,20 @@ import java.net.URI;
 import java.time.Instant;
 
 import javax.ejb.Local;
+import javax.ejb.Remote;
 
-import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
-import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
-
-@Local
 public interface EpaymentConnectionFacade {
 
-    URI getPaymentURI(String invoiceNumber) throws IllegalArgument, IllegalState;
+    @Local
+    public interface EpaymentConnectionFacadeLocal extends EpaymentConnectionFacade {
+    }
+
+    @Remote
+    public interface EpaymentConnectionFacadeRemote extends EpaymentConnectionFacade {
+    }
+
+    URI getPaymentURI(String invoiceNumber) throws IllegalArgumentException, IllegalStateException;
 
     void markInvoiceHasPaid(String invoiceNumber, Double paidAmount, Instant paidInstant, String paidReference)
-	    throws IllegalArgument, IllegalState;
+	    throws IllegalArgumentException, IllegalStateException;
 }

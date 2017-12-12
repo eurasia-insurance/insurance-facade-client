@@ -3,19 +3,25 @@ package tech.lapsa.insurance.facade;
 import java.util.List;
 
 import javax.ejb.Local;
+import javax.ejb.Remote;
 
 import com.lapsa.insurance.domain.policy.PolicyVehicle;
 
-import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
-import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
 import tech.lapsa.kz.vehicle.VehicleRegNumber;
 
-@Local
 public interface PolicyVehicleFacade {
 
-    List<PolicyVehicle> fetchByRegNumber(VehicleRegNumber regNumber) throws IllegalArgument, IllegalState;
+    @Local
+    public interface PolicyVehicleFacadeLocal extends PolicyVehicleFacade {
+    }
 
-    List<PolicyVehicle> fetchByVINCode(String vinCode) throws IllegalArgument, IllegalState;
+    @Remote
+    public interface PolicyVehicleFacadeRemote extends PolicyVehicleFacade {
+    }
 
-    PolicyVehicle getByRegNumberOrDefault(VehicleRegNumber regNumber) throws IllegalArgument, IllegalState;
+    List<PolicyVehicle> fetchByRegNumber(VehicleRegNumber regNumber) throws IllegalArgumentException;
+
+    List<PolicyVehicle> fetchByVINCode(String vinCode) throws IllegalArgumentException;
+
+    PolicyVehicle getByRegNumberOrDefault(VehicleRegNumber regNumber) throws IllegalArgumentException;
 }
