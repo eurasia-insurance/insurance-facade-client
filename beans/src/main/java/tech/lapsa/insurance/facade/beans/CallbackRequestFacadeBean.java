@@ -1,22 +1,20 @@
 package tech.lapsa.insurance.facade.beans;
 
-import static tech.lapsa.java.commons.function.MyExceptions.*;
-
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 
 import com.lapsa.insurance.domain.CallbackRequest;
 
-import tech.lapsa.insurance.dao.CallbackRequestDAO;
+import tech.lapsa.insurance.dao.CallbackRequestDAO.CallbackRequestDAORemote;
 import tech.lapsa.insurance.facade.CallbackRequestFacade;
-import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
-import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
+import tech.lapsa.insurance.facade.CallbackRequestFacade.CallbackRequestFacadeLocal;
+import tech.lapsa.insurance.facade.CallbackRequestFacade.CallbackRequestFacadeRemote;
 import tech.lapsa.java.commons.logging.MyLogger;
 
 @Stateless
-public class CallbackRequestFacadeBean implements CallbackRequestFacade {
+public class CallbackRequestFacadeBean implements CallbackRequestFacadeLocal, CallbackRequestFacadeRemote {
 
     // READERS
 
@@ -24,8 +22,14 @@ public class CallbackRequestFacadeBean implements CallbackRequestFacade {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public <T extends CallbackRequest> T acceptAndReply(final T request) throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> _acceptAndReply(request));
+    public CallbackRequest acceptAndReply(final CallbackRequest request) throws IllegalArgumentException {
+	return _acceptAndReply(request);
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void accept(CallbackRequest request) throws IllegalArgumentException {
+	_acceptAndReply(request);
     }
 
     // PRIVATE
@@ -53,8 +57,8 @@ public class CallbackRequestFacadeBean implements CallbackRequestFacade {
 	return request;
     }
 
-    @Inject
-    private CallbackRequestDAO dao;
+    @EJB
+    private CallbackRequestDAORemote dao;
 
     private <T extends CallbackRequest> T persistRequest(final T request) {
 	return dao.save(request);

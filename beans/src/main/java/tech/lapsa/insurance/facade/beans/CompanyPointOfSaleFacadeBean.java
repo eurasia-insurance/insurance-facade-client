@@ -1,7 +1,5 @@
 package tech.lapsa.insurance.facade.beans;
 
-import static tech.lapsa.java.commons.function.MyExceptions.*;
-
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -15,52 +13,51 @@ import com.lapsa.insurance.domain.PostAddress;
 import com.lapsa.kz.country.KZCity;
 
 import tech.lapsa.insurance.dao.CompanyPointOfSaleDAO;
-import tech.lapsa.insurance.facade.CompanyPointOfSaleFacade;
+import tech.lapsa.insurance.facade.CompanyPointOfSaleFacade.CompanyPointOfSaleFacadeLocal;
+import tech.lapsa.insurance.facade.CompanyPointOfSaleFacade.CompanyPointOfSaleFacadeRemote;
 import tech.lapsa.java.commons.function.MyCollectors;
-import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
-import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
 import tech.lapsa.java.commons.function.MyObjects;
 import tech.lapsa.java.commons.function.MyOptionals;
 
 @Stateless
-public class CompanyPointOfSaleFacadeBean implements CompanyPointOfSaleFacade {
+public class CompanyPointOfSaleFacadeBean implements CompanyPointOfSaleFacadeLocal, CompanyPointOfSaleFacadeRemote {
 
     // READERS
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<CompanyPointOfSale> pointOfSalesForPickup() throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> _pointOfSalesForPickup());
+    public List<CompanyPointOfSale> pointOfSalesForPickup() {
+	return _pointOfSalesForPickup();
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<CompanyPointOfSale> pointOfSalesForPickup(final KZCity city) throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> _pointOfSalesForPickup(city));
+    public List<CompanyPointOfSale> pointOfSalesForPickup(final KZCity city) throws IllegalArgumentException {
+	return _pointOfSalesForPickup(city);
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<CompanyPointOfSale> pointOfSalesForDelivery() throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> _pointOfSalesForDelivery());
+    public List<CompanyPointOfSale> pointOfSalesForDelivery() {
+	return _pointOfSalesForDelivery();
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<CompanyPointOfSale> pointOfSalesForDelivery(final KZCity city) throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> _pointOfSalesForDelivery(city));
+    public List<CompanyPointOfSale> pointOfSalesForDelivery(final KZCity city) throws IllegalArgumentException {
+	return _pointOfSalesForDelivery(city);
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<KZCity> getCitiesForPickup() throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> _getCitiesForPickup());
+    public List<KZCity> getCitiesForPickup() {
+	return _getCitiesForPickup();
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<CompanyPointOfSale> findAllOwnOffices() throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> _findAllOwnOffices());
+    public List<CompanyPointOfSale> findAllOwnOffices() {
+	return _findAllOwnOffices();
 
     }
 

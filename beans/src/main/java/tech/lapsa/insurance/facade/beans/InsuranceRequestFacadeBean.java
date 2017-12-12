@@ -1,11 +1,10 @@
 package tech.lapsa.insurance.facade.beans;
 
-import static tech.lapsa.java.commons.function.MyExceptions.*;
-
 import java.time.Instant;
 import java.util.Currency;
 import java.util.Optional;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -22,17 +21,17 @@ import tech.lapsa.epayment.shared.entity.XmlInvoiceAcceptRequest;
 import tech.lapsa.epayment.shared.entity.XmlInvoiceAcceptResponse;
 import tech.lapsa.epayment.shared.entity.XmlInvoicePurposeItem;
 import tech.lapsa.epayment.shared.jms.EpaymentDestinations;
-import tech.lapsa.insurance.dao.InsuranceRequestDAO;
+import tech.lapsa.insurance.dao.InsuranceRequestDAO.InsuranceRequestDAORemote;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade;
-import tech.lapsa.insurance.facade.NotificationFacade;
+import tech.lapsa.insurance.facade.InsuranceRequestFacade.InsuranceRequestFacadeLocal;
+import tech.lapsa.insurance.facade.InsuranceRequestFacade.InsuranceRequestFacadeRemote;
 import tech.lapsa.insurance.facade.NotificationFacade.Notification;
 import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationBuilder;
 import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationChannel;
 import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationEventType;
 import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationRecipientType;
+import tech.lapsa.insurance.facade.NotificationFacade.NotificationFacadeRemote;
 import tech.lapsa.java.commons.function.MyExceptions;
-import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
-import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
 import tech.lapsa.java.commons.function.MyNumbers;
 import tech.lapsa.java.commons.function.MyOptionals;
 import tech.lapsa.java.commons.function.MyStrings;
@@ -43,7 +42,7 @@ import tech.lapsa.javax.jms.client.JmsResultType;
 import tech.lapsa.patterns.dao.NotFound;
 
 @Stateless
-public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
+public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, InsuranceRequestFacadeRemote {
 
     // READERS
 
@@ -51,22 +50,28 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public <T extends InsuranceRequest> T acceptAndReply(final T request) throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> _acceptAndReply(request));
+    public InsuranceRequest acceptAndReply(final InsuranceRequest request) throws IllegalArgumentException {
+	return _acceptAndReply(request);
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void accept(InsuranceRequest request) throws IllegalArgumentException {
+	_acceptAndReply(request);
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void completePayment(final Integer id, final String methodName, final Instant paymentInstant,
 	    final Double paymentAmount, final Currency paymentCurrency, final String paymentReference)
-	    throws IllegalArgument, IllegalState {
-	reThrowAsChecked(() -> _completePayment(id, methodName, paymentInstant, paymentAmount, paymentReference));
+	    throws IllegalArgumentException, IllegalStateException {
+	_completePayment(id, methodName, paymentInstant, paymentAmount, paymentReference);
     }
 
     // PRIVATE
 
-    @Inject
-    private NotificationFacade notifications;
+    @EJB
+    private NotificationFacadeRemote notifications;
 
     private <T extends InsuranceRequest> T _acceptAndReply(final T request) {
 	Requests.preSave(request);
@@ -96,16 +101,12 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 
 	request.unlazy();
 
-	reThrowAsUnchecked(() ->
-	//
 	notifications.send(Notification.builder() //
 		.withEvent(NotificationEventType.REQUEST_PAID) //
 		.withChannel(NotificationChannel.EMAIL) //
 		.forEntity(request) //
 		.withRecipient(NotificationRecipientType.COMPANY) //
-		.build())
-	//
-	);
+		.build());
     }
 
     @Inject
@@ -169,21 +170,13 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 	switch (request.getType()) {
 	case ONLINE:
 	case EXPRESS:
-	    reThrowAsUnchecked(() ->
-	    //
 	    notifications.send(builder.withChannel(NotificationChannel.EMAIL) //
 		    .withRecipient(NotificationRecipientType.COMPANY) //
-		    .build())
-	    //
-	    );
+		    .build());
 	    if (request.getRequester().getEmail() != null)
-		reThrowAsUnchecked(() ->
-		//
 		notifications.send(builder.withChannel(NotificationChannel.EMAIL) //
 			.withRecipient(NotificationRecipientType.REQUESTER) //
-			.build())
-		//
-		);
+			.build());
 	case UNCOMPLETE:
 	    // TODO DEBUG : Push disabled temporary. Need to debug
 	    // builder.withChannel(NotificationChannel.PUSH) //
@@ -194,8 +187,8 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacade {
 	return request;
     }
 
-    @Inject
-    private InsuranceRequestDAO dao;
+    @EJB
+    private InsuranceRequestDAORemote dao;
 
     private <T extends InsuranceRequest> T persistRequest(final T request) {
 	return dao.save(request);

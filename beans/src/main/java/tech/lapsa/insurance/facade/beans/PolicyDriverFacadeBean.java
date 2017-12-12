@@ -1,7 +1,5 @@
 package tech.lapsa.insurance.facade.beans;
 
-import static tech.lapsa.java.commons.function.MyExceptions.*;
-
 import java.time.LocalDate;
 
 import javax.ejb.EJB;
@@ -23,47 +21,49 @@ import tech.lapsa.insurance.esbd.NotFound;
 import tech.lapsa.insurance.esbd.elements.InsuranceClassTypeService.InsuranceClassTypeServiceRemote;
 import tech.lapsa.insurance.esbd.entities.SubjectPersonEntity;
 import tech.lapsa.insurance.esbd.entities.SubjectPersonEntityService.SubjectPersonEntityServiceRemote;
-import tech.lapsa.insurance.facade.PolicyDriverFacade;
-import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
-import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
+import tech.lapsa.insurance.facade.PolicyDriverFacade.PolicyDriverFacadeLocal;
+import tech.lapsa.insurance.facade.PolicyDriverFacade.PolicyDriverFacadeRemote;
+import tech.lapsa.java.commons.function.MyObjects;
 import tech.lapsa.java.commons.function.MyOptionals;
 import tech.lapsa.java.commons.time.MyTemporals;
 import tech.lapsa.kz.taxpayer.TaxpayerNumber;
 
 @Stateless
-public class PolicyDriverFacadeBean implements PolicyDriverFacade {
+public class PolicyDriverFacadeBean implements PolicyDriverFacadeLocal, PolicyDriverFacadeRemote {
 
     // READERS
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public InsuranceClassType getDefaultInsuranceClass() throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> _getDefaultInsuranceClass());
+    public InsuranceClassType getDefaultInsuranceClass() {
+	return _getDefaultInsuranceClass();
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public PolicyDriver getByTaxpayerNumber(final TaxpayerNumber idNumber) throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> _getByTaxpayerNumber(idNumber));
+    public PolicyDriver getByTaxpayerNumber(final TaxpayerNumber idNumber) throws IllegalArgumentException {
+	return _getByTaxpayerNumber(idNumber);
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public PolicyDriver getByTaxpayerNumberOrDefault(final TaxpayerNumber taxpayerNumber)
-	    throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> _getByTaxpayerNumberOrDefault(taxpayerNumber));
+	    throws IllegalArgumentException {
+	return _getByTaxpayerNumberOrDefault(taxpayerNumber);
     }
 
+    @Override
     @Deprecated
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public void fetch(final PolicyDriver driver) throws IllegalArgument, IllegalState {
-	reThrowAsChecked(() -> _fetch(driver));
+    public void fetch(final PolicyDriver driver) throws IllegalArgumentException {
+	_fetch(driver);
     }
 
+    @Override
     @Deprecated
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public void clearFetched(final PolicyDriver driver) throws IllegalArgument, IllegalState {
-	reThrowAsChecked(() -> _clearFetched(driver));
+    public void clearFetched(final PolicyDriver driver) throws IllegalArgumentException {
+	_clearFetched(driver);
     }
 
     // MODIFIERS
@@ -80,13 +80,14 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 	return insuranceClassTypeService.getDefault();
     }
 
-    private PolicyDriver _getByTaxpayerNumberOrDefault(final TaxpayerNumber taxpayerNumber)
-	    throws IllegalArgument, IllegalState {
+    private PolicyDriver _getByTaxpayerNumberOrDefault(final TaxpayerNumber taxpayerNumber) {
+	// TODO FEAUTURE : check parameter for requirements
 	return MyOptionals.of(_getByTaxpayerNumber(taxpayerNumber)) //
 		.orElseGet(() -> fillFromTaxpayerNumber(new PolicyDriver(), taxpayerNumber));
     }
 
     private PolicyDriver _getByTaxpayerNumber(final TaxpayerNumber idNumber) {
+	// TODO FEAUTURE : check parameter for requirements
 	return MyOptionals.of(idNumber) //
 		.flatMap(number -> MyOptionals.ifAnyException(() -> subjectPersonService.getByIIN(number))) //
 		.map(this::fetchFromESBDEntity) //
@@ -96,6 +97,7 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 
     @Deprecated
     private void _fetch(final PolicyDriver driver) {
+	MyObjects.requireNonNull(driver, "driver");
 	_clearFetched(driver);
 	final PolicyDriver fetched = _getByTaxpayerNumber(driver.getIdNumber());
 	if (fetched == null)
@@ -116,6 +118,7 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacade {
 
     @Deprecated
     private void _clearFetched(final PolicyDriver driver) {
+	MyObjects.requireNonNull(driver, "driver");
 	driver.setFetched(false);
 
 	driver.setInsuranceClassType(_getDefaultInsuranceClass());

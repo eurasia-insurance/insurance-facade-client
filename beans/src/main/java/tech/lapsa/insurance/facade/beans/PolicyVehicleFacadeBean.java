@@ -1,7 +1,5 @@
 package tech.lapsa.insurance.facade.beans;
 
-import static tech.lapsa.java.commons.function.MyExceptions.*;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -18,10 +16,9 @@ import com.lapsa.insurance.elements.VehicleClass;
 
 import tech.lapsa.insurance.esbd.entities.VehicleEntity;
 import tech.lapsa.insurance.esbd.entities.VehicleEntityService.VehicleEntityServiceRemote;
-import tech.lapsa.insurance.facade.PolicyVehicleFacade;
+import tech.lapsa.insurance.facade.PolicyVehicleFacade.PolicyVehicleFacadeLocal;
+import tech.lapsa.insurance.facade.PolicyVehicleFacade.PolicyVehicleFacadeRemote;
 import tech.lapsa.java.commons.function.MyCollectors;
-import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
-import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
 import tech.lapsa.java.commons.function.MyObjects;
 import tech.lapsa.java.commons.function.MyOptionals;
 import tech.lapsa.java.commons.function.MyStrings;
@@ -29,39 +26,40 @@ import tech.lapsa.kz.vehicle.VehicleRegNumber;
 import tech.lapsa.kz.vehicle.VehicleType;
 
 @Stateless
-public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
+public class PolicyVehicleFacadeBean implements PolicyVehicleFacadeLocal, PolicyVehicleFacadeRemote {
 
     // READERS
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<PolicyVehicle> fetchByRegNumber(final VehicleRegNumber regNumber) throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> _fetchByRegNumber(regNumber));
+    public List<PolicyVehicle> fetchByRegNumber(final VehicleRegNumber regNumber) throws IllegalArgumentException {
+	return _fetchByRegNumber(regNumber);
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<PolicyVehicle> fetchByVINCode(final String vinCode) throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> _fetchByVINCode(vinCode));
+    public List<PolicyVehicle> fetchByVINCode(final String vinCode) throws IllegalArgumentException {
+	return _fetchByVINCode(vinCode);
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public PolicyVehicle getByRegNumberOrDefault(final VehicleRegNumber regNumber)
-	    throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> _getByRegNumberOrDefault(regNumber));
+    public PolicyVehicle getByRegNumberOrDefault(final VehicleRegNumber regNumber) throws IllegalArgumentException {
+	return _getByRegNumberOrDefault(regNumber);
     }
 
+    @Override
     @Deprecated
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public void fetch(final PolicyVehicle vehicle) throws IllegalArgument, IllegalState {
-	reThrowAsChecked(() -> _fetch(vehicle));
+    public void fetch(final PolicyVehicle vehicle) throws IllegalArgumentException {
+	_fetch(vehicle);
     }
 
+    @Override
     @Deprecated
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public void clearFetched(final PolicyVehicle vehicle) throws IllegalArgument, IllegalState {
-	reThrowAsChecked(() -> _clearFetched(vehicle));
+    public void clearFetched(final PolicyVehicle vehicle) throws IllegalArgumentException {
+	_clearFetched(vehicle);
     }
 
     // MODIFIERS
@@ -70,6 +68,7 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
 
     @Deprecated
     private void _clearFetched(final PolicyVehicle vehicle) {
+	MyObjects.requireNonNull(vehicle, "vehicle");
 	vehicle.setFetched(false);
 
 	vehicle.setFetched(false);
@@ -84,7 +83,8 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacade {
     }
 
     @Deprecated
-    private void _fetch(final PolicyVehicle vehicle) throws IllegalArgument, IllegalState {
+    private void _fetch(final PolicyVehicle vehicle) {
+	MyObjects.requireNonNull(vehicle, "vehicle");
 	clearFetched(vehicle);
 
 	final PolicyVehicle fetched = _fetchFirstByVINCode(vehicle.getVinCode()).orElse(null);

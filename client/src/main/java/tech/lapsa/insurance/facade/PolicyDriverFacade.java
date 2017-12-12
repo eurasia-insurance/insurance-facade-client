@@ -24,4 +24,10 @@ public interface PolicyDriverFacade {
 
     PolicyDriver getByTaxpayerNumberOrDefault(TaxpayerNumber taxpayerNumber) throws IllegalArgumentException;
 
+    @Deprecated
+    void fetch(PolicyDriver driver) throws IllegalArgumentException;
+
+    @Deprecated
+    void clearFetched(PolicyDriver driver) throws IllegalArgumentException;
+
 }

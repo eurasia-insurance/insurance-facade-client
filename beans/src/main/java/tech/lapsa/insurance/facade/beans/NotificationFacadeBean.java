@@ -1,7 +1,6 @@
 package tech.lapsa.insurance.facade.beans;
 
 import static tech.lapsa.insurance.shared.jms.InsuranceDestinations.*;
-import static tech.lapsa.java.commons.function.MyExceptions.*;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
@@ -14,15 +13,14 @@ import com.lapsa.insurance.domain.Request;
 import com.lapsa.insurance.domain.casco.CascoRequest;
 import com.lapsa.insurance.domain.policy.PolicyRequest;
 
-import tech.lapsa.insurance.facade.NotificationFacade;
+import tech.lapsa.insurance.facade.NotificationFacade.NotificationFacadeLocal;
+import tech.lapsa.insurance.facade.NotificationFacade.NotificationFacadeRemote;
 import tech.lapsa.java.commons.function.MyExceptions;
-import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
-import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
 import tech.lapsa.javax.jms.client.JmsClientFactory;
 import tech.lapsa.javax.jms.client.JmsEventNotificatorClient;
 
 @Stateless
-public class NotificationFacadeBean implements NotificationFacade {
+public class NotificationFacadeBean implements NotificationFacadeLocal, NotificationFacadeRemote {
 
     // READERS
 
@@ -30,8 +28,8 @@ public class NotificationFacadeBean implements NotificationFacade {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void send(final Notification notification) throws IllegalArgument, IllegalState {
-	reThrowAsChecked(() -> _send(notification));
+    public void send(final Notification notification) throws IllegalArgumentException {
+	_send(notification);
     }
 
     // PRIVATE

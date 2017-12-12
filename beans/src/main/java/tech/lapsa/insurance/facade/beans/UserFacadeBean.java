@@ -1,54 +1,52 @@
 package tech.lapsa.insurance.facade.beans;
 
-import static tech.lapsa.java.commons.function.MyExceptions.*;
-
 import java.security.Principal;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 
 import com.lapsa.insurance.domain.crm.User;
 import com.lapsa.insurance.domain.crm.UserLogin;
 
-import tech.lapsa.insurance.dao.UserDAO;
+import tech.lapsa.insurance.dao.UserDAO.UserDAORemote;
 import tech.lapsa.insurance.facade.UserFacade;
-import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
-import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
+import tech.lapsa.insurance.facade.UserFacade.UserFacadeLocal;
+import tech.lapsa.insurance.facade.UserFacade.UserFacadeRemote;
 import tech.lapsa.java.commons.logging.MyLogger;
 import tech.lapsa.patterns.dao.NotFound;
 
 @Stateless
-public class UserFacadeBean implements UserFacade {
+public class UserFacadeBean implements UserFacadeLocal, UserFacadeRemote {
 
     // READERS
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<User> getWhoEverCreatedRequests() throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> _getWhoEverCreatedRequests());
+    public List<User> getWhoEverCreatedRequests() {
+	return _getWhoEverCreatedRequests();
     }
 
     // MODIFIERS
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public User findOrCreate(final String principalName) throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> _findOrCreate(principalName));
+    public User findOrCreate(final String principalName) throws IllegalArgumentException {
+	return _findOrCreate(principalName);
     }
 
     @Override
-    public User findOrCreate(final Principal principal) throws IllegalArgument, IllegalState {
-	return reThrowAsChecked(() -> _findOrCreate(principal));
+    public User findOrCreate(final Principal principal) throws IllegalArgumentException {
+	return _findOrCreate(principal);
     }
 
     // PRIVATE
 
-    @Inject
-    private UserDAO userDAO;
+    @EJB
+    private UserDAORemote userDAO;
 
     private final MyLogger logger = MyLogger.newBuilder() //
 	    .withNameOf(UserFacade.class) //

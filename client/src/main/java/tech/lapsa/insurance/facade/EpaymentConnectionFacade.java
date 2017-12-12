@@ -16,7 +16,7 @@ public interface EpaymentConnectionFacade {
     public interface EpaymentConnectionFacadeRemote extends EpaymentConnectionFacade {
     }
 
-    URI getPaymentURI(String invoiceNumber) throws IllegalArgumentException, IllegalStateException;
+    URI getPaymentURI(String invoiceNumber) throws IllegalArgumentException;
 
     void markInvoiceHasPaid(String invoiceNumber, Double paidAmount, Instant paidInstant, String paidReference)
 	    throws IllegalArgumentException, IllegalStateException;
