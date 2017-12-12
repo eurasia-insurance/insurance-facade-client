@@ -8,10 +8,10 @@ import javax.inject.Inject;
 import com.lapsa.insurance.domain.CallbackRequest;
 
 import tech.lapsa.insurance.dao.CallbackRequestDAO;
+import tech.lapsa.insurance.dao.EJBViaCDI;
 import tech.lapsa.insurance.facade.CallbackRequestFacade;
 import tech.lapsa.insurance.facade.CallbackRequestFacade.CallbackRequestFacadeLocal;
 import tech.lapsa.insurance.facade.CallbackRequestFacade.CallbackRequestFacadeRemote;
-import tech.lapsa.insurance.facade.beans.ejb.EJBViaCDI;
 import tech.lapsa.java.commons.logging.MyLogger;
 
 @Stateless

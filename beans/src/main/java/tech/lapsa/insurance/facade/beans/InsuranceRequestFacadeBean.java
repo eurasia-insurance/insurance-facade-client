@@ -20,6 +20,7 @@ import tech.lapsa.epayment.shared.entity.XmlInvoiceAcceptRequest;
 import tech.lapsa.epayment.shared.entity.XmlInvoiceAcceptResponse;
 import tech.lapsa.epayment.shared.entity.XmlInvoicePurposeItem;
 import tech.lapsa.epayment.shared.jms.EpaymentDestinations;
+import tech.lapsa.insurance.dao.EJBViaCDI;
 import tech.lapsa.insurance.dao.InsuranceRequestDAO;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade.InsuranceRequestFacadeLocal;
@@ -30,7 +31,6 @@ import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationB
 import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationChannel;
 import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationEventType;
 import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationRecipientType;
-import tech.lapsa.insurance.facade.beans.ejb.EJBViaCDI;
 import tech.lapsa.java.commons.function.MyExceptions;
 import tech.lapsa.java.commons.function.MyNumbers;
 import tech.lapsa.java.commons.function.MyOptionals;
