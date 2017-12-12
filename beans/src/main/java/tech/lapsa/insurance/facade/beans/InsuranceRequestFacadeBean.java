@@ -30,6 +30,7 @@ import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationB
 import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationChannel;
 import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationEventType;
 import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationRecipientType;
+import tech.lapsa.insurance.facade.beans.ejb.EJBViaCDI;
 import tech.lapsa.java.commons.function.MyExceptions;
 import tech.lapsa.java.commons.function.MyNumbers;
 import tech.lapsa.java.commons.function.MyOptionals;

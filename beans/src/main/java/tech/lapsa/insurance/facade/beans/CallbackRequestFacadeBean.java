@@ -11,6 +11,7 @@ import tech.lapsa.insurance.dao.CallbackRequestDAO;
 import tech.lapsa.insurance.facade.CallbackRequestFacade;
 import tech.lapsa.insurance.facade.CallbackRequestFacade.CallbackRequestFacadeLocal;
 import tech.lapsa.insurance.facade.CallbackRequestFacade.CallbackRequestFacadeRemote;
+import tech.lapsa.insurance.facade.beans.ejb.EJBViaCDI;
 import tech.lapsa.java.commons.logging.MyLogger;
 
 @Stateless

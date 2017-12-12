@@ -20,6 +20,7 @@ import tech.lapsa.insurance.esbd.entities.VehicleEntityService;
 import tech.lapsa.insurance.esbd.entities.VehicleEntityService.VehicleEntityServiceRemote;
 import tech.lapsa.insurance.facade.NotificationFacade;
 import tech.lapsa.insurance.facade.NotificationFacade.NotificationFacadeLocal;
+import tech.lapsa.insurance.facade.beans.ejb.EJBViaCDI;
 
 @Dependent
 public class EJBViaCDIProducer {

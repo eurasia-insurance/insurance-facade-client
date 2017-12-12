@@ -16,6 +16,7 @@ import tech.lapsa.insurance.dao.UserDAO;
 import tech.lapsa.insurance.facade.UserFacade;
 import tech.lapsa.insurance.facade.UserFacade.UserFacadeLocal;
 import tech.lapsa.insurance.facade.UserFacade.UserFacadeRemote;
+import tech.lapsa.insurance.facade.beans.ejb.EJBViaCDI;
 import tech.lapsa.java.commons.logging.MyLogger;
 import tech.lapsa.patterns.dao.NotFound;
 
