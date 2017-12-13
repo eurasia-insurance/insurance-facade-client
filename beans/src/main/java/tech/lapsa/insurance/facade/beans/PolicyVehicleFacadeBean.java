@@ -5,18 +5,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 
 import com.lapsa.insurance.domain.policy.PolicyVehicle;
 import com.lapsa.insurance.elements.VehicleAgeClass;
 import com.lapsa.insurance.elements.VehicleClass;
 
-import tech.lapsa.insurance.esbd.EJBViaCDI;
 import tech.lapsa.insurance.esbd.entities.VehicleEntity;
-import tech.lapsa.insurance.esbd.entities.VehicleEntityService;
+import tech.lapsa.insurance.esbd.entities.VehicleEntityService.VehicleEntityServiceRemote;
 import tech.lapsa.insurance.facade.PolicyVehicleFacade.PolicyVehicleFacadeLocal;
 import tech.lapsa.insurance.facade.PolicyVehicleFacade.PolicyVehicleFacadeRemote;
 import tech.lapsa.java.commons.function.MyCollectors;
@@ -133,9 +132,8 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacadeLocal, Policy
 		.collect(MyCollectors.unmodifiableList());
     }
 
-    @Inject
-    @EJBViaCDI
-    private VehicleEntityService vehicleService;
+    @EJB
+    private VehicleEntityServiceRemote vehicleService;
 
     private List<PolicyVehicle> _fetchByRegNumber(final VehicleRegNumber regNumber) {
 	MyObjects.requireNonNull(regNumber, "regNumber");

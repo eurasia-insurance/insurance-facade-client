@@ -3,17 +3,16 @@ package tech.lapsa.insurance.facade.beans;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 
 import com.lapsa.insurance.domain.CompanyPointOfSale;
 import com.lapsa.insurance.domain.PostAddress;
 import com.lapsa.kz.country.KZCity;
 
-import tech.lapsa.insurance.dao.CompanyPointOfSaleDAO;
-import tech.lapsa.insurance.dao.EJBViaCDI;
+import tech.lapsa.insurance.dao.CompanyPointOfSaleDAO.CompanyPointOfSaleDAORemote;
 import tech.lapsa.insurance.facade.CompanyPointOfSaleFacade.CompanyPointOfSaleFacadeLocal;
 import tech.lapsa.insurance.facade.CompanyPointOfSaleFacade.CompanyPointOfSaleFacadeRemote;
 import tech.lapsa.java.commons.function.MyCollectors;
@@ -66,9 +65,8 @@ public class CompanyPointOfSaleFacadeBean implements CompanyPointOfSaleFacadeLoc
 
     // PRIVATE
 
-    @Inject
-    @EJBViaCDI
-    private CompanyPointOfSaleDAO companyPointOfSaleDAO;
+    @EJB
+    private CompanyPointOfSaleDAORemote companyPointOfSaleDAO;
 
     private List<CompanyPointOfSale> _findAllOwnOffices() {
 	return allAvailable() //

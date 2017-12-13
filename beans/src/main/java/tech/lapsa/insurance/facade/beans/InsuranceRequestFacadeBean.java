@@ -21,8 +21,7 @@ import tech.lapsa.epayment.shared.entity.XmlInvoiceAcceptRequest;
 import tech.lapsa.epayment.shared.entity.XmlInvoiceAcceptResponse;
 import tech.lapsa.epayment.shared.entity.XmlInvoicePurposeItem;
 import tech.lapsa.epayment.shared.jms.EpaymentDestinations;
-import tech.lapsa.insurance.dao.EJBViaCDI;
-import tech.lapsa.insurance.dao.InsuranceRequestDAO;
+import tech.lapsa.insurance.dao.InsuranceRequestDAO.InsuranceRequestDAORemote;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade.InsuranceRequestFacadeLocal;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade.InsuranceRequestFacadeRemote;
@@ -192,9 +191,8 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 	return request;
     }
 
-    @Inject
-    @EJBViaCDI
-    private InsuranceRequestDAO dao;
+    @EJB
+    private InsuranceRequestDAORemote dao;
 
     private <Y extends InsuranceRequest> Y persistRequest(final Y request) {
 	return dao.save(request);

@@ -1,14 +1,13 @@
 package tech.lapsa.insurance.facade.beans;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 
 import com.lapsa.insurance.domain.CallbackRequest;
 
-import tech.lapsa.insurance.dao.CallbackRequestDAO;
-import tech.lapsa.insurance.dao.EJBViaCDI;
+import tech.lapsa.insurance.dao.CallbackRequestDAO.CallbackRequestDAORemote;
 import tech.lapsa.insurance.facade.CallbackRequestFacade;
 import tech.lapsa.insurance.facade.CallbackRequestFacade.CallbackRequestFacadeLocal;
 import tech.lapsa.insurance.facade.CallbackRequestFacade.CallbackRequestFacadeRemote;
@@ -58,9 +57,8 @@ public class CallbackRequestFacadeBean implements CallbackRequestFacadeLocal, Ca
 	return request;
     }
 
-    @Inject
-    @EJBViaCDI
-    private CallbackRequestDAO dao;
+    @EJB
+    private CallbackRequestDAORemote dao;
 
     private <Y extends CallbackRequest> Y persistRequest(final Y request) {
 	return dao.save(request);
