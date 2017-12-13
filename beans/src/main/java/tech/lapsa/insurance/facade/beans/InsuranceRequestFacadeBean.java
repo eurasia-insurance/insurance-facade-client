@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Currency;
 import java.util.Optional;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -25,12 +26,12 @@ import tech.lapsa.insurance.dao.InsuranceRequestDAO;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade.InsuranceRequestFacadeLocal;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade.InsuranceRequestFacadeRemote;
-import tech.lapsa.insurance.facade.NotificationFacade;
 import tech.lapsa.insurance.facade.NotificationFacade.Notification;
 import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationBuilder;
 import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationChannel;
 import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationEventType;
 import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationRecipientType;
+import tech.lapsa.insurance.facade.NotificationFacade.NotificationFacadeLocal;
 import tech.lapsa.java.commons.function.MyExceptions;
 import tech.lapsa.java.commons.function.MyNumbers;
 import tech.lapsa.java.commons.function.MyOptionals;
@@ -70,8 +71,8 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 
     // PRIVATE
 
-    @Inject
-    private NotificationFacade notifications;
+    @EJB
+    private NotificationFacadeLocal notifications;
 
     private <Y extends InsuranceRequest> Y _acceptAndReply(final Y request) {
 	// TODO FEAUTURE : check parameter for requirements
@@ -191,7 +192,6 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 	return request;
     }
 
-    
     @Inject
     @EJBViaCDI
     private InsuranceRequestDAO dao;
