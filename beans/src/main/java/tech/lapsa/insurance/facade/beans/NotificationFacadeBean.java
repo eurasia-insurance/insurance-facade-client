@@ -16,6 +16,7 @@ import com.lapsa.insurance.domain.policy.PolicyRequest;
 import tech.lapsa.insurance.facade.NotificationFacade.NotificationFacadeLocal;
 import tech.lapsa.insurance.facade.NotificationFacade.NotificationFacadeRemote;
 import tech.lapsa.java.commons.function.MyExceptions;
+import tech.lapsa.java.commons.function.MyObjects;
 import tech.lapsa.javax.jms.client.JmsClientFactory;
 import tech.lapsa.javax.jms.client.JmsEventNotificatorClient;
 
@@ -40,7 +41,8 @@ public class NotificationFacadeBean implements NotificationFacadeLocal, Notifica
     // TODO REFACT : Required to send Notification object to the single JMS
     // destination and process the Notification at the recipient side. Also it
     // could removes the most of notification driven beans
-    private void _send(final Notification notification) {
+    private void _send(final Notification notification) throws IllegalArgumentException {
+	MyObjects.requireNonNull(notification, "notification");
 	final Destination destination = resolveDestination(notification);
 	final JmsEventNotificatorClient<Request> notificator = jmsFactory.createEventNotificator(destination);
 	notificator.eventNotify(notification.getEntity(), notification.getProperties());
@@ -67,7 +69,8 @@ public class NotificationFacadeBean implements NotificationFacadeLocal, Notifica
     @Resource(name = NOTIFIER_REQUEST_PAID_COMPANY_EMAIL)
     private Destination requestPaidCompanyEmail;
 
-    private Destination resolveDestination(Notification notification) {
+    private Destination resolveDestination(Notification notification) throws IllegalArgumentException {
+	MyObjects.requireNonNull(notification, "notification");
 	final Request request = notification.getEntity();
 	switch (notification.getEvent()) {
 	case NEW_REQUEST:
