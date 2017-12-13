@@ -47,13 +47,13 @@
 		</dependency>
 		<dependency>
 			<groupId>tech.lapsa.insurance</groupId>
-			<artifactId>insurance-dao-producer-remote</artifactId>
+			<artifactId>insurance-dao-client</artifactId>
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
 		<dependency>
 			<groupId>tech.lapsa.insurance</groupId>
-			<artifactId>insurance-esbd-producer-remote</artifactId>
+			<artifactId>insurance-esbd-client</artifactId>
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
