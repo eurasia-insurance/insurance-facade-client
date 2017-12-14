@@ -6,6 +6,7 @@ import javax.ejb.Remote;
 import com.lapsa.insurance.domain.policy.PolicyDriver;
 import com.lapsa.insurance.elements.InsuranceClassType;
 
+import tech.lapsa.java.commons.exceptions.IllegalArgument;
 import tech.lapsa.kz.taxpayer.TaxpayerNumber;
 
 public interface PolicyDriverFacade {
@@ -20,14 +21,14 @@ public interface PolicyDriverFacade {
 
     InsuranceClassType getDefaultInsuranceClass();
 
-    PolicyDriver getByTaxpayerNumber(TaxpayerNumber idNumber) throws IllegalArgumentException;
+    PolicyDriver getByTaxpayerNumber(TaxpayerNumber idNumber) throws IllegalArgument, PolicyDriverNotFound;
 
-    PolicyDriver getByTaxpayerNumberOrDefault(TaxpayerNumber taxpayerNumber) throws IllegalArgumentException;
-
-    @Deprecated
-    void fetch(PolicyDriver driver) throws IllegalArgumentException;
+    PolicyDriver getByTaxpayerNumberOrDefault(TaxpayerNumber taxpayerNumber) throws IllegalArgument;
 
     @Deprecated
-    void clearFetched(PolicyDriver driver) throws IllegalArgumentException;
+    void fetch(PolicyDriver driver) throws IllegalArgument, PolicyDriverNotFound;
+
+    @Deprecated
+    void clearFetched(PolicyDriver driver) throws IllegalArgument;
 
 }

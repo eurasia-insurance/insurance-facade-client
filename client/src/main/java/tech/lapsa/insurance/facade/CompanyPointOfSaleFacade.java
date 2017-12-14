@@ -8,6 +8,8 @@ import javax.ejb.Remote;
 import com.lapsa.insurance.domain.CompanyPointOfSale;
 import com.lapsa.kz.country.KZCity;
 
+import tech.lapsa.java.commons.exceptions.IllegalArgument;
+
 public interface CompanyPointOfSaleFacade {
 
     @Local
@@ -20,12 +22,12 @@ public interface CompanyPointOfSaleFacade {
 
     List<CompanyPointOfSale> pointOfSalesForPickup();
 
-    List<CompanyPointOfSale> pointOfSalesForPickup(KZCity city) throws IllegalArgumentException;
+    List<CompanyPointOfSale> pointOfSalesForPickup(KZCity city) throws IllegalArgument;
 
     List<CompanyPointOfSale> pointOfSalesForDelivery();
 
     List<CompanyPointOfSale> pointOfSalesForDelivery(KZCity city)
-	    throws IllegalArgumentException;
+	    throws IllegalArgument;
 
     List<KZCity> getCitiesForPickup();
 

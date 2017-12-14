@@ -8,6 +8,8 @@ import javax.ejb.Remote;
 
 import com.lapsa.insurance.domain.crm.User;
 
+import tech.lapsa.java.commons.exceptions.IllegalArgument;
+
 public interface UserFacade {
 
     @Local
@@ -18,9 +20,9 @@ public interface UserFacade {
     public interface UserFacadeRemote extends UserFacade {
     }
 
-    User findOrCreate(String principalName) throws IllegalArgumentException;
+    User findOrCreate(String principalName) throws IllegalArgument;
 
-    User findOrCreate(Principal principal) throws IllegalArgumentException;
+    User findOrCreate(Principal principal) throws IllegalArgument;
 
     List<User> getWhoEverCreatedRequests();
 

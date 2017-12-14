@@ -15,6 +15,7 @@ import com.lapsa.insurance.domain.policy.PolicyRequest;
 
 import tech.lapsa.insurance.facade.NotificationFacade.NotificationFacadeLocal;
 import tech.lapsa.insurance.facade.NotificationFacade.NotificationFacadeRemote;
+import tech.lapsa.java.commons.exceptions.IllegalArgument;
 import tech.lapsa.java.commons.function.MyExceptions;
 import tech.lapsa.java.commons.function.MyObjects;
 import tech.lapsa.javax.jms.client.JmsClientFactory;
@@ -29,8 +30,12 @@ public class NotificationFacadeBean implements NotificationFacadeLocal, Notifica
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void send(final Notification notification) throws IllegalArgumentException {
-	_send(notification);
+    public void send(final Notification notification) throws IllegalArgument {
+	try {
+	    _send(notification);
+	} catch (IllegalArgumentException e) {
+	    throw IllegalArgument.from(e);
+	}
     }
 
     // PRIVATE
@@ -69,7 +74,7 @@ public class NotificationFacadeBean implements NotificationFacadeLocal, Notifica
     @Resource(name = NOTIFIER_REQUEST_PAID_COMPANY_EMAIL)
     private Destination requestPaidCompanyEmail;
 
-    private Destination resolveDestination(Notification notification) throws IllegalArgumentException {
+    private Destination resolveDestination(final Notification notification) throws IllegalArgumentException {
 	MyObjects.requireNonNull(notification, "notification");
 	final Request request = notification.getEntity();
 	switch (notification.getEvent()) {

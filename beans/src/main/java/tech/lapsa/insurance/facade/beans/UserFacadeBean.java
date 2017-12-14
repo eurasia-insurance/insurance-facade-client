@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.ejb.EJB;
+import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -16,6 +17,9 @@ import tech.lapsa.insurance.dao.UserDAO.UserDAORemote;
 import tech.lapsa.insurance.facade.UserFacade;
 import tech.lapsa.insurance.facade.UserFacade.UserFacadeLocal;
 import tech.lapsa.insurance.facade.UserFacade.UserFacadeRemote;
+import tech.lapsa.java.commons.exceptions.IllegalArgument;
+import tech.lapsa.java.commons.function.MyObjects;
+import tech.lapsa.java.commons.function.MyStrings;
 import tech.lapsa.java.commons.logging.MyLogger;
 import tech.lapsa.patterns.dao.NotFound;
 
@@ -34,13 +38,21 @@ public class UserFacadeBean implements UserFacadeLocal, UserFacadeRemote {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public User findOrCreate(final String principalName) throws IllegalArgumentException {
-	return _findOrCreate(principalName);
+    public User findOrCreate(final String principalName) throws IllegalArgument {
+	try {
+	    return _findOrCreate(principalName);
+	} catch (IllegalArgumentException e) {
+	    throw IllegalArgument.from(e);
+	}
     }
 
     @Override
-    public User findOrCreate(final Principal principal) throws IllegalArgumentException {
-	return _findOrCreate(principal);
+    public User findOrCreate(final Principal principal) throws IllegalArgument {
+	try {
+	    return _findOrCreate(principal);
+	} catch (IllegalArgumentException e) {
+	    throw IllegalArgument.from(e);
+	}
     }
 
     // PRIVATE
@@ -56,30 +68,43 @@ public class UserFacadeBean implements UserFacadeLocal, UserFacadeRemote {
 	return userDAO.findAllWhoCreatedRequest();
     }
 
-    private User _findOrCreate(final Principal principal) {
-	if (principal == null)
-	    return null;
+    private User _findOrCreate(final Principal principal) throws IllegalArgumentException {
+	MyObjects.requireNonNull(principal, "principal");
 	return _findOrCreate(principal.getName());
     }
 
-    private User _findOrCreate(final String principalName) {
-	if (principalName == null)
-	    return null;
+    private User _findOrCreate(final String principalName) throws IllegalArgumentException {
+	MyStrings.requireNonEmpty(principalName, "principalName");
 	try {
 	    return userDAO.getByLogin(principalName);
+	} catch (IllegalArgument e) {
+	    // it should not happens
+	    throw new EJBException(e.getMessage());
 	} catch (final NotFound e) {
 	    logger.INFO.log("New User creating '%1$s'", principalName);
 
-	    final User value = new User();
-	    final UserLogin login = value.addLogin(new UserLogin());
-	    login.setName(principalName);
+	    final User uNew;
+	    {
+		uNew = new User();
+		final UserLogin login = uNew.addLogin(new UserLogin());
+		login.setName(principalName);
 
-	    if (Util.isEmail(principalName)) {
-		value.setEmail(principalName);
-		value.setName(Util.stripEmailToName(principalName));
-	    } else
-		value.setName(principalName);
-	    return userDAO.save(value);
+		if (Util.isEmail(principalName)) {
+		    uNew.setEmail(principalName);
+		    uNew.setName(Util.stripEmailToName(principalName));
+		} else
+		    uNew.setName(principalName);
+	    }
+
+	    final User u;
+	    try {
+		u = userDAO.save(uNew);
+	    } catch (IllegalArgument e1) {
+		// it should not happens
+		throw new EJBException(e.getMessage());
+	    }
+
+	    return u;
 	}
     }
 

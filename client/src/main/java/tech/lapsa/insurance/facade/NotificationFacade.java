@@ -11,6 +11,7 @@ import javax.ejb.Remote;
 
 import com.lapsa.insurance.domain.Request;
 
+import tech.lapsa.java.commons.exceptions.IllegalArgument;
 import tech.lapsa.java.commons.function.MyObjects;
 import tech.lapsa.java.commons.function.MyStrings;
 
@@ -24,7 +25,7 @@ public interface NotificationFacade {
     public interface NotificationFacadeRemote extends NotificationFacade {
     }
 
-    void send(Notification notification) throws IllegalArgumentException;
+    void send(Notification notification) throws IllegalArgument;
 
     public static final class Notification implements Serializable {
 
@@ -54,7 +55,7 @@ public interface NotificationFacade {
 	    private NotificationRecipientType recipientType;
 	    private NotificationEventType event;
 	    private Request entity;
-	    private Map<String, String> properties = new HashMap<>();
+	    private final Map<String, String> properties = new HashMap<>();
 
 	    private NotificationBuilder() {
 	    }
@@ -82,7 +83,8 @@ public interface NotificationFacade {
 
 	    public NotificationBuilder withProperty(final String key, final String value)
 		    throws IllegalArgumentException {
-		properties.put(MyStrings.requireNonEmpty(key, "key"), MyStrings.requireNonEmpty(value, "value"));
+		properties.put(MyStrings.requireNonEmpty(key, "key"),
+			MyStrings.requireNonEmpty(value, "value"));
 		return this;
 	    }
 
@@ -98,8 +100,8 @@ public interface NotificationFacade {
 	private final Request entity;
 	private final Map<String, String> propsMap;
 
-	private Notification(NotificationChannel channel, NotificationRecipientType recipientType,
-		NotificationEventType event, Request entity, Map<String, String> propsMap)
+	private Notification(final NotificationChannel channel, final NotificationRecipientType recipientType,
+		final NotificationEventType event, final Request entity, final Map<String, String> propsMap)
 		throws IllegalArgumentException {
 	    this.channel = MyObjects.requireNonNull(channel, "channel");
 	    this.recipientType = MyObjects.requireNonNull(recipientType, "recipientType");

@@ -7,8 +7,7 @@ import javax.ejb.Remote;
 
 import com.lapsa.insurance.domain.policy.PolicyVehicle;
 
-import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
-import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
+import tech.lapsa.java.commons.exceptions.IllegalArgument;
 import tech.lapsa.kz.vehicle.VehicleRegNumber;
 
 public interface PolicyVehicleFacade {
@@ -21,15 +20,21 @@ public interface PolicyVehicleFacade {
     public interface PolicyVehicleFacadeRemote extends PolicyVehicleFacade {
     }
 
-    List<PolicyVehicle> fetchByRegNumber(VehicleRegNumber regNumber) throws IllegalArgumentException;
+    List<PolicyVehicle> fetchAllByVINCode(String vinCode) throws IllegalArgument;
 
-    List<PolicyVehicle> fetchByVINCode(String vinCode) throws IllegalArgumentException;
+    PolicyVehicle fetchFirstByVINCode(String vinCode) throws IllegalArgument, PolicyVehicleNotFound;
 
-    PolicyVehicle getByRegNumberOrDefault(VehicleRegNumber regNumber) throws IllegalArgumentException;
+    List<PolicyVehicle> fetchAllByRegNumber(VehicleRegNumber regNumber) throws IllegalArgument;
+
+    PolicyVehicle fetchFirstByRegNumberOrDefault(VehicleRegNumber regNumber)
+	    throws IllegalArgument;
+
+    PolicyVehicle fetchFirstByRegNumber(VehicleRegNumber regNumber) throws IllegalArgument, PolicyVehicleNotFound;
 
     @Deprecated
-    void fetch(PolicyVehicle vehicle) throws IllegalArgument, IllegalState;
+    void fetch(PolicyVehicle vehicle) throws IllegalArgument, PolicyVehicleNotFound;
 
     @Deprecated
-    void clearFetched(PolicyVehicle vehicle) throws IllegalArgument, IllegalState;
+    void clearFetched(PolicyVehicle vehicle) throws IllegalArgument;
+
 }

@@ -5,6 +5,7 @@ import java.util.Currency;
 import java.util.Optional;
 
 import javax.ejb.EJB;
+import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -31,8 +32,11 @@ import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationC
 import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationEventType;
 import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationRecipientType;
 import tech.lapsa.insurance.facade.NotificationFacade.NotificationFacadeLocal;
+import tech.lapsa.java.commons.exceptions.IllegalArgument;
+import tech.lapsa.java.commons.exceptions.IllegalState;
 import tech.lapsa.java.commons.function.MyExceptions;
 import tech.lapsa.java.commons.function.MyNumbers;
+import tech.lapsa.java.commons.function.MyObjects;
 import tech.lapsa.java.commons.function.MyOptionals;
 import tech.lapsa.java.commons.function.MyStrings;
 import tech.lapsa.java.commons.logging.MyLogger;
@@ -50,22 +54,26 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public <Y extends InsuranceRequest> Y acceptAndReply(final Y request) throws IllegalArgumentException {
-	return _acceptAndReply(request);
-    }
-
-    @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void accept(InsuranceRequest request) throws IllegalArgumentException {
-	_acceptAndReply(request);
+    public <Y extends InsuranceRequest> Y acceptAndReply(final Y request) throws IllegalArgument {
+	try {
+	    return _acceptAndReply(request);
+	} catch (IllegalArgumentException e) {
+	    throw IllegalArgument.from(e);
+	}
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void completePayment(final Integer id, final String methodName, final Instant paymentInstant,
 	    final Double paymentAmount, final Currency paymentCurrency, final String paymentReference)
-	    throws IllegalArgumentException, IllegalStateException {
-	_completePayment(id, methodName, paymentInstant, paymentAmount, paymentReference);
+	    throws IllegalArgument, IllegalState {
+	try {
+	    _completePayment(id, methodName, paymentInstant, paymentAmount, paymentReference);
+	} catch (IllegalStateException e) {
+	    throw IllegalState.from(e);
+	} catch (IllegalArgumentException e) {
+	    throw IllegalArgument.from(e);
+	}
     }
 
     // PRIVATE
@@ -73,42 +81,91 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
     @EJB
     private NotificationFacadeLocal notifications;
 
-    private <Y extends InsuranceRequest> Y _acceptAndReply(final Y request) {
-	// TODO FEAUTURE : check parameter for requirements
-	Requests.preSave(request);
-	final Y saved = persistRequest(request);
-	setupPaymentOrder(saved);
-	setupNotifications(saved);
-	logInsuranceRequestAccepted(saved);
-	return saved;
+    @EJB
+    private InsuranceRequestDAORemote dao;
+
+    private <Y extends InsuranceRequest> Y _acceptAndReply(final Y insuranceRequest) throws IllegalArgumentException {
+
+	MyObjects.requireNonNull(insuranceRequest, "insuranceRequest");
+
+	Requests.preSave(insuranceRequest);
+
+	final Y ir;
+	try {
+	    ir = dao.save(insuranceRequest);
+	} catch (IllegalArgument e) {
+	    // it should not happens
+	    throw new EJBException(e.getMessage());
+	}
+
+	setupPaymentOrder(ir);
+	setupNotifications(ir);
+
+	logger.INFO.log("New %4$s accepded from '%1$s' '<%2$s>' tel '%3$s' ", //
+		ir.getRequester().getName(), // 1
+		ir.getRequester().getEmail(), // 2
+		ir.getRequester().getPhone(), // 3
+		ir.getClass().getSimpleName() // 4
+	);
+
+	return ir;
     }
 
     private void _completePayment(final Integer id, final String methodName, final Instant paymentInstant,
-	    final Double paymentAmount, final String paymentReference) {
+	    final Double paymentAmount, final String paymentReference)
+	    throws IllegalArgumentException, IllegalStateException {
+
 	// TODO FEAUTURE : check parameter for requirements
 
-	final InsuranceRequest request;
-	{
-	    InsuranceRequest temp = MyOptionals //
-		    .ifCheckedException(() -> dao.getById(id), NotFound.class) //
-		    .orElseThrow(() -> new IllegalArgumentException("Request not found with id " + id));
-	    temp.getPayment().setStatus(PaymentStatus.DONE);
-	    temp.getPayment().setMethodName(methodName);
-	    temp.getPayment().setPaymentAmount(paymentAmount);
-	    temp.getPayment().setPaymentReference(paymentReference);
-	    temp.getPayment().setPaymentInstant(paymentInstant);
+	InsuranceRequest request;
+	try {
+	    request = dao.getById(id);
+	} catch (final NotFound e) {
+	    throw MyExceptions.format(IllegalArgumentException::new, "Request not found with id %1$s", id);
+	} catch (IllegalArgument e) {
+	    // it should not happens
+	    throw new EJBException(e.getMessage());
+	}
+
+	try {
+	    if (request.getPayment().getStatus() == PaymentStatus.DONE) {
+		throw MyExceptions.illegalStateFormat("Request %1$s already paid on %2$s with reference %3$s",
+			request.getId(),
+			request.getPayment().getPaymentInstant(),
+			request.getPayment().getPaymentReference());
+	    }
+
+	    request.getPayment().setStatus(PaymentStatus.DONE);
+	    request.getPayment().setMethodName(methodName);
+	    request.getPayment().setPaymentAmount(paymentAmount);
+	    request.getPayment().setPaymentReference(paymentReference);
+	    request.getPayment().setPaymentInstant(paymentInstant);
 	    // TODO FEAUTURE : Save paymentCurrency or not?
-	    request = dao.save(temp);
+	} catch (NullPointerException e) {
+	    // it should not happens
+	    throw new EJBException(e.getMessage());
+	}
+
+	try {
+	    request = dao.save(request);
+	} catch (IllegalArgument e) {
+	    // it should not happens
+	    throw new EJBException(e.getMessage());
 	}
 
 	request.unlazy();
 
-	notifications.send(Notification.builder() //
-		.withEvent(NotificationEventType.REQUEST_PAID) //
-		.withChannel(NotificationChannel.EMAIL) //
-		.forEntity(request) //
-		.withRecipient(NotificationRecipientType.COMPANY) //
-		.build());
+	try {
+	    notifications.send(Notification.builder() //
+		    .withEvent(NotificationEventType.REQUEST_PAID) //
+		    .withChannel(NotificationChannel.EMAIL) //
+		    .forEntity(request) //
+		    .withRecipient(NotificationRecipientType.COMPANY) //
+		    .build());
+	} catch (IllegalArgument e) {
+	    // it should not happen
+	    throw new EJBException(e.getMessage());
+	}
     }
 
     @Inject
@@ -116,7 +173,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
     @JmsResultType(XmlInvoiceAcceptResponse.class)
     private JmsCallableClient<XmlInvoiceAcceptRequest, XmlInvoiceAcceptResponse> invoiceAcceptorCallableClient;
 
-    private <T extends InsuranceRequest> T setupPaymentOrder(final T request) {
+    private <T extends InsuranceRequest> T setupPaymentOrder(final T request) throws IllegalArgumentException {
 	// TODO FEAUTURE : check parameter for requirements
 
 	if (MyStrings.nonEmpty(request.getPayment().getInvoiceNumber()))
@@ -130,15 +187,15 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 		.map(InsuranceProduct::getCalculation);
 
 	r.setLanguage(ord.map(RequesterData::getPreferLanguage) //
-		.orElseThrow(MyExceptions.illegalStateSupplierFormat("Can't determine the language")));
+		.orElseThrow(MyExceptions.illegalArgumentSupplier("Can't determine the language")));
 
 	r.setCurrency(ocd.map(CalculationData::getPremiumCurrency) //
 		.map(FinCurrency::getCurrency)
-		.orElseThrow(MyExceptions.illegalStateSupplierFormat("Can't determine an premium currency")));
+		.orElseThrow(MyExceptions.illegalArgumentSupplier("Can't determine an premium currency")));
 
 	r.setExternalId(request.getId());
 	r.setName(ord.map(RequesterData::getName) //
-		.orElseThrow(MyExceptions.illegalStateSupplierFormat("Can't determine a consumer name")));
+		.orElseThrow(MyExceptions.illegalArgumentSupplier("Can't determine a consumer name")));
 	ord.map(RequesterData::getPhone) //
 		.ifPresent(r::setPhoneNumber);
 
@@ -150,10 +207,10 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 
 	final XmlInvoicePurposeItem p = new XmlInvoicePurposeItem(MyOptionals.of(request.getProductType()) //
 		.map(x -> x.regular(r.getLanguage().getLocale())) //
-		.orElseThrow(MyExceptions.illegalStateSupplierFormat("Can't determine an item name")),
+		.orElseThrow(MyExceptions.illegalArgumentSupplier("Can't determine an item name")),
 		ocd.map(CalculationData::getPremiumCost) //
 			.filter(MyNumbers::nonZero) //
-			.orElseThrow(MyExceptions.illegalStateSupplierFormat("Can't determine an premium amount")),
+			.orElseThrow(MyExceptions.illegalArgumentSupplier("Can't determine an premium amount")),
 		1);
 
 	r.setItem(p);
@@ -165,7 +222,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 	return request;
     }
 
-    private <T extends InsuranceRequest> T setupNotifications(final T request) {
+    private <T extends InsuranceRequest> T setupNotifications(final T request) throws IllegalArgumentException {
 	// TODO FEAUTURE : check parameter for requirements
 	final NotificationBuilder builder = Notification.builder() //
 		.withEvent(NotificationEventType.NEW_REQUEST) //
@@ -174,13 +231,23 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 	switch (request.getType()) {
 	case ONLINE:
 	case EXPRESS:
-	    notifications.send(builder.withChannel(NotificationChannel.EMAIL) //
-		    .withRecipient(NotificationRecipientType.COMPANY) //
-		    .build());
-	    if (request.getRequester().getEmail() != null)
+	    try {
 		notifications.send(builder.withChannel(NotificationChannel.EMAIL) //
-			.withRecipient(NotificationRecipientType.REQUESTER) //
+			.withRecipient(NotificationRecipientType.COMPANY) //
 			.build());
+	    } catch (IllegalArgument e) {
+		// it should not happen
+		throw new EJBException(e.getMessage());
+	    }
+	    if (request.getRequester().getEmail() != null)
+		try {
+		    notifications.send(builder.withChannel(NotificationChannel.EMAIL) //
+			    .withRecipient(NotificationRecipientType.REQUESTER) //
+			    .build());
+		} catch (IllegalArgument e) {
+		    // it should not happen
+		    throw new EJBException(e.getMessage());
+		}
 	case UNCOMPLETE:
 	    // TODO DEBUG : Push disabled temporary. Need to debug
 	    // builder.withChannel(NotificationChannel.PUSH) //
@@ -191,25 +258,8 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 	return request;
     }
 
-    @EJB
-    private InsuranceRequestDAORemote dao;
-
-    private <Y extends InsuranceRequest> Y persistRequest(final Y request) {
-	return dao.save(request);
-    }
-
     private final MyLogger logger = MyLogger.newBuilder() //
 	    .withNameOf(InsuranceRequestFacade.class) //
 	    .build();
-
-    private <T extends InsuranceRequest> T logInsuranceRequestAccepted(final T request) {
-	logger.INFO.log("New %4$s accepded from '%1$s' '<%2$s>' tel '%3$s' ", //
-		request.getRequester().getName(), // 1
-		request.getRequester().getEmail(), // 2
-		request.getRequester().getPhone(), // 3
-		request.getClass().getSimpleName() // 4
-	);
-	return request;
-    }
 
 }

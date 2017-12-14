@@ -15,6 +15,7 @@ import com.lapsa.kz.country.KZCity;
 import tech.lapsa.insurance.dao.CompanyPointOfSaleDAO.CompanyPointOfSaleDAORemote;
 import tech.lapsa.insurance.facade.CompanyPointOfSaleFacade.CompanyPointOfSaleFacadeLocal;
 import tech.lapsa.insurance.facade.CompanyPointOfSaleFacade.CompanyPointOfSaleFacadeRemote;
+import tech.lapsa.java.commons.exceptions.IllegalArgument;
 import tech.lapsa.java.commons.function.MyCollectors;
 import tech.lapsa.java.commons.function.MyObjects;
 import tech.lapsa.java.commons.function.MyOptionals;
@@ -32,8 +33,12 @@ public class CompanyPointOfSaleFacadeBean implements CompanyPointOfSaleFacadeLoc
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<CompanyPointOfSale> pointOfSalesForPickup(final KZCity city) throws IllegalArgumentException {
-	return _pointOfSalesForPickup(city);
+    public List<CompanyPointOfSale> pointOfSalesForPickup(final KZCity city) throws IllegalArgument {
+	try {
+	    return _pointOfSalesForPickup(city);
+	} catch (IllegalArgumentException e) {
+	    throw IllegalArgument.from(e);
+	}
     }
 
     @Override
@@ -44,8 +49,12 @@ public class CompanyPointOfSaleFacadeBean implements CompanyPointOfSaleFacadeLoc
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<CompanyPointOfSale> pointOfSalesForDelivery(final KZCity city) throws IllegalArgumentException {
-	return _pointOfSalesForDelivery(city);
+    public List<CompanyPointOfSale> pointOfSalesForDelivery(final KZCity city) throws IllegalArgument {
+	try {
+	    return _pointOfSalesForDelivery(city);
+	} catch (IllegalArgumentException e) {
+	    throw IllegalArgument.from(e);
+	}
     }
 
     @Override
@@ -83,7 +92,7 @@ public class CompanyPointOfSaleFacadeBean implements CompanyPointOfSaleFacadeLoc
 		.collect(MyCollectors.unmodifiableList());
     }
 
-    private List<CompanyPointOfSale> _pointOfSalesForDelivery(final KZCity city) {
+    private List<CompanyPointOfSale> _pointOfSalesForDelivery(final KZCity city) throws IllegalArgumentException {
 	MyObjects.requireNonNull(city, "city");
 	return allAvailable() //
 		.filter(CompanyPointOfSale::isDeliveryServicesAvailable) //
@@ -98,7 +107,7 @@ public class CompanyPointOfSaleFacadeBean implements CompanyPointOfSaleFacadeLoc
 		.collect(MyCollectors.unmodifiableList());
     }
 
-    private List<CompanyPointOfSale> _pointOfSalesForPickup(final KZCity city) {
+    private List<CompanyPointOfSale> _pointOfSalesForPickup(final KZCity city) throws IllegalArgumentException {
 	MyObjects.requireNonNull(city, "city");
 	return allAvailable() //
 		.filter(CompanyPointOfSale::isPickupAvailable)
