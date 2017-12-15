@@ -36,8 +36,8 @@ public class CompanyPointOfSaleFacadeBean implements CompanyPointOfSaleFacadeLoc
     public List<CompanyPointOfSale> pointOfSalesForPickup(final KZCity city) throws IllegalArgument {
 	try {
 	    return _pointOfSalesForPickup(city);
-	} catch (IllegalArgumentException e) {
-	    throw IllegalArgument.from(e);
+	} catch (final IllegalArgumentException e) {
+	    throw new IllegalArgument(e);
 	}
     }
 
@@ -52,8 +52,8 @@ public class CompanyPointOfSaleFacadeBean implements CompanyPointOfSaleFacadeLoc
     public List<CompanyPointOfSale> pointOfSalesForDelivery(final KZCity city) throws IllegalArgument {
 	try {
 	    return _pointOfSalesForDelivery(city);
-	} catch (IllegalArgumentException e) {
-	    throw IllegalArgument.from(e);
+	} catch (final IllegalArgumentException e) {
+	    throw new IllegalArgument(e);
 	}
     }
 

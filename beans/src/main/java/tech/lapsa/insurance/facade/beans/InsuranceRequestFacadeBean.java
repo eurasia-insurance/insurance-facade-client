@@ -57,8 +57,8 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
     public <Y extends InsuranceRequest> Y acceptAndReply(final Y request) throws IllegalArgument {
 	try {
 	    return _acceptAndReply(request);
-	} catch (IllegalArgumentException e) {
-	    throw IllegalArgument.from(e);
+	} catch (final IllegalArgumentException e) {
+	    throw new IllegalArgument(e);
 	}
     }
 
@@ -69,10 +69,10 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 	    throws IllegalArgument, IllegalState {
 	try {
 	    _completePayment(id, methodName, paymentInstant, paymentAmount, paymentReference);
-	} catch (IllegalStateException e) {
-	    throw IllegalState.from(e);
-	} catch (IllegalArgumentException e) {
-	    throw IllegalArgument.from(e);
+	} catch (final IllegalStateException e) {
+	    throw new IllegalState(e);
+	} catch (final IllegalArgumentException e) {
+	    throw new IllegalArgument(e);
 	}
     }
 
@@ -93,7 +93,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 	final Y ir;
 	try {
 	    ir = dao.save(insuranceRequest);
-	} catch (IllegalArgument e) {
+	} catch (final IllegalArgument e) {
 	    // it should not happens
 	    throw new EJBException(e.getMessage());
 	}
@@ -122,18 +122,17 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 	    request = dao.getById(id);
 	} catch (final NotFound e) {
 	    throw MyExceptions.format(IllegalArgumentException::new, "Request not found with id %1$s", id);
-	} catch (IllegalArgument e) {
+	} catch (final IllegalArgument e) {
 	    // it should not happens
 	    throw new EJBException(e.getMessage());
 	}
 
 	try {
-	    if (request.getPayment().getStatus() == PaymentStatus.DONE) {
+	    if (request.getPayment().getStatus() == PaymentStatus.DONE)
 		throw MyExceptions.illegalStateFormat("Request %1$s already paid on %2$s with reference %3$s",
 			request.getId(),
 			request.getPayment().getPaymentInstant(),
 			request.getPayment().getPaymentReference());
-	    }
 
 	    request.getPayment().setStatus(PaymentStatus.DONE);
 	    request.getPayment().setMethodName(methodName);
@@ -141,14 +140,14 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 	    request.getPayment().setPaymentReference(paymentReference);
 	    request.getPayment().setPaymentInstant(paymentInstant);
 	    // TODO FEAUTURE : Save paymentCurrency or not?
-	} catch (NullPointerException e) {
+	} catch (final NullPointerException e) {
 	    // it should not happens
 	    throw new EJBException(e.getMessage());
 	}
 
 	try {
 	    request = dao.save(request);
-	} catch (IllegalArgument e) {
+	} catch (final IllegalArgument e) {
 	    // it should not happens
 	    throw new EJBException(e.getMessage());
 	}
@@ -162,7 +161,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 		    .forEntity(request) //
 		    .withRecipient(NotificationRecipientType.COMPANY) //
 		    .build());
-	} catch (IllegalArgument e) {
+	} catch (final IllegalArgument e) {
 	    // it should not happen
 	    throw new EJBException(e.getMessage());
 	}
@@ -235,7 +234,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 		notifications.send(builder.withChannel(NotificationChannel.EMAIL) //
 			.withRecipient(NotificationRecipientType.COMPANY) //
 			.build());
-	    } catch (IllegalArgument e) {
+	    } catch (final IllegalArgument e) {
 		// it should not happen
 		throw new EJBException(e.getMessage());
 	    }
@@ -244,7 +243,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 		    notifications.send(builder.withChannel(NotificationChannel.EMAIL) //
 			    .withRecipient(NotificationRecipientType.REQUESTER) //
 			    .build());
-		} catch (IllegalArgument e) {
+		} catch (final IllegalArgument e) {
 		    // it should not happen
 		    throw new EJBException(e.getMessage());
 		}

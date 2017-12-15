@@ -38,8 +38,8 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacadeLocal, Policy
     public List<PolicyVehicle> fetchAllByRegNumber(final VehicleRegNumber regNumber) throws IllegalArgument {
 	try {
 	    return _fetchAllByRegNumber(regNumber);
-	} catch (IllegalArgumentException e) {
-	    throw IllegalArgument.from(e);
+	} catch (final IllegalArgumentException e) {
+	    throw new IllegalArgument(e);
 	}
     }
 
@@ -48,8 +48,8 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacadeLocal, Policy
     public List<PolicyVehicle> fetchAllByVINCode(final String vinCode) throws IllegalArgument {
 	try {
 	    return _fetchAllByVINCode(vinCode);
-	} catch (IllegalArgumentException e) {
-	    throw IllegalArgument.from(e);
+	} catch (final IllegalArgumentException e) {
+	    throw new IllegalArgument(e);
 	}
     }
 
@@ -58,8 +58,8 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacadeLocal, Policy
     public PolicyVehicle fetchFirstByVINCode(final String vinCode) throws IllegalArgument, PolicyVehicleNotFound {
 	try {
 	    return _fetchFirstByVINCode(vinCode);
-	} catch (IllegalArgumentException e) {
-	    throw IllegalArgument.from(e);
+	} catch (final IllegalArgumentException e) {
+	    throw new IllegalArgument(e);
 	}
     }
 
@@ -69,8 +69,8 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacadeLocal, Policy
 	    throws IllegalArgument, PolicyVehicleNotFound {
 	try {
 	    return _fetchFirstByRegNumber(regNumber);
-	} catch (IllegalArgumentException e) {
-	    throw IllegalArgument.from(e);
+	} catch (final IllegalArgumentException e) {
+	    throw new IllegalArgument(e);
 	}
     }
 
@@ -79,8 +79,8 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacadeLocal, Policy
     public PolicyVehicle fetchFirstByRegNumberOrDefault(final VehicleRegNumber regNumber) throws IllegalArgument {
 	try {
 	    return _fetchFirstByRegNumberOrDefault(regNumber);
-	} catch (IllegalArgumentException e) {
-	    throw IllegalArgument.from(e);
+	} catch (final IllegalArgumentException e) {
+	    throw new IllegalArgument(e);
 	}
     }
 
@@ -90,8 +90,8 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacadeLocal, Policy
     public void fetch(final PolicyVehicle vehicle) throws IllegalArgument, PolicyVehicleNotFound {
 	try {
 	    _fetch(vehicle);
-	} catch (IllegalArgumentException e) {
-	    throw IllegalArgument.from(e);
+	} catch (final IllegalArgumentException e) {
+	    throw new IllegalArgument(e);
 	}
     }
 
@@ -101,8 +101,8 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacadeLocal, Policy
     public void clearFetched(final PolicyVehicle vehicle) throws IllegalArgument {
 	try {
 	    _clearFetched(vehicle);
-	} catch (IllegalArgumentException e) {
-	    throw IllegalArgument.from(e);
+	} catch (final IllegalArgumentException e) {
+	    throw new IllegalArgument(e);
 	}
     }
 
@@ -155,8 +155,8 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacadeLocal, Policy
 	    throws IllegalArgumentException {
 	try {
 	    return _fetchFirstByRegNumber(regNumber);
-	} catch (PolicyVehicleNotFound e) {
-	    PolicyVehicle pv = new PolicyVehicle();
+	} catch (final PolicyVehicleNotFound e) {
+	    final PolicyVehicle pv = new PolicyVehicle();
 	    fillFromVehicleRegNumber(pv, regNumber);
 	    return pv;
 	}
@@ -170,7 +170,7 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacadeLocal, Policy
 	final List<VehicleEntity> vv;
 	try {
 	    vv = vehicleService.getByVINCode(vinCode);
-	} catch (IllegalArgument e) {
+	} catch (final IllegalArgument e) {
 	    // it should not happens
 	    throw new EJBException(e.getMessage());
 	}
@@ -193,7 +193,7 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacadeLocal, Policy
 	final List<VehicleEntity> vv;
 	try {
 	    vv = vehicleService.getByRegNumber(regNumber);
-	} catch (IllegalArgument e) {
+	} catch (final IllegalArgument e) {
 	    // it should not happens
 	    throw new EJBException(e.getMessage());
 	}
@@ -215,7 +215,7 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacadeLocal, Policy
 	final List<VehicleEntity> vv;
 	try {
 	    vv = vehicleService.getByVINCode(vinCode);
-	} catch (IllegalArgument e) {
+	} catch (final IllegalArgument e) {
 	    // it should not happens
 	    throw new EJBException(e.getMessage());
 	}
@@ -232,7 +232,7 @@ public class PolicyVehicleFacadeBean implements PolicyVehicleFacadeLocal, Policy
 	final List<VehicleEntity> vv;
 	try {
 	    vv = vehicleService.getByRegNumber(regNumber);
-	} catch (IllegalArgument e) {
+	} catch (final IllegalArgument e) {
 	    // it should not happens
 	    throw new EJBException(e.getMessage());
 	}

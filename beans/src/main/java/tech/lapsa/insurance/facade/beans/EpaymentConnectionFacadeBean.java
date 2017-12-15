@@ -32,8 +32,8 @@ public class EpaymentConnectionFacadeBean implements EpaymentConnectionFacadeLoc
     public URI getPaymentURI(final String invoiceNumber) throws IllegalArgument {
 	try {
 	    return _getPaymentURI(invoiceNumber);
-	} catch (IllegalArgumentException e) {
-	    throw IllegalArgument.from(e);
+	} catch (final IllegalArgumentException e) {
+	    throw new IllegalArgument(e);
 	}
     }
 
@@ -45,10 +45,10 @@ public class EpaymentConnectionFacadeBean implements EpaymentConnectionFacadeLoc
 	    final String paidReference) throws IllegalArgument, IllegalState {
 	try {
 	    _markInvoiceHasPaid(invoiceNumber, paidAmount, paidInstant, paidReference);
-	} catch (IllegalArgumentException e) {
-	    throw IllegalArgument.from(e);
-	} catch (IllegalStateException e) {
-	    throw IllegalState.from(e);
+	} catch (final IllegalArgumentException e) {
+	    throw new IllegalArgument(e);
+	} catch (final IllegalStateException e) {
+	    throw new IllegalState(e);
 	}
     }
 

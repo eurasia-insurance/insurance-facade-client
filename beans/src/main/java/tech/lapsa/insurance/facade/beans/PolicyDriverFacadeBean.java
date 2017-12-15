@@ -48,8 +48,8 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacadeLocal, PolicyDr
 	    throws IllegalArgument, PolicyDriverNotFound {
 	try {
 	    return _getByTaxpayerNumber(idNumber);
-	} catch (IllegalArgumentException e) {
-	    throw IllegalArgument.from(e);
+	} catch (final IllegalArgumentException e) {
+	    throw new IllegalArgument(e);
 	}
     }
 
@@ -59,8 +59,8 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacadeLocal, PolicyDr
 	    throws IllegalArgument {
 	try {
 	    return _getByTaxpayerNumberOrDefault(taxpayerNumber);
-	} catch (IllegalArgumentException e) {
-	    throw IllegalArgument.from(e);
+	} catch (final IllegalArgumentException e) {
+	    throw new IllegalArgument(e);
 	}
     }
 
@@ -70,8 +70,8 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacadeLocal, PolicyDr
     public void fetch(final PolicyDriver driver) throws IllegalArgument, PolicyDriverNotFound {
 	try {
 	    _fetch(driver);
-	} catch (IllegalArgumentException e) {
-	    throw IllegalArgument.from(e);
+	} catch (final IllegalArgumentException e) {
+	    throw new IllegalArgument(e);
 	}
     }
 
@@ -81,8 +81,8 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacadeLocal, PolicyDr
     public void clearFetched(final PolicyDriver driver) throws IllegalArgument {
 	try {
 	    _clearFetched(driver);
-	} catch (IllegalArgumentException e) {
-	    throw IllegalArgument.from(e);
+	} catch (final IllegalArgumentException e) {
+	    throw new IllegalArgument(e);
 	}
     }
 
@@ -104,7 +104,7 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacadeLocal, PolicyDr
 	    throws IllegalArgumentException {
 	try {
 	    return _getByTaxpayerNumber(taxpayerNumber);
-	} catch (PolicyDriverNotFound e) {
+	} catch (final PolicyDriverNotFound e) {
 	    final PolicyDriver pd = new PolicyDriver();
 	    fillFromTaxpayerNumber(pd, taxpayerNumber);
 	    return pd;
@@ -118,10 +118,10 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacadeLocal, PolicyDr
 	final SubjectPersonEntity sp;
 	try {
 	    sp = subjectPersonService.getByIIN(idNumber);
-	} catch (IllegalArgument e) {
+	} catch (final IllegalArgument e) {
 	    // it should not happens
 	    throw new EJBException(e.getMessage());
-	} catch (NotFound e) {
+	} catch (final NotFound e) {
 	    throw MyExceptions.format(PolicyDriverNotFound::new, "Driver not found with idNumber %1$s", idNumber);
 	}
 

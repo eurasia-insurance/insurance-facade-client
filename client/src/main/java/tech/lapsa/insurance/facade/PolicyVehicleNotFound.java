@@ -7,15 +7,15 @@ public class PolicyVehicleNotFound extends Exception {
     public PolicyVehicleNotFound() {
     }
 
-    public PolicyVehicleNotFound(String message, Throwable cause) {
+    public PolicyVehicleNotFound(final String message, final Throwable cause) {
 	super(message, cause);
     }
 
-    public PolicyVehicleNotFound(String message) {
+    public PolicyVehicleNotFound(final String message) {
 	super(message);
     }
 
-    public PolicyVehicleNotFound(Throwable cause) {
+    public PolicyVehicleNotFound(final Throwable cause) {
 	super(cause);
     }
 }

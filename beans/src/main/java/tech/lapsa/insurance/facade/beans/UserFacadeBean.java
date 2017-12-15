@@ -41,8 +41,8 @@ public class UserFacadeBean implements UserFacadeLocal, UserFacadeRemote {
     public User findOrCreate(final String principalName) throws IllegalArgument {
 	try {
 	    return _findOrCreate(principalName);
-	} catch (IllegalArgumentException e) {
-	    throw IllegalArgument.from(e);
+	} catch (final IllegalArgumentException e) {
+	    throw new IllegalArgument(e);
 	}
     }
 
@@ -50,8 +50,8 @@ public class UserFacadeBean implements UserFacadeLocal, UserFacadeRemote {
     public User findOrCreate(final Principal principal) throws IllegalArgument {
 	try {
 	    return _findOrCreate(principal);
-	} catch (IllegalArgumentException e) {
-	    throw IllegalArgument.from(e);
+	} catch (final IllegalArgumentException e) {
+	    throw new IllegalArgument(e);
 	}
     }
 
@@ -77,7 +77,7 @@ public class UserFacadeBean implements UserFacadeLocal, UserFacadeRemote {
 	MyStrings.requireNonEmpty(principalName, "principalName");
 	try {
 	    return userDAO.getByLogin(principalName);
-	} catch (IllegalArgument e) {
+	} catch (final IllegalArgument e) {
 	    // it should not happens
 	    throw new EJBException(e.getMessage());
 	} catch (final NotFound e) {
@@ -99,7 +99,7 @@ public class UserFacadeBean implements UserFacadeLocal, UserFacadeRemote {
 	    final User u;
 	    try {
 		u = userDAO.save(uNew);
-	    } catch (IllegalArgument e1) {
+	    } catch (final IllegalArgument e1) {
 		// it should not happens
 		throw new EJBException(e.getMessage());
 	    }
