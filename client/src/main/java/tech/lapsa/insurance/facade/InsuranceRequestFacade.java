@@ -11,7 +11,7 @@ import com.lapsa.insurance.domain.InsuranceRequest;
 import tech.lapsa.java.commons.exceptions.IllegalArgument;
 import tech.lapsa.java.commons.exceptions.IllegalState;
 
-public interface InsuranceRequestFacade extends Acceptor<InsuranceRequest> {
+public interface InsuranceRequestFacade extends Acceptor<InsuranceRequest>, EJBConstants {
 
     @Local
     public interface InsuranceRequestFacadeLocal extends InsuranceRequestFacade {

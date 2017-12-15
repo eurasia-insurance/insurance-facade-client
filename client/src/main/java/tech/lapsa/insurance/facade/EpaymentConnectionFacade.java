@@ -9,7 +9,7 @@ import javax.ejb.Remote;
 import tech.lapsa.java.commons.exceptions.IllegalArgument;
 import tech.lapsa.java.commons.exceptions.IllegalState;
 
-public interface EpaymentConnectionFacade {
+public interface EpaymentConnectionFacade extends EJBConstants {
 
     @Local
     public interface EpaymentConnectionFacadeLocal extends EpaymentConnectionFacade {

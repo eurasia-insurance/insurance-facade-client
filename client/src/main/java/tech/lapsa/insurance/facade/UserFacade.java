@@ -10,7 +10,7 @@ import com.lapsa.insurance.domain.crm.User;
 
 import tech.lapsa.java.commons.exceptions.IllegalArgument;
 
-public interface UserFacade {
+public interface UserFacade extends EJBConstants {
 
     @Local
     public interface UserFacadeLocal extends UserFacade {

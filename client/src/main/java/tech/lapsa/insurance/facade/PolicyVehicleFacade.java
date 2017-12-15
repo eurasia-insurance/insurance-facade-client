@@ -10,7 +10,7 @@ import com.lapsa.insurance.domain.policy.PolicyVehicle;
 import tech.lapsa.java.commons.exceptions.IllegalArgument;
 import tech.lapsa.kz.vehicle.VehicleRegNumber;
 
-public interface PolicyVehicleFacade {
+public interface PolicyVehicleFacade extends EJBConstants {
 
     @Local
     public interface PolicyVehicleFacadeLocal extends PolicyVehicleFacade {

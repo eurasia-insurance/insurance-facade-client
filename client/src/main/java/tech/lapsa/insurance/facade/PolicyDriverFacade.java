@@ -9,7 +9,7 @@ import com.lapsa.insurance.elements.InsuranceClassType;
 import tech.lapsa.java.commons.exceptions.IllegalArgument;
 import tech.lapsa.kz.taxpayer.TaxpayerNumber;
 
-public interface PolicyDriverFacade {
+public interface PolicyDriverFacade extends EJBConstants {
 
     @Local
     public interface PolicyDriverFacadeLocal extends PolicyDriverFacade {

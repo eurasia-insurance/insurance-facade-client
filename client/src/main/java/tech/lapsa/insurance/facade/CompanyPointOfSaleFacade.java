@@ -10,7 +10,7 @@ import com.lapsa.kz.country.KZCity;
 
 import tech.lapsa.java.commons.exceptions.IllegalArgument;
 
-public interface CompanyPointOfSaleFacade {
+public interface CompanyPointOfSaleFacade extends EJBConstants {
 
     @Local
     public interface CompanyPointOfSaleFacadeLocal extends CompanyPointOfSaleFacade {

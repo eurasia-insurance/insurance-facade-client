@@ -5,7 +5,7 @@ import javax.ejb.Remote;
 
 import com.lapsa.insurance.domain.CallbackRequest;
 
-public interface CallbackRequestFacade extends Acceptor<CallbackRequest> {
+public interface CallbackRequestFacade extends Acceptor<CallbackRequest>, EJBConstants {
 
     @Local
     public interface CallbackRequestFacadeLocal extends CallbackRequestFacade {
