@@ -17,7 +17,7 @@
 	<modules>
 		<module>client</module>
 		<module>beans</module>
-		<module>ear</module>
+		<module>app</module>
 	</modules>
 
 	<properties>
@@ -107,6 +107,12 @@
 				<artifactId>insurance-facade</artifactId>
 				<version>${project.version}</version>
 				<type>ejb</type>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>insurance-facade-app</artifactId>
+				<version>${project.version}</version>
+				<type>ear</type>
 			</dependency>
 			<!-- oldies -->
 			<dependency>
