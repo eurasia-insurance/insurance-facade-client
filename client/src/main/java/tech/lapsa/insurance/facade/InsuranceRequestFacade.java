@@ -13,6 +13,8 @@ import tech.lapsa.java.commons.exceptions.IllegalState;
 
 public interface InsuranceRequestFacade extends Acceptor<InsuranceRequest>, EJBConstants {
 
+    public static final String BEAN_NAME = "InsuranceRequestFacadeBean";
+
     @Local
     public interface InsuranceRequestFacadeLocal extends InsuranceRequestFacade {
     }

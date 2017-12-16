@@ -12,6 +12,7 @@ import tech.lapsa.epayment.shared.entity.XmlPaymentCompleteUnkownTypeRequest;
 import tech.lapsa.epayment.shared.entity.XmlPaymentURISpecifierRequest;
 import tech.lapsa.epayment.shared.entity.XmlPaymentURISpecifierResponse;
 import tech.lapsa.epayment.shared.jms.EpaymentDestinations;
+import tech.lapsa.insurance.facade.EpaymentConnectionFacade;
 import tech.lapsa.insurance.facade.EpaymentConnectionFacade.EpaymentConnectionFacadeLocal;
 import tech.lapsa.insurance.facade.EpaymentConnectionFacade.EpaymentConnectionFacadeRemote;
 import tech.lapsa.java.commons.exceptions.IllegalArgument;
@@ -22,7 +23,7 @@ import tech.lapsa.javax.jms.client.JmsConsumerClient;
 import tech.lapsa.javax.jms.client.JmsDestination;
 import tech.lapsa.javax.jms.client.JmsResultType;
 
-@Stateless
+@Stateless(name = EpaymentConnectionFacade.BEAN_NAME)
 public class EpaymentConnectionFacadeBean implements EpaymentConnectionFacadeLocal, EpaymentConnectionFacadeRemote {
 
     // READERS

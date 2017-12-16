@@ -22,6 +22,7 @@ import tech.lapsa.insurance.esbd.NotFound;
 import tech.lapsa.insurance.esbd.elements.InsuranceClassTypeService.InsuranceClassTypeServiceRemote;
 import tech.lapsa.insurance.esbd.entities.SubjectPersonEntity;
 import tech.lapsa.insurance.esbd.entities.SubjectPersonEntityService.SubjectPersonEntityServiceRemote;
+import tech.lapsa.insurance.facade.PolicyDriverFacade;
 import tech.lapsa.insurance.facade.PolicyDriverFacade.PolicyDriverFacadeLocal;
 import tech.lapsa.insurance.facade.PolicyDriverFacade.PolicyDriverFacadeRemote;
 import tech.lapsa.insurance.facade.PolicyDriverNotFound;
@@ -31,7 +32,7 @@ import tech.lapsa.java.commons.function.MyObjects;
 import tech.lapsa.java.commons.time.MyTemporals;
 import tech.lapsa.kz.taxpayer.TaxpayerNumber;
 
-@Stateless
+@Stateless(name = PolicyDriverFacade.BEAN_NAME)
 public class PolicyDriverFacadeBean implements PolicyDriverFacadeLocal, PolicyDriverFacadeRemote {
 
     // READERS

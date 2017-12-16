@@ -12,6 +12,8 @@ import tech.lapsa.kz.vehicle.VehicleRegNumber;
 
 public interface PolicyVehicleFacade extends EJBConstants {
 
+    public static final String BEAN_NAME = "PolicyVehicleFacadeBean";
+
     @Local
     public interface PolicyVehicleFacadeLocal extends PolicyVehicleFacade {
     }

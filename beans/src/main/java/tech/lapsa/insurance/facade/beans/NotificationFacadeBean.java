@@ -13,6 +13,7 @@ import com.lapsa.insurance.domain.Request;
 import com.lapsa.insurance.domain.casco.CascoRequest;
 import com.lapsa.insurance.domain.policy.PolicyRequest;
 
+import tech.lapsa.insurance.facade.NotificationFacade;
 import tech.lapsa.insurance.facade.NotificationFacade.NotificationFacadeLocal;
 import tech.lapsa.insurance.facade.NotificationFacade.NotificationFacadeRemote;
 import tech.lapsa.java.commons.exceptions.IllegalArgument;
@@ -21,7 +22,7 @@ import tech.lapsa.java.commons.function.MyObjects;
 import tech.lapsa.javax.jms.client.JmsClientFactory;
 import tech.lapsa.javax.jms.client.JmsEventNotificatorClient;
 
-@Stateless
+@Stateless(name = NotificationFacade.BEAN_NAME)
 public class NotificationFacadeBean implements NotificationFacadeLocal, NotificationFacadeRemote {
 
     // READERS

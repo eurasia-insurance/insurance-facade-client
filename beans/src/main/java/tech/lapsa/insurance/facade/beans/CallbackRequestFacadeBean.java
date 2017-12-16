@@ -16,7 +16,7 @@ import tech.lapsa.java.commons.exceptions.IllegalArgument;
 import tech.lapsa.java.commons.function.MyObjects;
 import tech.lapsa.java.commons.logging.MyLogger;
 
-@Stateless
+@Stateless(name = CallbackRequestFacade.BEAN_NAME)
 public class CallbackRequestFacadeBean implements CallbackRequestFacadeLocal, CallbackRequestFacadeRemote {
 
     // READERS

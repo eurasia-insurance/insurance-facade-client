@@ -13,6 +13,7 @@ import com.lapsa.insurance.domain.PostAddress;
 import com.lapsa.kz.country.KZCity;
 
 import tech.lapsa.insurance.dao.CompanyPointOfSaleDAO.CompanyPointOfSaleDAORemote;
+import tech.lapsa.insurance.facade.CompanyPointOfSaleFacade;
 import tech.lapsa.insurance.facade.CompanyPointOfSaleFacade.CompanyPointOfSaleFacadeLocal;
 import tech.lapsa.insurance.facade.CompanyPointOfSaleFacade.CompanyPointOfSaleFacadeRemote;
 import tech.lapsa.java.commons.exceptions.IllegalArgument;
@@ -20,7 +21,7 @@ import tech.lapsa.java.commons.function.MyCollectors;
 import tech.lapsa.java.commons.function.MyObjects;
 import tech.lapsa.java.commons.function.MyOptionals;
 
-@Stateless
+@Stateless(name = CompanyPointOfSaleFacade.BEAN_NAME)
 public class CompanyPointOfSaleFacadeBean implements CompanyPointOfSaleFacadeLocal, CompanyPointOfSaleFacadeRemote {
 
     // READERS

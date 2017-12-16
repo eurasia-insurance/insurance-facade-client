@@ -45,7 +45,7 @@ import tech.lapsa.javax.jms.client.JmsDestination;
 import tech.lapsa.javax.jms.client.JmsResultType;
 import tech.lapsa.patterns.dao.NotFound;
 
-@Stateless
+@Stateless(name = InsuranceRequestFacade.BEAN_NAME)
 public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, InsuranceRequestFacadeRemote {
 
     // READERS

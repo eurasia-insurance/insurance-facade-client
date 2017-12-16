@@ -11,6 +11,8 @@ import tech.lapsa.kz.taxpayer.TaxpayerNumber;
 
 public interface PolicyDriverFacade extends EJBConstants {
 
+    public static final String BEAN_NAME = "PolicyDriverFacadeBean";
+
     @Local
     public interface PolicyDriverFacadeLocal extends PolicyDriverFacade {
     }

@@ -12,6 +12,8 @@ import tech.lapsa.java.commons.exceptions.IllegalArgument;
 
 public interface CompanyPointOfSaleFacade extends EJBConstants {
 
+    public static final String BEAN_NAME = "CompanyPointOfSaleFacadeBean";
+
     @Local
     public interface CompanyPointOfSaleFacadeLocal extends CompanyPointOfSaleFacade {
     }

@@ -16,6 +16,7 @@ import com.lapsa.insurance.elements.VehicleClass;
 
 import tech.lapsa.insurance.esbd.entities.VehicleEntity;
 import tech.lapsa.insurance.esbd.entities.VehicleEntityService.VehicleEntityServiceRemote;
+import tech.lapsa.insurance.facade.PolicyVehicleFacade;
 import tech.lapsa.insurance.facade.PolicyVehicleFacade.PolicyVehicleFacadeLocal;
 import tech.lapsa.insurance.facade.PolicyVehicleFacade.PolicyVehicleFacadeRemote;
 import tech.lapsa.insurance.facade.PolicyVehicleNotFound;
@@ -28,7 +29,7 @@ import tech.lapsa.java.commons.function.MyStrings;
 import tech.lapsa.kz.vehicle.VehicleRegNumber;
 import tech.lapsa.kz.vehicle.VehicleType;
 
-@Stateless
+@Stateless(name = PolicyVehicleFacade.BEAN_NAME)
 public class PolicyVehicleFacadeBean implements PolicyVehicleFacadeLocal, PolicyVehicleFacadeRemote {
 
     // READERS

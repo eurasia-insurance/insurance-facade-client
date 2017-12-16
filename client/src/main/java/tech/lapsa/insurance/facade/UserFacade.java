@@ -12,6 +12,8 @@ import tech.lapsa.java.commons.exceptions.IllegalArgument;
 
 public interface UserFacade extends EJBConstants {
 
+    public static final String BEAN_NAME = "UserFacadeBean";
+
     @Local
     public interface UserFacadeLocal extends UserFacade {
     }

@@ -23,7 +23,7 @@ import tech.lapsa.java.commons.function.MyStrings;
 import tech.lapsa.java.commons.logging.MyLogger;
 import tech.lapsa.patterns.dao.NotFound;
 
-@Stateless
+@Stateless(name = UserFacade.BEAN_NAME)
 public class UserFacadeBean implements UserFacadeLocal, UserFacadeRemote {
 
     // READERS
