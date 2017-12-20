@@ -97,6 +97,13 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 	setupPaymentOrder(ir);
 	setupNotifications(ir);
 
+	try {
+	    dao.save(ir);
+	} catch (final IllegalArgument e) {
+	    // it should not happens
+	    throw new EJBException(e.getMessage());
+	}
+
 	logger.INFO.log("New %4$s accepded from '%1$s' '<%2$s>' tel '%3$s' ", //
 		ir.getRequester().getName(), // 1
 		ir.getRequester().getEmail(), // 2
