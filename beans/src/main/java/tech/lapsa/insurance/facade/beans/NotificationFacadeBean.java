@@ -57,12 +57,6 @@ public class NotificationFacadeBean implements NotificationFacadeLocal, Notifica
     @Resource(name = NOTIFIER_NEW_POLICY_COMPANY_EMAIL)
     private Destination newPolicyCompanyEmail;
 
-    @Resource(name = NOTIFIER_NEW_INSURANCE_COMPANY_PUSH)
-    private Destination newInsuranceCompanyPush;
-
-    @Resource(name = NOTIFIER_NEW_CALLBACK_COMPANY_PUSH)
-    private Destination newCallbackCompanyPush;
-
     @Resource(name = NOTIFIER_NEW_POLICY_USER_EMAIL)
     private Destination newPolicyUserEmail;
 
@@ -78,7 +72,7 @@ public class NotificationFacadeBean implements NotificationFacadeLocal, Notifica
     private Destination resolveDestination(final Notification notification) throws IllegalArgumentException {
 	MyObjects.requireNonNull(notification, "notification");
 	final Request request = notification.getEntity();
-	switch (notification.getEvent()) {
+	out: switch (notification.getEvent()) {
 	case NEW_REQUEST:
 	    switch (notification.getChannel()) {
 	    case EMAIL:
@@ -88,45 +82,29 @@ public class NotificationFacadeBean implements NotificationFacadeLocal, Notifica
 			return newPolicyCompanyEmail;
 		    if (request instanceof CascoRequest)
 			return newCascoCompanyEmail;
-		    break;
+		    break out;
 		case REQUESTER:
 		    if (request instanceof PolicyRequest)
 			return newPolicyUserEmail;
 		    if (request instanceof CascoRequest)
 			return newCascoUserEmail;
-		    break;
-		default:
+		    break out;
 		}
-	    case PUSH:
-		// TODO DEBUG : Push disabled temporary. Need to debug
-		// switch (recipientType) {
-		// case COMPANY:
-		// if (request instanceof InsuranceRequest)
-		// return newInsuranceCompanyPush;
-		// if (request instanceof CallbackRequest)
-		// return newCallbackCompanyPush;
-		// break;
-		// default:
-		// }
-		break;
-	    default:
+		break out;
 	    }
-	    break;
+	    break out;
 	case REQUEST_PAID:
 	    switch (notification.getChannel()) {
 	    case EMAIL:
 		switch (notification.getRecipientType()) {
 		case COMPANY:
 		    return requestPaidCompanyEmail;
-		default:
-		    break;
+		case REQUESTER:
+		    break out;
 		}
-	    default:
-		break;
+		break out;
 	    }
-	    break;
-	default:
-	    break;
+	    break out;
 	}
 	throw MyExceptions.illegalArgumentFormat(
 		"Can't resolve Destination for channel '%2$s' recipient '%3$s' stage '%1$s'", // s

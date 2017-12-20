@@ -34,7 +34,7 @@ public interface NotificationFacade extends EJBConstants {
 	private static final long serialVersionUID = 1L;
 
 	public static enum NotificationChannel {
-	    EMAIL, PUSH, SMS;
+	    EMAIL;
 	}
 
 	public static enum NotificationRecipientType {

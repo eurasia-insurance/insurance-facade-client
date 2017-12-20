@@ -9,7 +9,6 @@ import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 
 import com.lapsa.fin.FinCurrency;
 import com.lapsa.insurance.domain.CalculationData;
@@ -17,11 +16,11 @@ import com.lapsa.insurance.domain.InsuranceProduct;
 import com.lapsa.insurance.domain.InsuranceRequest;
 import com.lapsa.insurance.domain.RequesterData;
 import com.lapsa.insurance.elements.PaymentStatus;
+import com.lapsa.international.localization.LocalizationLanguage;
 
-import tech.lapsa.epayment.shared.entity.XmlInvoiceAcceptRequest;
-import tech.lapsa.epayment.shared.entity.XmlInvoiceAcceptResponse;
-import tech.lapsa.epayment.shared.entity.XmlInvoicePurposeItem;
-import tech.lapsa.epayment.shared.jms.EpaymentDestinations;
+import tech.lapsa.epayment.domain.Invoice;
+import tech.lapsa.epayment.domain.Invoice.InvoiceBuilder;
+import tech.lapsa.epayment.facade.EpaymentFacade.EpaymentFacadeRemote;
 import tech.lapsa.insurance.dao.InsuranceRequestDAO.InsuranceRequestDAORemote;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade.InsuranceRequestFacadeLocal;
@@ -40,9 +39,6 @@ import tech.lapsa.java.commons.function.MyObjects;
 import tech.lapsa.java.commons.function.MyOptionals;
 import tech.lapsa.java.commons.function.MyStrings;
 import tech.lapsa.java.commons.logging.MyLogger;
-import tech.lapsa.javax.jms.client.JmsCallableClient;
-import tech.lapsa.javax.jms.client.JmsDestination;
-import tech.lapsa.javax.jms.client.JmsResultType;
 import tech.lapsa.patterns.dao.NotFound;
 
 @Stateless(name = InsuranceRequestFacade.BEAN_NAME)
@@ -167,10 +163,8 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 	}
     }
 
-    @Inject
-    @JmsDestination(EpaymentDestinations.ACCEPT_INVOICE)
-    @JmsResultType(XmlInvoiceAcceptResponse.class)
-    private JmsCallableClient<XmlInvoiceAcceptRequest, XmlInvoiceAcceptResponse> invoiceAcceptorCallableClient;
+    @EJB
+    private EpaymentFacadeRemote epayments;
 
     private <T extends InsuranceRequest> T setupPaymentOrder(final T request) throws IllegalArgumentException {
 	// TODO FEAUTURE : check parameter for requirements
@@ -178,45 +172,53 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 	if (MyStrings.nonEmpty(request.getPayment().getInvoiceNumber()))
 	    return request;
 
-	final XmlInvoiceAcceptRequest r = new XmlInvoiceAcceptRequest();
-
 	final Optional<RequesterData> ord = MyOptionals.of(request.getRequester());
 
 	final Optional<CalculationData> ocd = MyOptionals.of(request.getProduct()) //
 		.map(InsuranceProduct::getCalculation);
 
-	r.setLanguage(ord.map(RequesterData::getPreferLanguage) //
-		.orElseThrow(MyExceptions.illegalArgumentSupplier("Can't determine the language")));
+	final LocalizationLanguage lang = ord.map(RequesterData::getPreferLanguage) //
+		.orElseThrow(MyExceptions.illegalArgumentSupplier("Can't determine the language"));
 
-	r.setCurrency(ocd.map(CalculationData::getPremiumCurrency) //
+	final String itemName = MyOptionals.of(request.getProductType()) //
+		.map(x -> x.regular(lang.getLocale())) //
+		.orElseThrow(MyExceptions.illegalArgumentSupplier("Can't determine an item name"));
+
+	final Integer quantity = 1;
+
+	final Double cost = ocd.map(CalculationData::getPremiumCost) //
+		.filter(MyNumbers::nonZero) //
+		.orElseThrow(MyExceptions.illegalArgumentSupplier("Can't determine an premium amount"));
+
+	final String consumerName = ord.map(RequesterData::getName) //
+		.orElseThrow(MyExceptions.illegalArgumentSupplier("Can't determine a consumer name"));
+
+	final Currency currency = ocd.map(CalculationData::getPremiumCurrency) //
 		.map(FinCurrency::getCurrency)
-		.orElseThrow(MyExceptions.illegalArgumentSupplier("Can't determine an premium currency")));
+		.orElseThrow(MyExceptions.illegalArgumentSupplier("Can't determine an premium currency"));
 
-	r.setExternalId(request.getId());
-	r.setName(ord.map(RequesterData::getName) //
-		.orElseThrow(MyExceptions.illegalArgumentSupplier("Can't determine a consumer name")));
-	ord.map(RequesterData::getPhone) //
-		.ifPresent(r::setPhoneNumber);
+	final InvoiceBuilder builder = Invoice.builder() //
+		.withGeneratedNumber() //
+		.withConsumerName(consumerName) //
+		.withCurrency(currency) //
+		.withConsumerPreferLanguage(lang)
+		//
+		.withExternalId(request.getId()) //
+		.withConsumerEmail(ord.map(RequesterData::getEmail)) //
+		.withConsumerPhone(ord.map(RequesterData::getPhone)) //
+		.withConsumerTaxpayerNumber(ord.map(RequesterData::getIdNumber)) //
+		.withItem(itemName, quantity, cost);
 
-	ord.map(RequesterData::getEmail) //
-		.ifPresent(r::setEmail);
-
-	ord.map(RequesterData::getIdNumber) //
-		.ifPresent(r::setTaxpayerNumber);
-
-	final XmlInvoicePurposeItem p = new XmlInvoicePurposeItem(MyOptionals.of(request.getProductType()) //
-		.map(x -> x.regular(r.getLanguage().getLocale())) //
-		.orElseThrow(MyExceptions.illegalArgumentSupplier("Can't determine an item name")),
-		ocd.map(CalculationData::getPremiumCost) //
-			.filter(MyNumbers::nonZero) //
-			.orElseThrow(MyExceptions.illegalArgumentSupplier("Can't determine an premium amount")),
-		1);
-
-	r.setItem(p);
-
-	final XmlInvoiceAcceptResponse resp = invoiceAcceptorCallableClient.call(r);
-
-	request.getPayment().setInvoiceNumber(resp.getInvoiceNumber());
+	final Invoice invoice;
+	try {
+	    invoice = epayments.invoiceAccept(builder);
+	} catch (IllegalArgument e) {
+	    // it should not happens
+	    throw new EJBException(e.getMessage());
+	}
+	
+	request.getPayment().setInvoiceNumber(invoice.getNumber());
+	request.getPayment().setStatus(PaymentStatus.PENDING);
 
 	return request;
     }
