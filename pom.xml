@@ -33,6 +33,7 @@
 		<insurance-dao.version>1.1-SNAPSHOT</insurance-dao.version>
 		<insurance-esbd.version>1.1-SNAPSHOT</insurance-esbd.version>
 		<epayment-facade.version>1.1-SNAPSHOT</epayment-facade.version>
+		<epayment-shared.version>1.0-SNAPSHOT</epayment-shared.version>
 		<!-- oldies -->
 		<insurance-lib.version>2.4-SNAPSHOT</insurance-lib.version>
 	</properties>
@@ -98,6 +99,11 @@
 				<groupId>tech.lapsa.insurance</groupId>
 				<artifactId>insurance-shared</artifactId>
 				<version>${insurance-shared.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>tech.lapsa.epayment</groupId>
+				<artifactId>epayment-shared</artifactId>
+				<version>${epayment-shared.version}</version>
 			</dependency>
 			<!-- own -->
 			<dependency>
