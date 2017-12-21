@@ -42,9 +42,9 @@ public class InvoiceHasPaidDrivenBean extends JmsReceiverServiceDrivenBean<XmlIn
 	final String ref = entity.getReferenceNumber();
 	try {
 	    insuranceRequests.completePayment(id, methodName, paid, amount, currency, ref);
-	} catch (IllegalArgument e) {
+	} catch (final IllegalArgument e) {
 	    throw e.getRuntime();
-	} catch (IllegalState e) {
+	} catch (final IllegalState e) {
 	    throw e.getRuntime();
 	}
     }
