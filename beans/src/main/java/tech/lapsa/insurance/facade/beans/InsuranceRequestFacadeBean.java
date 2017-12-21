@@ -120,9 +120,9 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 
 	// TODO FEAUTURE : check parameter for requirements
 
-	InsuranceRequest request;
+	final InsuranceRequest found;
 	try {
-	    request = dao.getById(id);
+	    found = dao.getById(id);
 	} catch (final NotFound e) {
 	    throw MyExceptions.format(IllegalArgumentException::new, "Request not found with id %1$s", id);
 	} catch (final IllegalArgument e) {
@@ -131,37 +131,38 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 	}
 
 	try {
-	    if (request.getPayment().getStatus() == PaymentStatus.DONE)
+	    if (found.getPayment().getStatus() == PaymentStatus.DONE)
 		throw MyExceptions.illegalStateFormat("Request %1$s already paid on %2$s with reference %3$s",
-			request.getId(),
-			request.getPayment().getPaymentInstant(),
-			request.getPayment().getPaymentReference());
+			found.getId(),
+			found.getPayment().getPaymentInstant(),
+			found.getPayment().getPaymentReference());
 
-	    request.getPayment().setStatus(PaymentStatus.DONE);
-	    request.getPayment().setMethodName(methodName);
-	    request.getPayment().setPaymentAmount(paymentAmount);
-	    request.getPayment().setPaymentReference(paymentReference);
-	    request.getPayment().setPaymentInstant(paymentInstant);
+	    found.getPayment().setStatus(PaymentStatus.DONE);
+	    found.getPayment().setMethodName(methodName);
+	    found.getPayment().setPaymentAmount(paymentAmount);
+	    found.getPayment().setPaymentReference(paymentReference);
+	    found.getPayment().setPaymentInstant(paymentInstant);
 	    // TODO FEAUTURE : Save paymentCurrency or not?
 	} catch (final NullPointerException e) {
 	    // it should not happens
 	    throw new EJBException(e.getMessage());
 	}
 
+	final InsuranceRequest processed;
 	try {
-	    request = dao.save(request);
+	    processed = dao.save(found);
 	} catch (final IllegalArgument e) {
 	    // it should not happens
 	    throw new EJBException(e.getMessage());
 	}
 
-	request.unlazy();
+	processed.unlazy();
 
 	try {
 	    notifications.send(Notification.builder() //
 		    .withEvent(NotificationEventType.REQUEST_PAID) //
 		    .withChannel(NotificationChannel.EMAIL) //
-		    .forEntity(request) //
+		    .forEntity(processed) //
 		    .withRecipient(NotificationRecipientType.COMPANY) //
 		    .build());
 	} catch (final IllegalArgument e) {
@@ -219,11 +220,11 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 	final Invoice invoice;
 	try {
 	    invoice = epayments.invoiceAccept(builder);
-	} catch (IllegalArgument e) {
+	} catch (final IllegalArgument e) {
 	    // it should not happens
 	    throw new EJBException(e.getMessage());
 	}
-	
+
 	request.getPayment().setInvoiceNumber(invoice.getNumber());
 	request.getPayment().setStatus(PaymentStatus.PENDING);
 
