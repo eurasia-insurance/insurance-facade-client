@@ -3,19 +3,40 @@ package tech.lapsa.insurance.facade;
 import java.util.List;
 
 import javax.ejb.Local;
+import javax.ejb.Remote;
 
 import com.lapsa.insurance.domain.policy.PolicyVehicle;
 
-import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
-import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
+import tech.lapsa.java.commons.exceptions.IllegalArgument;
 import tech.lapsa.kz.vehicle.VehicleRegNumber;
 
-@Local
-public interface PolicyVehicleFacade {
+public interface PolicyVehicleFacade extends EJBConstants {
 
-    List<PolicyVehicle> fetchByRegNumber(VehicleRegNumber regNumber) throws IllegalArgument, IllegalState;
+    public static final String BEAN_NAME = "PolicyVehicleFacadeBean";
 
-    List<PolicyVehicle> fetchByVINCode(String vinCode) throws IllegalArgument, IllegalState;
+    @Local
+    public interface PolicyVehicleFacadeLocal extends PolicyVehicleFacade {
+    }
 
-    PolicyVehicle getByRegNumberOrDefault(VehicleRegNumber regNumber) throws IllegalArgument, IllegalState;
+    @Remote
+    public interface PolicyVehicleFacadeRemote extends PolicyVehicleFacade {
+    }
+
+    List<PolicyVehicle> fetchAllByVINCode(String vinCode) throws IllegalArgument;
+
+    PolicyVehicle fetchFirstByVINCode(String vinCode) throws IllegalArgument, PolicyVehicleNotFound;
+
+    List<PolicyVehicle> fetchAllByRegNumber(VehicleRegNumber regNumber) throws IllegalArgument;
+
+    PolicyVehicle fetchFirstByRegNumberOrDefault(VehicleRegNumber regNumber)
+	    throws IllegalArgument;
+
+    PolicyVehicle fetchFirstByRegNumber(VehicleRegNumber regNumber) throws IllegalArgument, PolicyVehicleNotFound;
+
+    @Deprecated
+    void fetch(PolicyVehicle vehicle) throws IllegalArgument, PolicyVehicleNotFound;
+
+    @Deprecated
+    void clearFetched(PolicyVehicle vehicle) throws IllegalArgument;
+
 }

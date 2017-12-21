@@ -1,15 +1,19 @@
 package tech.lapsa.insurance.facade;
 
 import javax.ejb.Local;
+import javax.ejb.Remote;
 
 import com.lapsa.insurance.domain.CallbackRequest;
 
-import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
-import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
+public interface CallbackRequestFacade extends Acceptor<CallbackRequest>, EJBConstants {
 
-@Local
-public interface CallbackRequestFacade extends Acceptor<CallbackRequest> {
+    public static final String BEAN_NAME = "CallbackRequestFacadeBean";
 
-    <T extends CallbackRequest> T acceptAndReply(T request) throws IllegalArgument, IllegalState;
+    @Local
+    public interface CallbackRequestFacadeLocal extends CallbackRequestFacade {
+    }
 
+    @Remote
+    public interface CallbackRequestFacadeRemote extends CallbackRequestFacade {
+    }
 }

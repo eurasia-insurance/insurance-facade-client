@@ -3,26 +3,36 @@ package tech.lapsa.insurance.facade;
 import java.util.List;
 
 import javax.ejb.Local;
+import javax.ejb.Remote;
 
 import com.lapsa.insurance.domain.CompanyPointOfSale;
 import com.lapsa.kz.country.KZCity;
 
-import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
-import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
+import tech.lapsa.java.commons.exceptions.IllegalArgument;
 
-@Local
-public interface CompanyPointOfSaleFacade {
+public interface CompanyPointOfSaleFacade extends EJBConstants {
 
-    List<CompanyPointOfSale> pointOfSalesForPickup() throws IllegalArgument, IllegalState;
+    public static final String BEAN_NAME = "CompanyPointOfSaleFacadeBean";
 
-    List<CompanyPointOfSale> pointOfSalesForPickup(KZCity city) throws IllegalArgument, IllegalState;
+    @Local
+    public interface CompanyPointOfSaleFacadeLocal extends CompanyPointOfSaleFacade {
+    }
 
-    List<CompanyPointOfSale> pointOfSalesForDelivery() throws IllegalArgument, IllegalState;
+    @Remote
+    public interface CompanyPointOfSaleFacadeRemote extends CompanyPointOfSaleFacade {
+    }
 
-    List<CompanyPointOfSale> pointOfSalesForDelivery(KZCity city) throws IllegalArgument, IllegalState;
+    List<CompanyPointOfSale> pointOfSalesForPickup();
 
-    List<KZCity> getCitiesForPickup() throws IllegalArgument, IllegalState;
+    List<CompanyPointOfSale> pointOfSalesForPickup(KZCity city) throws IllegalArgument;
 
-    List<CompanyPointOfSale> findAllOwnOffices() throws IllegalArgument, IllegalState;
+    List<CompanyPointOfSale> pointOfSalesForDelivery();
+
+    List<CompanyPointOfSale> pointOfSalesForDelivery(KZCity city)
+	    throws IllegalArgument;
+
+    List<KZCity> getCitiesForPickup();
+
+    List<CompanyPointOfSale> findAllOwnOffices();
 
 }

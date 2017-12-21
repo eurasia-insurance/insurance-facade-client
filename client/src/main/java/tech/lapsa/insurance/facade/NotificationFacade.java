@@ -7,25 +7,34 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.ejb.Local;
+import javax.ejb.Remote;
 
 import com.lapsa.insurance.domain.Request;
 
-import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
-import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
+import tech.lapsa.java.commons.exceptions.IllegalArgument;
 import tech.lapsa.java.commons.function.MyObjects;
 import tech.lapsa.java.commons.function.MyStrings;
 
-@Local
-public interface NotificationFacade {
+public interface NotificationFacade extends EJBConstants {
 
-    void send(Notification notification) throws IllegalArgument, IllegalState;
+    public static final String BEAN_NAME = "NotificationFacadeBean";
+
+    @Local
+    public interface NotificationFacadeLocal extends NotificationFacade {
+    }
+
+    @Remote
+    public interface NotificationFacadeRemote extends NotificationFacade {
+    }
+
+    void send(Notification notification) throws IllegalArgument;
 
     public static final class Notification implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	public static enum NotificationChannel {
-	    EMAIL, PUSH, SMS;
+	    EMAIL;
 	}
 
 	public static enum NotificationRecipientType {
@@ -40,43 +49,48 @@ public interface NotificationFacade {
 	    return new NotificationBuilder();
 	}
 
-	public static final class NotificationBuilder {
+	public static final class NotificationBuilder implements Serializable {
+
+	    private static final long serialVersionUID = 1L;
 
 	    private NotificationChannel channel;
 	    private NotificationRecipientType recipientType;
 	    private NotificationEventType event;
 	    private Request entity;
-	    private Map<String, String> properties = new HashMap<>();
+	    private final Map<String, String> properties = new HashMap<>();
 
 	    private NotificationBuilder() {
 	    }
 
-	    public NotificationBuilder withChannel(final NotificationChannel channel) {
+	    public NotificationBuilder withChannel(final NotificationChannel channel) throws IllegalArgumentException {
 		this.channel = MyObjects.requireNonNull(channel, "channel");
 		return this;
 	    }
 
-	    public NotificationBuilder withRecipient(final NotificationRecipientType recipientType) {
+	    public NotificationBuilder withRecipient(final NotificationRecipientType recipientType)
+		    throws IllegalArgumentException {
 		this.recipientType = MyObjects.requireNonNull(recipientType, "recipientType");
 		return this;
 	    }
 
-	    public NotificationBuilder withEvent(final NotificationEventType event) {
+	    public NotificationBuilder withEvent(final NotificationEventType event) throws IllegalArgumentException {
 		this.event = MyObjects.requireNonNull(event, "event");
 		return this;
 	    }
 
-	    public NotificationBuilder forEntity(final Request entity) {
+	    public NotificationBuilder forEntity(final Request entity) throws IllegalArgumentException {
 		this.entity = MyObjects.requireNonNull(entity, "entity");
 		return this;
 	    }
 
-	    public NotificationBuilder withProperty(final String key, final String value) {
-		properties.put(MyStrings.requireNonEmpty(key, "key"), MyStrings.requireNonEmpty(value, "value"));
+	    public NotificationBuilder withProperty(final String key, final String value)
+		    throws IllegalArgumentException {
+		properties.put(MyStrings.requireNonEmpty(key, "key"),
+			MyStrings.requireNonEmpty(value, "value"));
 		return this;
 	    }
 
-	    public Notification build() {
+	    public Notification build() throws IllegalArgumentException {
 		return new Notification(channel, recipientType, event, entity, properties);
 	    }
 
@@ -88,8 +102,9 @@ public interface NotificationFacade {
 	private final Request entity;
 	private final Map<String, String> propsMap;
 
-	private Notification(NotificationChannel channel, NotificationRecipientType recipientType,
-		NotificationEventType event, Request entity, Map<String, String> propsMap) {
+	private Notification(final NotificationChannel channel, final NotificationRecipientType recipientType,
+		final NotificationEventType event, final Request entity, final Map<String, String> propsMap)
+		throws IllegalArgumentException {
 	    this.channel = MyObjects.requireNonNull(channel, "channel");
 	    this.recipientType = MyObjects.requireNonNull(recipientType, "recipientType");
 	    this.event = MyObjects.requireNonNull(event, "event");

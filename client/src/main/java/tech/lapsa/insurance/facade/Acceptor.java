@@ -1,13 +1,8 @@
 package tech.lapsa.insurance.facade;
 
-import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
-import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
+import tech.lapsa.java.commons.exceptions.IllegalArgument;
 
-public interface Acceptor<T> {
+public interface Acceptor<X> {
 
-    default <X extends T> void accept(X request) throws IllegalArgument, IllegalState {
-	acceptAndReply(request);
-    }
-
-    <X extends T> X acceptAndReply(X request) throws IllegalArgument, IllegalState;
+    <Y extends X> Y acceptAndReply(Y request) throws IllegalArgument;
 }

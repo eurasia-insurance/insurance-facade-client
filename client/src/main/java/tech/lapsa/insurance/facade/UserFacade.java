@@ -4,19 +4,28 @@ import java.security.Principal;
 import java.util.List;
 
 import javax.ejb.Local;
+import javax.ejb.Remote;
 
 import com.lapsa.insurance.domain.crm.User;
 
-import tech.lapsa.java.commons.function.MyExceptions.IllegalArgument;
-import tech.lapsa.java.commons.function.MyExceptions.IllegalState;
+import tech.lapsa.java.commons.exceptions.IllegalArgument;
 
-@Local
-public interface UserFacade {
+public interface UserFacade extends EJBConstants {
 
-    User findOrCreate(String principalName) throws IllegalArgument, IllegalState;
+    public static final String BEAN_NAME = "UserFacadeBean";
 
-    User findOrCreate(Principal principal) throws IllegalArgument, IllegalState;
+    @Local
+    public interface UserFacadeLocal extends UserFacade {
+    }
 
-    List<User> getWhoEverCreatedRequests() throws IllegalArgument, IllegalState;
+    @Remote
+    public interface UserFacadeRemote extends UserFacade {
+    }
+
+    User findOrCreate(String principalName) throws IllegalArgument;
+
+    User findOrCreate(Principal principal) throws IllegalArgument;
+
+    List<User> getWhoEverCreatedRequests();
 
 }
