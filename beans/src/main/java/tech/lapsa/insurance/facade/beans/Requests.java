@@ -4,11 +4,8 @@ import java.time.Instant;
 
 import com.lapsa.insurance.domain.CallbackRequest;
 import com.lapsa.insurance.domain.InsuranceRequest;
-import com.lapsa.insurance.domain.ObtainingData;
 import com.lapsa.insurance.domain.PaymentData;
 import com.lapsa.insurance.domain.Request;
-import com.lapsa.insurance.elements.ObtainingMethod;
-import com.lapsa.insurance.elements.ObtainingStatus;
 import com.lapsa.insurance.elements.PaymentStatus;
 import com.lapsa.insurance.elements.ProgressStatus;
 import com.lapsa.insurance.elements.RequestStatus;
@@ -24,7 +21,6 @@ final class Requests {
 	preProgressStatus(request);
 
 	prePayment(request);
-	preObtaining(request);
 	return request;
     }
 
@@ -53,16 +49,6 @@ final class Requests {
     protected static <T extends Request> T preStatus(final T request) {
 	if (request.getStatus() == null)
 	    request.setStatus(RequestStatus.OPEN);
-	return request;
-    }
-
-    private static <T extends InsuranceRequest> T preObtaining(final T request) {
-	if (request.getObtaining() == null)
-	    request.setObtaining(new ObtainingData());
-	if (request.getObtaining().getMethod() == null)
-	    request.getObtaining().setMethod(ObtainingMethod.UNDEFINED);
-	if (request.getObtaining().getStatus() == null)
-	    request.getObtaining().setStatus(ObtainingStatus.UNDEFINED);
 	return request;
     }
 

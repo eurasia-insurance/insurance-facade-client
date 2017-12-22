@@ -130,19 +130,13 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 	}
 
 	try {
-	    if (found.getPayment().getStatus() == PaymentStatus.DONE)
-		throw MyExceptions.illegalStateFormat("Request %1$s already paid on %2$s with reference %3$s",
-			found.getId(),
-			found.getPayment().getPaymentInstant(),
-			found.getPayment().getPaymentReference());
-
 	    found.getPayment().setStatus(PaymentStatus.DONE);
 	    found.getPayment().setMethodName(methodName);
 	    found.getPayment().setAmount(paymentAmount);
 	    found.getPayment().setCurrency(paymentCurrency);
 	    found.getPayment().setPaymentReference(paymentReference);
 	    found.getPayment().setPaymentInstant(paymentInstant);
-	    // TODO FEAUTURE : Save paymentCurrency or not?
+	    found.setUpdated(Instant.now());
 	} catch (final NullPointerException e) {
 	    // it should not happens
 	    throw new EJBException(e.getMessage());
