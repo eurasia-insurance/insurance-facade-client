@@ -10,7 +10,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
-import com.lapsa.fin.FinCurrency;
 import com.lapsa.insurance.domain.CalculationData;
 import com.lapsa.insurance.domain.InsuranceProduct;
 import com.lapsa.insurance.domain.InsuranceRequest;
@@ -64,7 +63,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 	    final Double paymentAmount, final Currency paymentCurrency, final String paymentReference)
 	    throws IllegalArgument, IllegalState {
 	try {
-	    _completePayment(id, methodName, paymentInstant, paymentAmount, paymentReference);
+	    _completePayment(id, methodName, paymentInstant, paymentAmount, paymentCurrency, paymentReference);
 	} catch (final IllegalStateException e) {
 	    throw new IllegalState(e);
 	} catch (final IllegalArgumentException e) {
@@ -115,7 +114,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
     }
 
     private void _completePayment(final Integer id, final String methodName, final Instant paymentInstant,
-	    final Double paymentAmount, final String paymentReference)
+	    final Double paymentAmount, final Currency paymentCurrency, final String paymentReference)
 	    throws IllegalArgumentException, IllegalStateException {
 
 	// TODO FEAUTURE : check parameter for requirements
@@ -139,7 +138,8 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 
 	    found.getPayment().setStatus(PaymentStatus.DONE);
 	    found.getPayment().setMethodName(methodName);
-	    found.getPayment().setPaymentAmount(paymentAmount);
+	    found.getPayment().setAmount(paymentAmount);
+	    found.getPayment().setCurrency(paymentCurrency);
 	    found.getPayment().setPaymentReference(paymentReference);
 	    found.getPayment().setPaymentInstant(paymentInstant);
 	    // TODO FEAUTURE : Save paymentCurrency or not?
@@ -194,15 +194,14 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 
 	final Integer quantity = 1;
 
-	final Double cost = ocd.map(CalculationData::getPremiumCost) //
+	final Double amount = ocd.map(CalculationData::getAmount) //
 		.filter(MyNumbers::nonZero) //
 		.orElseThrow(MyExceptions.illegalArgumentSupplier("Can't determine an premium amount"));
 
 	final String consumerName = ord.map(RequesterData::getName) //
 		.orElseThrow(MyExceptions.illegalArgumentSupplier("Can't determine a consumer name"));
 
-	final Currency currency = ocd.map(CalculationData::getPremiumCurrency) //
-		.map(FinCurrency::getCurrency)
+	final Currency currency = ocd.map(CalculationData::getCurrency) //
 		.orElseThrow(MyExceptions.illegalArgumentSupplier("Can't determine an premium currency"));
 
 	final InvoiceBuilder builder = Invoice.builder() //
@@ -215,7 +214,7 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 		.withConsumerEmail(ord.map(RequesterData::getEmail)) //
 		.withConsumerPhone(ord.map(RequesterData::getPhone)) //
 		.withConsumerTaxpayerNumber(ord.map(RequesterData::getIdNumber)) //
-		.withItem(itemName, quantity, cost);
+		.withItem(itemName, quantity, amount);
 
 	final Invoice invoice;
 	try {
