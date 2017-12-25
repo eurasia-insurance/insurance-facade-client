@@ -29,9 +29,9 @@
 		<lapsa-jms-rpc.version>1.0-SNAPSHOT</lapsa-jms-rpc.version>
 		<payara-hibernate-validation.version>1.0</payara-hibernate-validation.version>
 		<!-- ejbs -->
+		<esbd-dao.version>2.0-SNAPSHOT</esbd-dao.version>
 		<insurance-shared.version>1.0-SNAPSHOT</insurance-shared.version>
 		<insurance-dao.version>1.1-SNAPSHOT</insurance-dao.version>
-		<insurance-esbd.version>1.1-SNAPSHOT</insurance-esbd.version>
 		<epayment-facade.version>1.1-SNAPSHOT</epayment-facade.version>
 		<epayment-shared.version>1.0-SNAPSHOT</epayment-shared.version>
 	</properties>
@@ -68,9 +68,9 @@
 				<scope>import</scope>
 			</dependency>
 			<dependency>
-				<groupId>tech.lapsa.insurance</groupId>
-				<artifactId>insurance-esbd-root</artifactId>
-				<version>${insurance-esbd.version}</version>
+				<groupId>tech.lapsa.esbd</groupId>
+				<artifactId>esbd-dao-root</artifactId>
+				<version>${esbd-dao.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
