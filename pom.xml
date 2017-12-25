@@ -34,8 +34,6 @@
 		<insurance-esbd.version>1.1-SNAPSHOT</insurance-esbd.version>
 		<epayment-facade.version>1.1-SNAPSHOT</epayment-facade.version>
 		<epayment-shared.version>1.0-SNAPSHOT</epayment-shared.version>
-		<!-- oldies -->
-		<insurance-lib.version>2.4-SNAPSHOT</insurance-lib.version>
 	</properties>
 
 	<dependencyManagement>
@@ -122,14 +120,6 @@
 				<artifactId>insurance-facade-app</artifactId>
 				<version>${project.version}</version>
 				<type>ear</type>
-			</dependency>
-			<!-- oldies -->
-			<dependency>
-				<groupId>com.lapsa.insurance-lib</groupId>
-				<artifactId>insurance-root</artifactId>
-				<version>${insurance-lib.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
