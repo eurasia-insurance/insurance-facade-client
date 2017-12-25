@@ -11,7 +11,7 @@
 	<artifactId>insurance-facade-app</artifactId>
 	<packaging>ear</packaging>
 
-	<name>Insurance Lib : Facade : EE Application</name>
+	<name>Insurance Lib : Facade : EAR</name>
 
 	<dependencies>
 		<dependency>
