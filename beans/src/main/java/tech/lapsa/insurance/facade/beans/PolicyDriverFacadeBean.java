@@ -18,10 +18,10 @@ import com.lapsa.insurance.elements.InsuranceClassType;
 import com.lapsa.insurance.elements.InsuredAgeClass;
 import com.lapsa.insurance.elements.Sex;
 
-import tech.lapsa.insurance.esbd.NotFound;
-import tech.lapsa.insurance.esbd.elements.InsuranceClassTypeService.InsuranceClassTypeServiceRemote;
-import tech.lapsa.insurance.esbd.entities.SubjectPersonEntity;
-import tech.lapsa.insurance.esbd.entities.SubjectPersonEntityService.SubjectPersonEntityServiceRemote;
+import tech.lapsa.esbd.dao.NotFound;
+import tech.lapsa.esbd.dao.elements.InsuranceClassTypeService.InsuranceClassTypeServiceRemote;
+import tech.lapsa.esbd.dao.entities.SubjectPersonEntity;
+import tech.lapsa.esbd.dao.entities.SubjectPersonEntityService.SubjectPersonEntityServiceRemote;
 import tech.lapsa.insurance.facade.PolicyDriverFacade;
 import tech.lapsa.insurance.facade.PolicyDriverFacade.PolicyDriverFacadeLocal;
 import tech.lapsa.insurance.facade.PolicyDriverFacade.PolicyDriverFacadeRemote;

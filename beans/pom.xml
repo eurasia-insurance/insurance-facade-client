@@ -58,8 +58,8 @@
 			<optional>false</optional>
 		</dependency>
 		<dependency>
-			<groupId>tech.lapsa.insurance</groupId>
-			<artifactId>insurance-esbd-client</artifactId>
+			<groupId>tech.lapsa.esbd</groupId>
+			<artifactId>esbd-dao-client</artifactId>
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
