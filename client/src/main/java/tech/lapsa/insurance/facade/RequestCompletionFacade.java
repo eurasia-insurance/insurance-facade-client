@@ -28,10 +28,10 @@ public interface RequestCompletionFacade extends EJBConstants {
     Request transactionUncomplete(Request request,
 	    User user,
 	    String note,
-	    TransactionProblem transactionProblem)
+	    TransactionProblem transactionProblem, boolean paidable)
 	    throws IllegalState, IllegalArgument;
 
-    Request transactionComplete(Request request,
+    Request transactionCompleteWithPayment(Request request,
 	    User user,
 	    String note,
 	    String agreementNumber,
@@ -39,5 +39,11 @@ public interface RequestCompletionFacade extends EJBConstants {
 	    Currency paymentCurrency,
 	    Instant paymentInstant,
 	    String paymentReference) throws IllegalState, IllegalArgument;
+
+    Request transactionComplete(Request request,
+	    User user,
+	    String note,
+	    String agreementNumber)
+	    throws IllegalState, IllegalArgument;
 
 }
