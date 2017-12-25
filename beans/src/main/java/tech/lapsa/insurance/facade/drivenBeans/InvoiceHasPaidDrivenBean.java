@@ -12,7 +12,7 @@ import tech.lapsa.epayment.shared.jms.EpaymentDestinations;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade.InsuranceRequestFacadeRemote;
 import tech.lapsa.java.commons.exceptions.IllegalArgument;
 import tech.lapsa.java.commons.exceptions.IllegalState;
-import tech.lapsa.javax.jms.service.JmsReceiverServiceDrivenBean;
+import tech.lapsa.lapsa.jmsRPC.service.JmsReceiverServiceDrivenBean;
 
 @MessageDriven(mappedName = EpaymentDestinations.INVOICE_HAS_PAID)
 public class InvoiceHasPaidDrivenBean extends JmsReceiverServiceDrivenBean<XmlInvoiceHasPaidEvent> {
