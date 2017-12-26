@@ -7,21 +7,21 @@ import java.util.Properties;
 import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
 
-import tech.lapsa.epayment.shared.entity.XmlInvoiceHasPaidEvent;
+import tech.lapsa.epayment.shared.entity.InvoiceHasPaidJmsEvent;
 import tech.lapsa.epayment.shared.jms.EpaymentDestinations;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade.InsuranceRequestFacadeRemote;
 import tech.lapsa.java.commons.exceptions.IllegalArgument;
 import tech.lapsa.lapsa.jmsRPC.service.JmsReceiverServiceDrivenBean;
 
 @MessageDriven(mappedName = EpaymentDestinations.INVOICE_HAS_PAID)
-public class InvoiceHasPaidDrivenBean extends JmsReceiverServiceDrivenBean<XmlInvoiceHasPaidEvent> {
+public class InvoiceHasPaidDrivenBean extends JmsReceiverServiceDrivenBean<InvoiceHasPaidJmsEvent> {
 
     public InvoiceHasPaidDrivenBean() {
-	super(XmlInvoiceHasPaidEvent.class);
+	super(InvoiceHasPaidJmsEvent.class);
     }
 
     @Override
-    public void receiving(final XmlInvoiceHasPaidEvent entity, final Properties properties)
+    public void receiving(final InvoiceHasPaidJmsEvent entity, final Properties properties)
 	    throws IllegalArgumentException, IllegalStateException {
 	_receiving(entity, properties);
     }
@@ -31,7 +31,7 @@ public class InvoiceHasPaidDrivenBean extends JmsReceiverServiceDrivenBean<XmlIn
     @EJB
     private InsuranceRequestFacadeRemote insuranceRequests;
 
-    private void _receiving(final XmlInvoiceHasPaidEvent entity, final Properties properties)
+    private void _receiving(final InvoiceHasPaidJmsEvent entity, final Properties properties)
 	    throws IllegalArgumentException, IllegalStateException {
 	final String methodName = entity.getMethod();
 	final Integer id = Integer.valueOf(entity.getExternalId());
