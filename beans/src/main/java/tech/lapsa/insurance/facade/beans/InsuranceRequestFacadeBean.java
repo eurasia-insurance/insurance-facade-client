@@ -143,8 +143,8 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 	    found.getPayment().setMethodName(methodName);
 	    found.getPayment().setAmount(paymentAmount);
 	    found.getPayment().setCurrency(paymentCurrency);
-	    found.getPayment().setPaymentReference(paymentReference);
-	    found.getPayment().setPaymentInstant(paymentInstant);
+	    found.getPayment().setReference(paymentReference);
+	    found.getPayment().setInstant(paymentInstant);
 	    found.setUpdated(Instant.now());
 	} catch (final NullPointerException e) {
 	    // it should not happens
