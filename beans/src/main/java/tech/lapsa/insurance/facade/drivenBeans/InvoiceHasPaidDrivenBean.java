@@ -11,7 +11,6 @@ import tech.lapsa.epayment.shared.entity.XmlInvoiceHasPaidEvent;
 import tech.lapsa.epayment.shared.jms.EpaymentDestinations;
 import tech.lapsa.insurance.facade.InsuranceRequestFacade.InsuranceRequestFacadeRemote;
 import tech.lapsa.java.commons.exceptions.IllegalArgument;
-import tech.lapsa.java.commons.exceptions.IllegalState;
 import tech.lapsa.lapsa.jmsRPC.service.JmsReceiverServiceDrivenBean;
 
 @MessageDriven(mappedName = EpaymentDestinations.INVOICE_HAS_PAID)
@@ -43,8 +42,6 @@ public class InvoiceHasPaidDrivenBean extends JmsReceiverServiceDrivenBean<XmlIn
 	try {
 	    insuranceRequests.completePayment(id, methodName, paid, amount, currency, ref);
 	} catch (final IllegalArgument e) {
-	    throw e.getRuntime();
-	} catch (final IllegalState e) {
 	    throw e.getRuntime();
 	}
     }

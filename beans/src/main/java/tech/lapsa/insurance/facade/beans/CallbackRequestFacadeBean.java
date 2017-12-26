@@ -68,18 +68,7 @@ public class CallbackRequestFacadeBean implements CallbackRequestFacadeLocal, Ca
 	return cb;
     }
 
-    // TODO DEBUG : Push disabled temporary. Need to debug
-    // @EJB
-    // private NotificationFacadeLocal notifications;
     private CallbackRequest setupNotifications(final CallbackRequest request) throws IllegalArgumentException {
-	// notifier.newNotificationBuilder() //
-	// .withEvent(NotificationRequestStage.NEW_REQUEST) //
-	// .withChannel(NotificationChannel.PUSH) //
-	// .withRecipient(NotificationRecipientType.COMPANY) //
-	// .forEntity(request) //
-	// .build() //
-	// .send();
 	return request;
     }
-
 }

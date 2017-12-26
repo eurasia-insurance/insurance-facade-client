@@ -9,7 +9,6 @@ import javax.ejb.Remote;
 import com.lapsa.insurance.domain.InsuranceRequest;
 
 import tech.lapsa.java.commons.exceptions.IllegalArgument;
-import tech.lapsa.java.commons.exceptions.IllegalState;
 
 public interface InsuranceRequestFacade extends Acceptor<InsuranceRequest>, EJBConstants {
 
@@ -24,5 +23,5 @@ public interface InsuranceRequestFacade extends Acceptor<InsuranceRequest>, EJBC
     }
 
     void completePayment(Integer id, String methodName, Instant paymentInstant, Double amount,
-	    Currency currency, String paymentReference) throws IllegalArgument, IllegalState;
+	    Currency currency, String paymentReference) throws IllegalArgument;
 }

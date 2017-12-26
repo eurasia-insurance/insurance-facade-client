@@ -31,7 +31,6 @@ import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationE
 import tech.lapsa.insurance.facade.NotificationFacade.Notification.NotificationRecipientType;
 import tech.lapsa.insurance.facade.NotificationFacade.NotificationFacadeLocal;
 import tech.lapsa.java.commons.exceptions.IllegalArgument;
-import tech.lapsa.java.commons.exceptions.IllegalState;
 import tech.lapsa.java.commons.function.MyExceptions;
 import tech.lapsa.java.commons.function.MyNumbers;
 import tech.lapsa.java.commons.function.MyObjects;
@@ -59,13 +58,15 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void completePayment(final Integer id, final String methodName, final Instant paymentInstant,
-	    final Double paymentAmount, final Currency paymentCurrency, final String paymentReference)
-	    throws IllegalArgument, IllegalState {
+    public void completePayment(final Integer id,
+	    final String methodName,
+	    final Instant paymentInstant,
+	    final Double paymentAmount,
+	    final Currency paymentCurrency,
+	    final String paymentReference)
+	    throws IllegalArgument {
 	try {
 	    _completePayment(id, methodName, paymentInstant, paymentAmount, paymentCurrency, paymentReference);
-	} catch (final IllegalStateException e) {
-	    throw new IllegalState(e);
 	} catch (final IllegalArgumentException e) {
 	    throw new IllegalArgument(e);
 	}
@@ -113,17 +114,25 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 	return ir;
     }
 
-    private void _completePayment(final Integer id, final String methodName, final Instant paymentInstant,
-	    final Double paymentAmount, final Currency paymentCurrency, final String paymentReference)
-	    throws IllegalArgumentException, IllegalStateException {
+    private void _completePayment(final Integer id,
+	    final String methodName,
+	    final Instant paymentInstant,
+	    final Double paymentAmount,
+	    final Currency paymentCurrency,
+	    final String paymentReference)
+	    throws IllegalArgumentException {
 
-	// TODO FEAUTURE : check parameter for requirements
+	MyNumbers.requirePositive(id, "id");
+	MyStrings.requireNonEmpty(methodName, "methodName");
+	MyObjects.requireNonNull(paymentInstant, "paymentInstant");
+	MyNumbers.requirePositive(paymentAmount, "paymentAmount");
+	MyObjects.requireNonNull(paymentCurrency, "paymentCurrency");
 
 	final InsuranceRequest found;
 	try {
 	    found = dao.getById(id);
 	} catch (final NotFound e) {
-	    throw MyExceptions.format(IllegalArgumentException::new, "Request not found with id %1$s", id);
+	    throw MyExceptions.illegalArgumentFormat("Request not found with id %1$s", id);
 	} catch (final IllegalArgument e) {
 	    // it should not happens
 	    throw new EJBException(e.getMessage());
@@ -169,8 +178,6 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
     private EpaymentFacadeRemote epayments;
 
     private <T extends InsuranceRequest> T setupPaymentOrder(final T request) throws IllegalArgumentException {
-	// TODO FEAUTURE : check parameter for requirements
-
 	if (MyStrings.nonEmpty(request.getPayment().getInvoiceNumber()))
 	    return request;
 
@@ -225,7 +232,9 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
     }
 
     private <T extends InsuranceRequest> T setupNotifications(final T request) throws IllegalArgumentException {
-	// TODO FEAUTURE : check parameter for requirements
+
+	MyObjects.requireNonNull(request, "request");
+
 	final NotificationBuilder builder = Notification.builder() //
 		.withEvent(NotificationEventType.NEW_REQUEST) //
 		.forEntity(request);
@@ -251,11 +260,6 @@ public class InsuranceRequestFacadeBean implements InsuranceRequestFacadeLocal, 
 		    throw new EJBException(e.getMessage());
 		}
 	case UNCOMPLETE:
-	    // TODO DEBUG : Push disabled temporary. Need to debug
-	    // builder.withChannel(NotificationChannel.PUSH) //
-	    // .withRecipient(NotificationRecipientType.COMPANY) //
-	    // .build() //
-	    // .send();
 	}
 	return request;
     }
