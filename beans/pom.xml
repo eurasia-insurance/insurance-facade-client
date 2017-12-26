@@ -28,12 +28,6 @@
 			<optional>false</optional>
 		</dependency>
 		<dependency>
-			<groupId>tech.lapsa.payara</groupId>
-			<artifactId>payara-hibernate-validation</artifactId>
-			<scope>runtime</scope>
-			<optional>false</optional>
-		</dependency>
-		<dependency>
 			<groupId>tech.lapsa.insurance</groupId>
 			<artifactId>insurance-shared</artifactId>
 			<scope>compile</scope>
@@ -88,13 +82,15 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>javax.jms</groupId>
 			<artifactId>javax.jms-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!-- due to eclipse error 'The type cannot be resolved. It is indirectly 
+			referenced from required .class files' -->
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
