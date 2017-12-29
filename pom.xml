@@ -28,7 +28,7 @@
 		<!-- tech -->
 		<lapsa-jms-rpc.version>1.0</lapsa-jms-rpc.version>
 		<!-- ejbs -->
-		<esbd-dao.version>2.0.1</esbd-dao.version>
+		<esbd-dao.version>2.1</esbd-dao.version>
 		<insurance-shared.version>1.0</insurance-shared.version>
 		<insurance-dao.version>1.1</insurance-dao.version>
 		<epayment-facade.version>1.1</epayment-facade.version>
