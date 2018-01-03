@@ -15,6 +15,11 @@ public interface PolicyDriverFacade extends EJBConstants {
 
     @Local
     public interface PolicyDriverFacadeLocal extends PolicyDriverFacade {
+	@Deprecated
+	void fetch(PolicyDriver driver) throws IllegalArgument, PolicyDriverNotFound;
+
+	@Deprecated
+	void clearFetched(PolicyDriver driver) throws IllegalArgument;
     }
 
     @Remote
@@ -26,11 +31,4 @@ public interface PolicyDriverFacade extends EJBConstants {
     PolicyDriver getByTaxpayerNumber(TaxpayerNumber idNumber) throws IllegalArgument, PolicyDriverNotFound;
 
     PolicyDriver getByTaxpayerNumberOrDefault(TaxpayerNumber taxpayerNumber) throws IllegalArgument;
-
-    @Deprecated
-    void fetch(PolicyDriver driver) throws IllegalArgument, PolicyDriverNotFound;
-
-    @Deprecated
-    void clearFetched(PolicyDriver driver) throws IllegalArgument;
-
 }
