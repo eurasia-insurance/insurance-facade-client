@@ -19,20 +19,34 @@ public class PingClientBean implements PingClientLocal, PingClientRemote {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void fullPing() throws IllegalState {
 	try {
-	    MyNaming.lookupEJB(IllegalStateException::new,
-		    ESBDDAOPingServiceRemote.APPLICATION_NAME,
-		    ESBDDAOPingServiceRemote.MODULE_NAME,
-		    ESBDDAOPingServiceRemote.BEAN_NAME,
-		    ESBDDAOPingServiceRemote.class) //
-		    .ping();
-	    MyNaming.lookupEJB(IllegalStateException::new,
-		    InsuranceDAOPingServiceRemote.APPLICATION_NAME,
-		    InsuranceDAOPingServiceRemote.MODULE_NAME,
-		    InsuranceDAOPingServiceRemote.BEAN_NAME,
-		    InsuranceDAOPingServiceRemote.class) //
-		    .ping();
+	    _fullPing();
 	} catch (IllegalStateException e) {
 	    throw new IllegalState(e);
 	}
+    }
+
+    // PRIVATE
+
+    private void _fullPing() throws IllegalState, IllegalStateException {
+	_pingESBDDAO();
+	_pingInsuranceDAO();
+    }
+
+    private void _pingInsuranceDAO() throws IllegalState {
+	MyNaming.lookupEJB(IllegalStateException::new,
+		InsuranceDAOPingServiceRemote.APPLICATION_NAME,
+		InsuranceDAOPingServiceRemote.MODULE_NAME,
+		InsuranceDAOPingServiceRemote.BEAN_NAME,
+		InsuranceDAOPingServiceRemote.class) //
+		.ping();
+    }
+
+    private void _pingESBDDAO() throws IllegalState {
+	MyNaming.lookupEJB(IllegalStateException::new,
+		ESBDDAOPingServiceRemote.APPLICATION_NAME,
+		ESBDDAOPingServiceRemote.MODULE_NAME,
+		ESBDDAOPingServiceRemote.BEAN_NAME,
+		ESBDDAOPingServiceRemote.class) //
+		.ping();
     }
 }
