@@ -29,7 +29,6 @@ import tech.lapsa.insurance.facade.PolicyDriverNotFound;
 import tech.lapsa.java.commons.exceptions.IllegalArgument;
 import tech.lapsa.java.commons.function.MyExceptions;
 import tech.lapsa.java.commons.function.MyObjects;
-import tech.lapsa.java.commons.time.MyTemporals;
 import tech.lapsa.kz.taxpayer.TaxpayerNumber;
 
 @Stateless(name = PolicyDriverFacade.BEAN_NAME)
@@ -118,7 +117,7 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacadeLocal, PolicyDr
 
 	final SubjectPersonEntity sp;
 	try {
-	    sp = subjectPersonService.getByIIN(idNumber);
+	    sp = subjectPersonService.getFirstByIdNumber(idNumber);
 	} catch (final IllegalArgument e) {
 	    // it should not happens
 	    throw new EJBException(e.getMessage());
@@ -175,10 +174,8 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacadeLocal, PolicyDr
 
 	if (esbdEntity != null) {
 
-	    final TaxpayerNumber idNumber = TaxpayerNumber.of(esbdEntity.getIdNumber());
-
-	    if (idNumber != null)
-		driver.setIdNumber(idNumber);
+	    if (esbdEntity.getIdNumber() != null)
+		driver.setIdNumber(esbdEntity.getIdNumber());
 
 	    InsuranceClassType insuranceClassTypeLocal = null;
 	    {
@@ -205,11 +202,11 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacadeLocal, PolicyDr
 	    Sex sexLocal = null;
 	    {
 		if (esbdEntity != null && esbdEntity.getPersonal() != null
-			&& esbdEntity.getPersonal().getSex() != null)
-		    sexLocal = esbdEntity.getPersonal().getSex();
+			&& esbdEntity.getPersonal().getGender() != null)
+		    sexLocal = esbdEntity.getPersonal().getGender();
 	    }
 
-	    driver.setIdNumber(idNumber);
+	    driver.setIdNumber(esbdEntity.getIdNumber());
 
 	    driver.setInsuranceClassType(insuranceClassTypeLocal);
 	    driver.setAgeClass(insuredAgeClassLocal);
@@ -239,9 +236,7 @@ public class PolicyDriverFacadeBean implements PolicyDriverFacadeLocal, PolicyDr
 
 		if (esbdEntity.getIdentityCard() != null) {
 		    driver.getIdentityCardData().setNumber(esbdEntity.getIdentityCard().getNumber());
-		    driver.getIdentityCardData()
-			    .setDateOfIssue(
-				    MyTemporals.calendar().toLocalDate(esbdEntity.getIdentityCard().getDateOfIssue()));
+		    driver.getIdentityCardData().setDateOfIssue(esbdEntity.getIdentityCard().getDateOfIssue());
 		    driver.getIdentityCardData().setType(esbdEntity.getIdentityCard().getIdentityCardType());
 		    driver.getIdentityCardData()
 			    .setIssuingAuthority(esbdEntity.getIdentityCard().getIssuingAuthority());
