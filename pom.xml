@@ -30,7 +30,7 @@
 		<!-- ejbs -->
 		<esbd-dao.version>2.2-SNAPSHOT</esbd-dao.version>
 		<insurance-shared.version>1.0</insurance-shared.version>
-		<insurance-dao.version>1.1</insurance-dao.version>
+		<insurance-dao.version>1.2-SNAPSHOT</insurance-dao.version>
 		<epayment-facade.version>1.1</epayment-facade.version>
 		<epayment-shared.version>1.0</epayment-shared.version>
 	</properties>
