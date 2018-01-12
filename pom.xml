@@ -69,4 +69,15 @@
 		</dependency>
 	</dependencies>
 
+	<scm>
+		<connection>scm:git:https://gitlab.lapsa.tech/lapsa/insurance/facade-client.git</connection>
+		<developerConnection>scm:git:https://gitlab.lapsa.tech/lapsa/insurance/facade-client.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+
+	<issueManagement>
+		<system>gitlab</system>
+		<url>https://gitlab.lapsa.tech/lapsa/insurance/facade-client/issues</url>
+	</issueManagement>
+
 </project>
