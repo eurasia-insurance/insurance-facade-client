@@ -30,7 +30,8 @@
 		<!-- ejbs -->
 		<esbd-dao.version>2.2-SNAPSHOT</esbd-dao.version>
 		<insurance-shared.version>1.0</insurance-shared.version>
-		<insurance-dao.version>1.2-SNAPSHOT</insurance-dao.version>
+		<insurance-domain.version>2.4</insurance-domain.version>
+		<insurance-dao-client.version>1.2-SNAPSHOT</insurance-dao-client.version>
 		<epayment-facade.version>1.1</epayment-facade.version>
 		<epayment-shared.version>1.0</epayment-shared.version>
 	</properties>
@@ -60,13 +61,6 @@
 				<scope>import</scope>
 			</dependency>
 			<dependency>
-				<groupId>tech.lapsa.insurance</groupId>
-				<artifactId>insurance-dao-root</artifactId>
-				<version>${insurance-dao.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
 				<groupId>tech.lapsa.esbd</groupId>
 				<artifactId>esbd-dao-root</artifactId>
 				<version>${esbd-dao.version}</version>
@@ -81,6 +75,16 @@
 				<scope>import</scope>
 			</dependency>
 			<!-- tech -->
+			<dependency>
+				<groupId>tech.lapsa.insurance</groupId>
+				<artifactId>insurance-domain</artifactId>
+				<version>${insurance-domain.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>tech.lapsa.insurance</groupId>
+				<artifactId>insurance-dao-client</artifactId>
+				<version>${insurance-dao-client.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>tech.lapsa.lapsa</groupId>
 				<artifactId>lapsa-jms-rpc</artifactId>
