@@ -2,15 +2,50 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>tech.lapsa.insurance</groupId>
-		<artifactId>insurance-facade-root</artifactId>
-		<version>1.3-SNAPSHOT</version>
+		<groupId>tech.lapsa.maven</groupId>
+		<artifactId>maven-general</artifactId>
+		<version>3.1</version>
 	</parent>
 
+	<groupId>tech.lapsa.insurance</groupId>
 	<artifactId>insurance-facade-client</artifactId>
+	<version>1.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Insurance Lib : Facade : EJB-client</name>
+
+	<properties>
+		<!-- BOMS -->
+		<javax-javaee-bom.version>7.0a</javax-javaee-bom.version>
+		<payara-bom.version>4.1.2-2</payara-bom.version>
+		<insurance-domain.version>2.4</insurance-domain.version>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- BOMS -->
+			<dependency>
+				<groupId>tech.lapsa.javax</groupId>
+				<artifactId>javax-javaee-bom</artifactId>
+				<version>${javax-javaee-bom.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>tech.lapsa.payara</groupId>
+				<artifactId>payara-bom</artifactId>
+				<version>${payara-bom.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+			<!-- tech -->
+			<dependency>
+				<groupId>tech.lapsa.insurance</groupId>
+				<artifactId>insurance-domain</artifactId>
+				<version>${insurance-domain.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 		<!-- tech -->
