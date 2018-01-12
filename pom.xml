@@ -54,6 +54,20 @@
 			<artifactId>insurance-domain</artifactId>
 			<scope>compile</scope>
 			<optional>false</optional>
+			<exclusions>
+				<exclusion>
+					<groupId>tech.lapsa.javax</groupId>
+					<artifactId>javax-jpa-commons</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.lapsa.kz-lib</groupId>
+					<artifactId>kz-eelib</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.lapsa.international-lib</groupId>
+					<artifactId>international-eelib</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<!-- Payara -->
 		<dependency>
