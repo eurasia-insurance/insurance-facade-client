@@ -35,6 +35,7 @@ public interface RequestCompletionFacade extends EJBConstants {
 	    User user,
 	    String note,
 	    String agreementNumber,
+	    String paymentMethodName,
 	    Double paymentAmount,
 	    Currency paymentCurrency,
 	    Instant paymentInstant,
