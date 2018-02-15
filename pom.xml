@@ -9,7 +9,7 @@
 
 	<groupId>tech.lapsa.insurance</groupId>
 	<artifactId>insurance-facade-client</artifactId>
-	<version>1.3.3-SNAPSHOT</version>
+	<version>1.4-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Insurance Lib : Facade : EJB-client</name>
@@ -18,7 +18,7 @@
 		<!-- BOMS -->
 		<javax-javaee-bom.version>7.0a</javax-javaee-bom.version>
 		<payara-bom.version>4.1.2-2</payara-bom.version>
-		<insurance-domain.version>2.4.2</insurance-domain.version>
+		<insurance-domain.version>2.5-SNAPSHOT</insurance-domain.version>
 	</properties>
 
 	<dependencyManagement>
