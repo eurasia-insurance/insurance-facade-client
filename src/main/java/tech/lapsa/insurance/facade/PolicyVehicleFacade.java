@@ -31,7 +31,11 @@ public interface PolicyVehicleFacade extends EJBConstants {
     PolicyVehicle fetchFirstByRegNumberOrDefault(VehicleRegNumber regNumber)
 	    throws IllegalArgument;
 
+    PolicyVehicle fetchLastByRegNumberOrDefault(VehicleRegNumber regNumber) throws IllegalArgument;
+
     PolicyVehicle fetchFirstByRegNumber(VehicleRegNumber regNumber) throws IllegalArgument, PolicyVehicleNotFound;
+
+    PolicyVehicle fetchLastByRegNumber(VehicleRegNumber regNumber) throws IllegalArgument, PolicyVehicleNotFound;
 
     @Deprecated
     void fetch(PolicyVehicle vehicle) throws IllegalArgument, PolicyVehicleNotFound;
