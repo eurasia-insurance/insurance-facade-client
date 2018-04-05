@@ -22,6 +22,12 @@ public interface InsuranceRequestFacade extends Acceptor<InsuranceRequest>, EJBC
     public interface InsuranceRequestFacadeRemote extends InsuranceRequestFacade {
     }
 
-    void completePayment(Integer id, String methodName, Instant paymentInstant, Double amount,
-	    Currency currency, String paymentCard, String paymentReference) throws IllegalArgument;
+    void completePayment(Integer id,
+	    String methodName,
+	    Instant paymentInstant,
+	    Double amount,
+	    Currency currency,
+	    String paymentCard,
+	    String paymentReference,
+	    String payerName) throws IllegalArgument;
 }
