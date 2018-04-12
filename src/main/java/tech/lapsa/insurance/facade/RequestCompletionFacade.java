@@ -25,6 +25,9 @@ public interface RequestCompletionFacade extends EJBConstants {
     public interface RequestCompletionFacadeRemote extends RequestCompletionFacade {
     }
 
+    Request commentRequest(Request r, User user, String message) throws IllegalState, IllegalArgument;
+
+
     Request transactionUncomplete(Request request,
 	    User user,
 	    TransactionProblem transactionProblem,
