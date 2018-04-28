@@ -28,6 +28,7 @@ public interface InsuranceRequestFacade extends Acceptor<InsuranceRequest>, EJBC
 	    Double amount,
 	    Currency currency,
 	    String paymentCard,
+	    String paymentCardBank,
 	    String paymentReference,
 	    String payerName) throws IllegalArgument;
 }
