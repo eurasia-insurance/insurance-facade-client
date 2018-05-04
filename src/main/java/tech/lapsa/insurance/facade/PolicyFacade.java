@@ -17,5 +17,5 @@ public interface PolicyFacade extends EJBConstants {
     public interface PolicyFacadeRemote extends PolicyFacade {
     }
 
-    Policy getByNumber() throws PolicyNotFound;
+    Policy getByNumber(String number) throws PolicyNotFound;
 }
