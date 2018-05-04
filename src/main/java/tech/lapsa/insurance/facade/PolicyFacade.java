@@ -9,7 +9,7 @@ import tech.lapsa.java.commons.exceptions.IllegalArgument;
 
 public interface PolicyFacade extends EJBConstants {
 
-    public static final String BEAN_NAME = "PolicyDriverFacadeBean";
+    public static final String BEAN_NAME = "PolicyFacadeBean";
 
     @Local
     public interface PolicyFacadeLocal extends PolicyFacade {
