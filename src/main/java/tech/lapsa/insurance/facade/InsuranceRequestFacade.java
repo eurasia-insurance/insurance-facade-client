@@ -10,7 +10,7 @@ import com.lapsa.insurance.domain.InsuranceRequest;
 
 import tech.lapsa.java.commons.exceptions.IllegalArgument;
 
-public interface InsuranceRequestFacade extends Acceptor<InsuranceRequest>, EJBConstants {
+public interface InsuranceRequestFacade extends EJBConstants {
 
     public static final String BEAN_NAME = "InsuranceRequestFacadeBean";
 
@@ -22,6 +22,12 @@ public interface InsuranceRequestFacade extends Acceptor<InsuranceRequest>, EJBC
     public interface InsuranceRequestFacadeRemote extends InsuranceRequestFacade {
     }
 
+    <T extends InsuranceRequest> T newRequest(T request) throws IllegalArgument;
+
+    <T extends InsuranceRequest> T newAcceptedRequest(T request) throws IllegalArgument;
+
+    <T extends InsuranceRequest> T acceptRequest(T request) throws IllegalArgument;
+    
     void completePayment(Integer id,
 	    String methodName,
 	    Instant paymentInstant,
