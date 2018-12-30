@@ -7,10 +7,13 @@ import javax.ejb.Local;
 import javax.ejb.Remote;
 
 import com.lapsa.insurance.domain.InsuranceRequest;
+import com.lapsa.international.localization.LocalizationLanguage;
+import com.lapsa.international.phone.PhoneNumber;
 
 import tech.lapsa.java.commons.exceptions.IllegalArgument;
+import tech.lapsa.kz.taxpayer.TaxpayerNumber;
 
-public interface InsuranceRequestFacade extends Acceptor<InsuranceRequest>, EJBConstants {
+public interface InsuranceRequestFacade extends EJBConstants {
 
     public static final String BEAN_NAME = "InsuranceRequestFacadeBean";
 
@@ -20,7 +23,23 @@ public interface InsuranceRequestFacade extends Acceptor<InsuranceRequest>, EJBC
 
     @Remote
     public interface InsuranceRequestFacadeRemote extends InsuranceRequestFacade {
+
     }
+
+    <T extends InsuranceRequest> T newRequest(T request) throws IllegalArgument;
+
+    <T extends InsuranceRequest> T newAcceptedRequest(T request) throws IllegalArgument;
+
+    <T extends InsuranceRequest> T acceptRequest(T request,
+	    String invoicePayeeName,
+	    Currency invoiceCurrency,
+	    LocalizationLanguage invoiceLanguage,
+	    String invoicePayeeEmail,
+	    PhoneNumber invoicePayeePhone,
+	    TaxpayerNumber invoicePayeeTaxpayerNumber,
+	    String invoiceProductName,
+	    Double invoiceAmount,
+	    Integer invoiceQuantity) throws IllegalArgument;
 
     void completePayment(Integer id,
 	    String methodName,
@@ -31,4 +50,5 @@ public interface InsuranceRequestFacade extends Acceptor<InsuranceRequest>, EJBC
 	    String paymentCardBank,
 	    String paymentReference,
 	    String payerName) throws IllegalArgument;
+
 }

@@ -28,7 +28,7 @@ public interface UserFacade extends EJBConstants {
 
     List<User> getWhoEverCreatedRequests();
 
-    List<User> getWhoEverAcceptedRequests();
+    List<User> getWhoEverPickedRequests();
 
     List<User> getWhoEverCompletedRequests();
 
