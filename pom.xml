@@ -89,9 +89,4 @@
 		<tag>HEAD</tag>
 	</scm>
 
-	<issueManagement>
-		<system>gitlab</system>
-		<url>https://gitlab.lapsa.tech/lapsa/insurance/facade-client/issues</url>
-	</issueManagement>
-
 </project>
