@@ -8,7 +8,7 @@ import javax.ejb.Remote;
 
 import com.lapsa.insurance.domain.Request;
 import com.lapsa.insurance.domain.crm.User;
-import com.lapsa.insurance.elements.TransactionProblem;
+import com.lapsa.insurance.elements.RequestCancelationReason;
 
 import tech.lapsa.java.commons.exceptions.IllegalArgument;
 import tech.lapsa.java.commons.exceptions.IllegalState;
@@ -30,7 +30,7 @@ public interface RequestCompletionFacade extends EJBConstants {
 
     Request transactionUncomplete(Request request,
 	    User user,
-	    TransactionProblem transactionProblem,
+	    RequestCancelationReason requestCancelationReason,
 	    boolean paidable) throws IllegalState, IllegalArgument;
 
     Request transactionCompleteWithPayment(Request request,
