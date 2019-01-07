@@ -30,11 +30,15 @@ public interface InsuranceRequestFacade extends EJBConstants {
 
     <T extends InsuranceRequest> T getById(Integer id) throws IllegalState, IllegalArgument;
 
-    <T extends InsuranceRequest> T newRequest(T request) throws IllegalArgument;
+    <T extends InsuranceRequest> T requestReceived(T request) throws IllegalArgument;
 
-    <T extends InsuranceRequest> T newAcceptedRequest(T request) throws IllegalArgument;
+    <T extends InsuranceRequest> T policyIssued(T request,
+	    User user,
+	    String agreementNumber) throws IllegalArgument, IllegalState;
 
-    <T extends InsuranceRequest> T acceptRequest(T request,
+    <T extends InsuranceRequest> T policyIssuedAndInvoiceCreated(T request,
+	    User user,
+	    String agreementNumber,
 	    String invoicePayeeName,
 	    Currency invoiceCurrency,
 	    LocalizationLanguage invoiceLanguage,
@@ -43,7 +47,30 @@ public interface InsuranceRequestFacade extends EJBConstants {
 	    TaxpayerNumber invoicePayeeTaxpayerNumber,
 	    String invoiceProductName,
 	    Double invoiceAmount,
-	    Integer invoiceQuantity) throws IllegalArgument;
+	    Integer invoiceQuantity) throws IllegalArgument, IllegalState;
+
+    <T extends InsuranceRequest> T policyIssuedAndPremiumPaid(T request,
+	    User user,
+	    String agreementNumber,
+	    String paymentMethodName,
+	    Double paymentAmount,
+	    Currency paymentCurrency,
+	    Instant paymentInstant,
+	    String paymentCard,
+	    String paymentCardBank,
+	    String paymentReference,
+	    String payerName) throws IllegalState, IllegalArgument;
+
+    <T extends InsuranceRequest> T invoiceCreated(T request,
+	    String invoicePayeeName,
+	    Currency invoiceCurrency,
+	    LocalizationLanguage invoiceLanguage,
+	    String invoicePayeeEmail,
+	    PhoneNumber invoicePayeePhone,
+	    TaxpayerNumber invoicePayeeTaxpayerNumber,
+	    String invoiceProductName,
+	    Double invoiceAmount,
+	    Integer invoiceQuantity) throws IllegalArgument, IllegalState;
 
     <T extends InsuranceRequest> T premiumPaid(T request,
 	    String paymentMethodName,
@@ -54,19 +81,6 @@ public interface InsuranceRequestFacade extends EJBConstants {
 	    String paymentCardBank,
 	    String paymentReference,
 	    String payerName) throws IllegalArgument;
-
-    <T extends InsuranceRequest> T policyIssued(T request, User user, String agreementNumber)
-	    throws IllegalState, IllegalArgument;
-
-    <T extends InsuranceRequest> T policyIssuedAndPremiumPaid(T request,
-	    User user,
-	    String agreementNumber,
-	    String paymentMethodName,
-	    Double paymentAmount,
-	    Currency paymentCurrency,
-	    Instant paymentInstant,
-	    String paymentReference,
-	    String payerName) throws IllegalState, IllegalArgument;
 
     <T extends InsuranceRequest> T requestCanceled(T request,
 	    User user,
