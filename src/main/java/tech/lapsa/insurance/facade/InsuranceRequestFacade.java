@@ -30,12 +30,34 @@ public interface InsuranceRequestFacade extends EJBConstants {
 
     <T extends InsuranceRequest> T getById(Integer id) throws IllegalState, IllegalArgument;
 
-    <T extends InsuranceRequest> T requestReceived(T request) throws IllegalArgument;
+    <T extends InsuranceRequest> T requestReceived(T insuranceRequest) throws IllegalArgument;
 
-    <T extends InsuranceRequest> T policyIssued(T request,
+    <T extends InsuranceRequest> T policyIssued(T insuranceRequest,
 	    String agreementNumber) throws IllegalArgument, IllegalState;
 
-    <T extends InsuranceRequest> T policyIssuedAndInvoiceCreated(T request,
+    /**
+     * Alternative completion of request
+     * @deprecated to be removed when query below will return empty result set
+     * 
+     * <pre>
+     * select r.ID, 
+     *        r.PROGRESS_STATUS, 
+     *       ir.PAYMENT_STATUS, 
+     *       ir.AGREEMENT_NUMBER 
+     * FROM REQUEST r, 
+     *      INSURANCE_REQUEST ir
+     * WHERE ir.ID = r.ID 
+     *   AND ir.INSURANCE_REQUEST_STATUS = 'PREMIUM_PAID' 
+     *   AND r.PROGRESS_STATUS <> 'FINISHED';
+     * </pre>
+     */
+    @Deprecated
+    <T extends InsuranceRequest> T policyIssuedAlt(T insuranceRequest,
+	    String agreementNumber,
+	    User completedBy)
+	    throws IllegalState, IllegalArgument;
+
+    <T extends InsuranceRequest> T policyIssuedAndInvoiceCreated(T insuranceRequest,
 	    String agreementNumber,
 	    String invoicePayeeName,
 	    Currency invoiceCurrency,
@@ -47,7 +69,7 @@ public interface InsuranceRequestFacade extends EJBConstants {
 	    Double invoiceAmount,
 	    Integer invoiceQuantity) throws IllegalArgument, IllegalState;
 
-    <T extends InsuranceRequest> T policyIssuedAndPremiumPaid(T request,
+    <T extends InsuranceRequest> T policyIssuedAndPremiumPaid(T insuranceRequest,
 	    User completedBy,
 	    String agreementNumber,
 	    String paymentMethodName,
@@ -59,7 +81,7 @@ public interface InsuranceRequestFacade extends EJBConstants {
 	    String paymentReference,
 	    String payerName) throws IllegalState, IllegalArgument;
 
-    <T extends InsuranceRequest> T invoiceCreated(T request,
+    <T extends InsuranceRequest> T invoiceCreated(T insuranceRequest,
 	    String invoicePayeeName,
 	    Currency invoiceCurrency,
 	    LocalizationLanguage invoiceLanguage,
@@ -70,7 +92,7 @@ public interface InsuranceRequestFacade extends EJBConstants {
 	    Double invoiceAmount,
 	    Integer invoiceQuantity) throws IllegalArgument, IllegalState;
 
-    <T extends InsuranceRequest> T premiumPaid(T request,
+    <T extends InsuranceRequest> T premiumPaid(T insuranceRequest,
 	    String paymentMethodName,
 	    Instant paymentInstant,
 	    Double paymentAmount,
@@ -81,7 +103,7 @@ public interface InsuranceRequestFacade extends EJBConstants {
 	    String payerName,
 	    User completedBy) throws IllegalArgument;
 
-    <T extends InsuranceRequest> T requestCanceled(T request,
+    <T extends InsuranceRequest> T requestCanceled(T insuranceRequest,
 	    User completedBy,
 	    InsuranceRequestCancellationReason insuranceRequestCancellationReason) throws IllegalState, IllegalArgument;
 }
