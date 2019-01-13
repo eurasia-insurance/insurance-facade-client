@@ -22,6 +22,8 @@ public interface UserFacade extends EJBConstants {
     public interface UserFacadeRemote extends UserFacade {
     }
 
+    User getRootUser();
+
     User findOrCreate(String principalName) throws IllegalArgument;
 
     User findOrCreate(Principal principal) throws IllegalArgument;
