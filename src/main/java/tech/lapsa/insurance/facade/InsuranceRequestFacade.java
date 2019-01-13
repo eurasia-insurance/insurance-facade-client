@@ -33,11 +33,9 @@ public interface InsuranceRequestFacade extends EJBConstants {
     <T extends InsuranceRequest> T requestReceived(T request) throws IllegalArgument;
 
     <T extends InsuranceRequest> T policyIssued(T request,
-	    User user,
 	    String agreementNumber) throws IllegalArgument, IllegalState;
 
     <T extends InsuranceRequest> T policyIssuedAndInvoiceCreated(T request,
-	    User user,
 	    String agreementNumber,
 	    String invoicePayeeName,
 	    Currency invoiceCurrency,
@@ -50,7 +48,7 @@ public interface InsuranceRequestFacade extends EJBConstants {
 	    Integer invoiceQuantity) throws IllegalArgument, IllegalState;
 
     <T extends InsuranceRequest> T policyIssuedAndPremiumPaid(T request,
-	    User user,
+	    User completedBy,
 	    String agreementNumber,
 	    String paymentMethodName,
 	    Double paymentAmount,
@@ -80,9 +78,10 @@ public interface InsuranceRequestFacade extends EJBConstants {
 	    String paymentCard,
 	    String paymentCardBank,
 	    String paymentReference,
-	    String payerName) throws IllegalArgument;
+	    String payerName,
+	    User completedBy) throws IllegalArgument;
 
     <T extends InsuranceRequest> T requestCanceled(T request,
-	    User user,
+	    User completedBy,
 	    InsuranceRequestCancellationReason insuranceRequestCancellationReason) throws IllegalState, IllegalArgument;
 }
