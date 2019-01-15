@@ -26,6 +26,7 @@ public interface InsuranceRequestFacade extends EJBConstants {
 
     @Remote
     public interface InsuranceRequestFacadeRemote extends InsuranceRequestFacade {
+
     }
 
     <T extends InsuranceRequest> T getById(Integer id) throws IllegalState, IllegalArgument;
@@ -101,7 +102,18 @@ public interface InsuranceRequestFacade extends EJBConstants {
 	    String paymentCardBank,
 	    String paymentReference,
 	    String payerName,
-	    User completedBy) throws IllegalArgument;
+	    User completedBy) throws IllegalArgument, IllegalState;
+
+    void premiumPaid(Integer id,
+	    String paymentMethodName,
+	    Instant paymentInstant,
+	    Double paymentAmount,
+	    Currency paymentCurrency,
+	    String paymentCard,
+	    String paymentCardBank,
+	    String paymentReference,
+	    String payerName) throws IllegalArgument, IllegalState;
+
 
     <T extends InsuranceRequest> T requestCanceled(T insuranceRequest,
 	    User completedBy,
