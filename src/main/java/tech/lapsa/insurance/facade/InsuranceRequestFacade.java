@@ -104,7 +104,7 @@ public interface InsuranceRequestFacade extends EJBConstants {
 	    String payerName,
 	    User completedBy) throws IllegalArgument, IllegalState;
 
-    void premiumPaid(Integer id,
+    void premiumPaidById(Integer id,
 	    String paymentMethodName,
 	    Instant paymentInstant,
 	    Double paymentAmount,
