@@ -21,5 +21,5 @@ public interface RequestFacade extends EJBConstants {
     public interface RequestFacadeRemote extends RequestFacade {
     }
 
-    Request commentRequest(Request r, User user, String message) throws IllegalState, IllegalArgument;
+    <T extends Request> T commentRequest(T r, User user, String message) throws IllegalState, IllegalArgument;
 }
