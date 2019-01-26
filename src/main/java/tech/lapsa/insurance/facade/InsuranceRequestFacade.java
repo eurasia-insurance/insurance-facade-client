@@ -130,4 +130,9 @@ public interface InsuranceRequestFacade extends EJBConstants {
     <T extends InsuranceRequest> T requestCanceled(T insuranceRequest,
 	    User completedBy,
 	    InsuranceRequestCancellationReason insuranceRequestCancellationReason) throws IllegalState, IllegalArgument;
+
+    <T extends InsuranceRequest> T paymentCanceled(T insuranceRequest,
+	    User completedBy,
+	    InsuranceRequestCancellationReason insuranceRequestCancellationReason,
+	    String comments) throws IllegalState, IllegalArgument;
 }
