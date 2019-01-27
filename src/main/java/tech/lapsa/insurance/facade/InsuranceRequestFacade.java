@@ -26,7 +26,6 @@ public interface InsuranceRequestFacade extends EJBConstants {
 
     @Remote
     public interface InsuranceRequestFacadeRemote extends InsuranceRequestFacade {
-
     }
 
     <T extends InsuranceRequest> T getById(Integer id) throws IllegalState, IllegalArgument;
@@ -35,28 +34,6 @@ public interface InsuranceRequestFacade extends EJBConstants {
 
     <T extends InsuranceRequest> T policyIssued(T insuranceRequest,
 	    String agreementNumber) throws IllegalArgument, IllegalState;
-
-    /**
-     * Alternative completion of request
-     * @deprecated to be removed when query below will return empty result set
-     * 
-     * <pre>
-     * select r.ID, 
-     *        r.PROGRESS_STATUS, 
-     *       ir.PAYMENT_STATUS, 
-     *       ir.AGREEMENT_NUMBER 
-     * FROM REQUEST r, 
-     *      INSURANCE_REQUEST ir
-     * WHERE ir.ID = r.ID 
-     *   AND ir.INSURANCE_REQUEST_STATUS = 'PREMIUM_PAID' 
-     *   AND r.PROGRESS_STATUS <> 'FINISHED';
-     * </pre>
-     */
-    @Deprecated
-    <T extends InsuranceRequest> T policyIssuedAlt(T insuranceRequest,
-	    String agreementNumber,
-	    User completedBy)
-	    throws IllegalState, IllegalArgument;
 
     <T extends InsuranceRequest> T policyIssuedAndInvoiceCreated(T insuranceRequest,
 	    String agreementNumber,
@@ -130,4 +107,6 @@ public interface InsuranceRequestFacade extends EJBConstants {
     <T extends InsuranceRequest> T requestCanceled(T insuranceRequest,
 	    User completedBy,
 	    InsuranceRequestCancellationReason insuranceRequestCancellationReason) throws IllegalState, IllegalArgument;
+
+    <T extends InsuranceRequest> T paymentCanceled(T insuranceRequest, String comments) throws IllegalState, IllegalArgument;
 }
