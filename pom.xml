@@ -16,9 +16,9 @@
 
 	<properties>
 		<!-- BOMS -->
-		<javax-javaee-bom.version>CURRENT-SNAPSHOT</javax-javaee-bom.version>
-		<payara-bom.version>CURRENT-SNAPSHOT</payara-bom.version>
-		<insurance-domain.version>CURRENT-SNAPSHOT</insurance-domain.version>
+		<javax-javaee-bom.version>20190317r6</javax-javaee-bom.version>
+		<payara-bom.version>20190317r6</payara-bom.version>
+		<insurance-domain.version>20190317r6</insurance-domain.version>
 	</properties>
 
 	<dependencyManagement>
